@@ -10,7 +10,7 @@ import java.util.logging.Level;
 
 import net.thevpc.echo.AppEvent;
 import net.thevpc.echo.UndoableAction;
-import net.thevpc.common.msg.FormattedMessage;
+import net.thevpc.common.msg.JFormattedMessage;
 import net.thevpc.common.msg.Message;
 import net.thevpc.common.props.WritablePValue;
 
@@ -41,7 +41,7 @@ public class PropUndoableAction<T> implements UndoableAction {
         oldValue = prop.get();
         prop.set(newValue.get());
         postDo();
-        return new FormattedMessage(Level.INFO, messageTemplate, new Object[]{prop.get()});
+        return new JFormattedMessage(Level.INFO, messageTemplate, new Object[]{prop.get()});
     }
 
     protected void postDo() {

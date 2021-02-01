@@ -6,7 +6,7 @@
     <groupId>net.thevpc.echo</groupId>
     <artifactId>echo-swing</artifactId>
     <version>1.0.0</version><!--updated-->
-    <name>net.thevpc.echo.echo-swing</name>
+    <name>net.thevpc.echo.echo-swing.echo-swing</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/echo</url>
     <description>Desktop Application Framework Swing implentation</description>

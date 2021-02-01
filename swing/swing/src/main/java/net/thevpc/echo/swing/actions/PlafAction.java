@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 
 import net.thevpc.echo.AbstractAppAction;
 import net.thevpc.echo.Application;
-import net.thevpc.swings.plaf.UIPlafManager;
+import net.thevpc.swing.plaf.UIPlafManager;
 
 /**
  *

@@ -12,6 +12,7 @@ import net.thevpc.echo.AppComponent;
 import net.thevpc.echo.ItemPath;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BindingNode implements AppNode {
     protected Application application;
@@ -64,31 +65,20 @@ public class BindingNode implements AppNode {
         if (!this.binding.path().equals(parentPath)) {
             goodNode = get(parentPath);
         }
-        BindingNode last = null;
-        for (BindingNode child : goodNode.children) {
+        int u = goodNode.getItemCount();
+        int index=-1;
+        for (int i = 0; i < u; i++) {
+            BindingNode child = goodNode.children.get(i);
             int o = child.binding.order();
             if (o <= b.order()) {
-                last = child;
+                index = i;
             }
         }
-        if (last != null) {
-            int c = goodNode.getItemCount();
-            for (int i = 0; i < c; i++) {
-                Object curr = goodNode.getItemAt(i);
-                if ((curr == null && last.binding.tool() instanceof AppToolSeparator) || curr == last.guiElement) {
-                    return goodNode.addChildItem(i + 1, b);
-                }
-            }
-            for (int i = 0; i < c; i++) {
-                if (goodNode.getItemAt(i) == last.guiElement) {
-                    return goodNode.addChildItem(i + 1, b);
-                }
-            }
+        if (index>=0 && index<u-1) {
+            return goodNode.addChildItem(index + 1, b);
         } else {
-            int u = goodNode.getItemCount();
             return goodNode.addChildItem(u, b);
         }
-        throw new IllegalArgumentException("Unsupported");
     }
 
     public BindingNode addChildItem(int i, AppToolComponent b) {

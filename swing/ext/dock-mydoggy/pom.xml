@@ -51,26 +51,38 @@
         <!-- ##############################
                 PRIVATE COMPILE DEPENDENCIES 
         ############################## -->
-        <dependency>
-            <!--<groupId>net.sourceforge.mydoggy</groupId>-->
+<!--        <dependency>
+            <groupId>net.sourceforge.mydoggy</groupId>
             <groupId>org.noos.xing</groupId>
             <artifactId>mydoggy-api</artifactId>
-            <!--<version>1.5.0-beta-r1389</version>-->
+            <version>1.5.0-beta-r1389</version>
             <version>1.5.0.s</version>
+        </dependency>-->
+        
+        <dependency>
+            <groupId>net.sourceforge.mydoggy</groupId>
+            <artifactId>mydoggy-api</artifactId>
+            <version>1.5.0-beta-r1389</version>
         </dependency>
+        <dependency>
+            <groupId>net.sourceforge.mydoggy</groupId>
+            <artifactId>mydoggy-plaf</artifactId>
+            <version>1.5.0-beta-r1389</version>
+        </dependency>
+
         <!--        <dependency>
             <groupId>net.sourceforge.mydoggy</groupId>
             <artifactId>mydoggy-site-skin</artifactId>
             <version>1.5.0-beta-r1389</version>
             <version>1.5.0.s</version>
         </dependency>-->
-        <dependency>
-            <!--<groupId>net.sourceforge.mydoggy</groupId>-->
+<!--        <dependency>
+            <groupId>net.sourceforge.mydoggy</groupId>
             <groupId>org.noos.xing</groupId>
             <artifactId>mydoggy-plaf</artifactId>
-            <!--<version>1.5.0-beta-r1389</version>-->
+            <version>1.5.0-beta-r1389</version>
             <version>1.5.0.s</version>
-        </dependency>
+        </dependency>-->
 
 
         <!-- ##############################
@@ -150,20 +162,21 @@
                     </execution>
                 </executions>
             </plugin>
-<plugin>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-gpg-plugin</artifactId>
-      <version>1.6</version>
-      <executions>
-        <execution>
-          <id>sign-artifacts</id>
-          <phase>verify</phase>
-          <goals>
-            <goal>sign</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin><plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>3.0.2</version>
                 <executions>
@@ -176,7 +189,7 @@
 
                         <configuration>
 
-<outputDirectory>${targetdirectory}</outputDirectory>
+                            <outputDirectory>${targetdirectory}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

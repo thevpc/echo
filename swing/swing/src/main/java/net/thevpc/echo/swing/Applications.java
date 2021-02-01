@@ -7,8 +7,8 @@ import net.thevpc.common.props.PList;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.swing.win.InternalWindowsHelper;
-import net.thevpc.swings.plaf.UIPlaf;
-import net.thevpc.swings.plaf.UIPlafManager;
+import net.thevpc.swing.plaf.UIPlaf;
+import net.thevpc.swing.plaf.UIPlafManager;
 
 import javax.swing.*;
 import java.awt.*;
