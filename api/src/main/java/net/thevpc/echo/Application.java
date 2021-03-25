@@ -3,7 +3,6 @@ package net.thevpc.echo;
 import net.thevpc.common.iconset.IconSet;
 import net.thevpc.common.i18n.I18n;
 import net.thevpc.common.props.*;
-import net.thevpc.common.props.*;
 
 public interface Application extends PropertyContainer {
 
@@ -11,11 +10,11 @@ public interface Application extends PropertyContainer {
 
     PValue<AppState> state();
 
-    void start();
+    Application start();
 
     WritablePList<AppShutdownVeto> shutdownVetos();
 
-    void shutdown();
+    Application shutdown();
 
     AppTools tools();
 
@@ -48,4 +47,6 @@ public interface Application extends PropertyContainer {
     WritablePValue<String> currentWorkingDirectory();
 
     AppComponentRendererFactory componentRendererFactory();
+
+    public void waitFor();
 }

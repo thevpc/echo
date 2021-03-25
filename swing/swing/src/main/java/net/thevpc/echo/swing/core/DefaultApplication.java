@@ -13,8 +13,10 @@ import net.thevpc.echo.swing.Applications;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import net.thevpc.echo.swing.core.swing.AppToolActionComponent;
 import net.thevpc.echo.swing.core.swing.AppToolCheckBoxComponent;
@@ -43,6 +45,8 @@ public class DefaultApplication implements Application {
     private WritablePValue<String> currentWorkingDirectory = Props.of("currentWorkingDirectory").valueOf(String.class, null);
     protected AppErrors errors = new DefaultAppErrors(this);
     protected DefaultAppComponentRendererFactory componentRendererFactory = new DefaultAppComponentRendererFactory();
+    private List<Semaphore> waitings = new ArrayList<>();
+
 
     public DefaultApplication() {
         support.add(name);
@@ -53,17 +57,16 @@ public class DefaultApplication implements Application {
         builder().mainWindowBuilder().get().toolBarFactory().set(Applications.ToolBars.Default());
         builder().mainWindowBuilder().get().workspaceFactory().set(Applications.Workspaces.Default());
 
-
         componentRendererFactory.setToolRenderer(
-                AppToolSeparator.class,new AppToolSeparatorComponent());
+                AppToolSeparator.class, new AppToolSeparatorComponent());
         componentRendererFactory.setToolRenderer(
-                AppToolFolder.class,new AppToolFolderComponent());
+                AppToolFolder.class, new AppToolFolderComponent());
         componentRendererFactory.setToolRenderer(
-                AppToolRadioBox.class,new AppToolRadioBoxComponent());
+                AppToolRadioBox.class, new AppToolRadioBoxComponent());
         componentRendererFactory.setToolRenderer(
-                AppToolCheckBox.class,new AppToolCheckBoxComponent());
+                AppToolCheckBox.class, new AppToolCheckBoxComponent());
         componentRendererFactory.setToolRenderer(
-                AppToolAction.class,new AppToolActionComponent());
+                AppToolAction.class, new AppToolActionComponent());
 
         mainWindow.listeners().add(new PropertyListener() {
             @Override
@@ -155,8 +158,8 @@ public class DefaultApplication implements Application {
     }
 
     @Override
-    public void start() {
-        if(state().get()==AppState.NONE) {
+    public Application start() {
+        if (state().get() == AppState.NONE) {
             initImpl();
             state.set(AppState.INIT);
             state.set(AppState.STARTING);
@@ -164,10 +167,11 @@ public class DefaultApplication implements Application {
             state.set(AppState.STARTED);
             logs().add(new StringMessage(Level.INFO, "Application Started"));
         }
+        return this;
     }
 
     @Override
-    public void shutdown() {
+    public Application shutdown() {
         switch (state.get()) {
             case CLOSED: {
                 break;
@@ -177,6 +181,7 @@ public class DefaultApplication implements Application {
                 break;
             }
         }
+        return this;
     }
 
     @Override
@@ -277,6 +282,8 @@ public class DefaultApplication implements Application {
                 AppState s = (AppState) event.getNewValue();
                 if (s == AppState.CLOSING) {
                     state.set(AppState.CLOSED);
+                }else if (s == AppState.CLOSED) {
+                    onFreeWaiters();
                 }
             }
 
@@ -410,4 +417,29 @@ public class DefaultApplication implements Application {
     public AppComponentRendererFactory componentRendererFactory() {
         return componentRendererFactory;
     }
+
+    /**
+     * should be called when the window is destructed
+     */
+    private void onFreeWaiters() {
+        for (Iterator<Semaphore> it = waitings.iterator(); it.hasNext();) {
+            Semaphore waiting = it.next();
+            waiting.release();
+            it.remove();
+        }
+    }
+
+    @Override
+    public void waitFor() {
+        try {
+            Semaphore sem = new Semaphore(1);
+            sem.acquire();
+            waitings.add(sem);
+            
+            sem.acquire();
+        } catch (InterruptedException ex) {
+            //
+        }
+    }
+
 }
