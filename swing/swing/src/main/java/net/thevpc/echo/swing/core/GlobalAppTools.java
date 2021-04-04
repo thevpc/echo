@@ -10,7 +10,8 @@ import net.thevpc.echo.ItemPath;
 
 import java.util.*;
 
-public class GlobalAppTools extends DefaultAppToolsBase {
+public class GlobalAppTools extends AbstractAppToolsBase {
+
     private List<AppToolComponent> tools0 = new ArrayList<>();
 
     public GlobalAppTools(DefaultApplication application) {
@@ -20,7 +21,7 @@ public class GlobalAppTools extends DefaultAppToolsBase {
             public void propertyUpdated(PropertyEvent event) {
                 AppState s = (AppState) event.getNewValue();
                 if (s == AppState.INIT) {
-                    for (Iterator<AppToolComponent> iterator = tools0.iterator(); iterator.hasNext(); ) {
+                    for (Iterator<AppToolComponent> iterator = tools0.iterator(); iterator.hasNext();) {
                         AppToolComponent tool = iterator.next();
                         iterator.remove();
                         addTool(tool);
@@ -30,27 +31,25 @@ public class GlobalAppTools extends DefaultAppToolsBase {
         });
     }
 
-
-
     @Override
     public void addTool(AppToolComponent tool) {
         if (this.application.state().get() == AppState.NONE) {
             this.tools0.add(tool);
             return;
         }
-        String first = tool.path().first();
-        AppToolComponent subBinding = AppToolComponent.of(tool.tool(), tool.path().skipFirst().toString(), tool.order(), tool.renderer());
-        Set<String> available=new HashSet<>();
-        for (AppNode node : this.application.nodes()) {
+//        String first = tool.path().first();
+//        AppToolComponent subBinding = AppToolComponent.of(tool.tool(), tool.path().skipFirst().toString(), tool.order(), tool.renderer());
+        Set<String> available = new HashSet<>();
+        for (AppNode node : this.application.rootNode().getChildren()) {
             AppToolContainer c = (AppToolContainer) node.getComponent();
-            ItemPath path = c.rootNode().getPath();
-            available.add(path.first());
-            if (path.first().equals(first)) {
-                c.tools().addTool(subBinding);
+            ItemPath path = c.rootNode().path();
+            available.add(path.toString());
+            if (tool.path().startsWith(path)) {
+                c.tools().addTool(tool);
                 return;
             }
         }
-        throw new IllegalArgumentException("Unable to resolve to a valid path '"+tool.path()+"' . root nodes start with one of : "+available);
+        throw new IllegalArgumentException("Unable to resolve to a valid path '" + tool.path() + "' . root nodes start with one of : " + available);
     }
 
     @Override
@@ -69,6 +68,4 @@ public class GlobalAppTools extends DefaultAppToolsBase {
 //            c.components().listeners().add(toolMapResolverAppPropertyListener);
 //        }
 //    }
-
-
 }

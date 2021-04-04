@@ -1,15 +1,15 @@
 package net.thevpc.echo.swing.core.swing;
 
-import net.thevpc.common.props.PList;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 
 import javax.swing.*;
+import net.thevpc.common.props.ObservableList;
 
 public class PListComponentModel<T> extends AbstractListModel<T> {
-    private PList<T> items;
+    private ObservableList<T> items;
 
-    public PListComponentModel(PList<T> items) {
+    public PListComponentModel(ObservableList<T> items) {
         super();
         this.items = items;
         items.listeners().add(new PropertyListener() {

@@ -1,28 +1,30 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePValue;
 
 import javax.swing.*;
+import net.thevpc.common.props.WritableValue;
 
 public interface AppWindow extends AppToolContainer {
 
     Application application();
 
-    WritablePValue<AppWindowDisplayMode> displayMode();
+    WritableValue<AppWindowDisplayMode> displayMode();
 
-    WritablePValue<AppMenuBar> menuBar();
+    WritableValue<AppMenuBar> menuBar();
 
-    WritablePValue<AppStatusBar> statusBar();
+    WritableValue<AppStatusBar> statusBar();
 
-    WritablePValue<AppToolBar> toolBar();
+    WritableValue<AppToolBar> toolBar();
 
-    WritablePValue<AppWorkspace> workspace();
+    WritableValue<AppWorkspace> workspace();
 
-    WritablePValue<String> title();
+    WritableValue<String> title();
 
-    WritablePValue<ImageIcon> icon();
+    WritableValue<ImageIcon> icon();
 
     AppWindowStateSetValue state();
+    
+    void centerOnDefaultMonitor();
     
     Object component();
 }

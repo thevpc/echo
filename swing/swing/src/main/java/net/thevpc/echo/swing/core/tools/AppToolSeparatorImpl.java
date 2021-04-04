@@ -4,23 +4,28 @@ import net.thevpc.echo.AbstractAppTool;
 import net.thevpc.echo.AppToolSeparator;
 import net.thevpc.echo.ItemPath;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.echo.Application;
+import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.AppTools;
 
 public class AppToolSeparatorImpl extends AbstractAppTool implements AppToolSeparator {
-    private final WritablePValue<Integer> width = Props.of("width").valueOf(Integer.class, 0);
-    private final WritablePValue<Integer> height = Props.of("height").valueOf( Integer.class, 0);
+
+    private final WritableValue<Integer> width = Props.of("width").valueOf(Integer.class, 0);
+    private final WritableValue<Integer> height = Props.of("height").valueOf(Integer.class, 0);
     private ItemPath path;
 
-    public AppToolSeparatorImpl(String path) {
-        super(ItemPath.of("menuBar").child(path).toString());
-        this.path = ItemPath.of("menuBar").child(path);
+    public AppToolSeparatorImpl(String path, Application app, AppTools tools) {
+        super(ItemPath.of(path).toString(), app,tools,false);
+        this.path = ItemPath.of(path);
     }
 
-    public WritablePValue<Integer> width() {
+    @Override
+    public WritableValue<Integer> width() {
         return width;
     }
 
-    public WritablePValue<Integer> height() {
+    @Override
+    public WritableValue<Integer> height() {
         return height;
     }
 

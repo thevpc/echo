@@ -43,4 +43,9 @@ public class DefaultAppToolComponent<T extends AppTool> implements AppToolCompon
         return c2;
     }
 
+    @Override
+    public String toString() {
+        return "DefaultAppToolComponent{" + "path=" + path +" :: "+tool.id()+ '}';
+    }
+
 }

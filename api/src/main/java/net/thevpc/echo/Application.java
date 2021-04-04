@@ -6,21 +6,21 @@ import net.thevpc.common.props.*;
 
 public interface Application extends PropertyContainer {
 
-    PValue<String> name();
+    ObservableValue<String> name();
 
-    PValue<AppState> state();
+    ObservableValue<AppState> state();
 
     Application start();
 
-    WritablePList<AppShutdownVeto> shutdownVetos();
+    WritableList<AppShutdownVeto> shutdownVetos();
 
     Application shutdown();
 
     AppTools tools();
 
-    WritablePValue<AppWindow> mainWindow();
+    WritableValue<AppWindow> mainWindow();
 
-    AppNode[] nodes();
+    AppNode rootNode();
 
     ApplicationBuilder builder();
 
@@ -32,11 +32,11 @@ public interface Application extends PropertyContainer {
 
     AppLogs logs();
 
-    WritablePLMap<String, IconSet> iconSets();
+    WritableLiMap<String, IconSet> iconSets();
 
     AppIconSet iconSet();
 
-    WritablePValue<AppPropertiesTree> activeProperties();
+    WritableValue<AppPropertiesTree> activeProperties();
 
     void runFront(Runnable run);
 
@@ -44,7 +44,7 @@ public interface Application extends PropertyContainer {
 
     AppErrors errors();
 
-    WritablePValue<String> currentWorkingDirectory();
+    WritableValue<String> currentWorkingDirectory();
 
     AppComponentRendererFactory componentRendererFactory();
 

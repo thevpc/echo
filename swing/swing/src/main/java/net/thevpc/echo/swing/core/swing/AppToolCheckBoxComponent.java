@@ -19,18 +19,18 @@ public class AppToolCheckBoxComponent implements AppComponentRenderer {
                     || parentGuiElement instanceof JToolbarGroup
                     || parentGuiElement instanceof JStatusBarGroup) {
                 JToggleButton m = new JToggleButton();
-                SwingHelper.prepareAbstractButton(m, b, application, false);
+                SwingApplicationsHelper.prepareAbstractButton(m, b, application, false);
                 return m;
             }
             if (parentGuiElement instanceof JMenuBar) {
                 JCheckBox m = new JCheckBox();
-                SwingHelper.prepareAbstractButton(m, b, application, true);
+                SwingApplicationsHelper.prepareAbstractButton(m, b, application, true);
                 return m;
             }
             if (parentGuiElement instanceof JMenu
                     || parentGuiElement instanceof JPopupMenu) {
                 JCheckBoxMenuItem m = new JCheckBoxMenuItem();
-                SwingHelper.prepareAbstractButton(m, b, application, true);
+                SwingApplicationsHelper.prepareAbstractButton(m, b, application, true);
                 return m;
             }
         }

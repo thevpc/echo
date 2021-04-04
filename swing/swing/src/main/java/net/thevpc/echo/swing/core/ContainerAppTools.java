@@ -8,29 +8,27 @@ import net.thevpc.echo.ItemPath;
 
 import java.util.*;
 
-public class ContainerAppTools extends DefaultAppToolsBase {
+public class ContainerAppTools extends AbstractAppToolsBase {
 
     public ContainerAppTools(Application application) {
         super(application);
     }
 
-
-
     @Override
     public void addTool(AppToolComponent tool) {
-        String first = tool.path().first();
-        AppToolComponent subBinding = AppToolComponent.of(tool.tool(), tool.path().skipFirst().toString(), tool.order(), tool.renderer());
-        Set<String> available=new HashSet<>();
-        for (AppNode node : this.application.nodes()) {
+//        String first = tool.path().first();
+//        AppToolComponent subBinding = AppToolComponent.of(tool.tool(), tool.path().skipFirst().toString(), tool.order(), tool.renderer());
+        Set<String> available = new HashSet<>();
+        for (AppNode node : this.application.rootNode().getChildren()) {
             AppToolContainer c = (AppToolContainer) node.getComponent();
-            ItemPath path = c.rootNode().getPath();
-            available.add(path.first());
-            if (path.first().equals(first)) {
-                c.tools().addTool(subBinding);
+            ItemPath path = c.rootNode().path();
+            available.add(path.toString());
+            if (tool.path().startsWith(path)) {
+                c.tools().addTool(tool);
                 return;
             }
         }
-        throw new IllegalArgumentException("Unable to resolve to a valid path '"+tool.path()+"' . root nodes start with one of : "+available);
+        throw new IllegalArgumentException("Unable to resolve to a valid path '" + tool.path() + "' . root nodes start with one of : " + available);
     }
 
     @Override

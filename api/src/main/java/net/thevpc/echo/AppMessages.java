@@ -5,17 +5,17 @@
  */
 package net.thevpc.echo;
 
-import net.thevpc.common.props.PList;
-import net.thevpc.common.props.WritablePList;
 import net.thevpc.common.msg.Message;
+import net.thevpc.common.props.WritableList;
+import net.thevpc.common.props.ObservableList;
 
 /**
  *
  * @author thevpc
  */
-public interface AppMessages extends PList<Message> {
+public interface AppMessages extends ObservableList<Message> {
 
-    WritablePList<AppMessageProducer> producers();
+    WritableList<AppMessageProducer> producers();
 
     void update();
 

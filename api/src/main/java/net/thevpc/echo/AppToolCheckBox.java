@@ -1,11 +1,11 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
 
 public interface AppToolCheckBox extends AppTool{
     String id();
 
-    WritablePValue<String> group();
+    WritableValue<String> group();
 
-    WritablePValue<Boolean> selected();
+    WritableValue<Boolean> selected();
 }

@@ -7,19 +7,19 @@ import net.thevpc.echo.AppStatusBar;
 import net.thevpc.echo.AppWindow;
 import net.thevpc.echo.Application;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
 
 public class JStatusBarGroupStatusBar extends AppToolContainerImpl implements AppStatusBar, JComponentSupplier {
 
-    private WritablePValue<Boolean> visible = Props.of("visible").valueOf(Boolean.class, false);
+    private WritableValue<Boolean> visible = Props.of("visible").valueOf(Boolean.class, false);
 
     public JStatusBarGroupStatusBar(String rootPath, Application application) {
         super(rootPath, new JStatusBarGroup(), application);
-        SwingHelper.bindVisible((JComponent) rootGuiElement, visible);
+        SwingApplicationsHelper.bindVisible((JComponent) rootGuiElement, visible);
     }
 
     @Override
-    public WritablePValue<Boolean> visible() {
+    public WritableValue<Boolean> visible() {
         return visible;
     }
 

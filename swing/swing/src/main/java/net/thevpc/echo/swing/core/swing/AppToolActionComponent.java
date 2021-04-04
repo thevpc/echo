@@ -19,18 +19,18 @@ public class AppToolActionComponent implements AppComponentRenderer {
                     || parentGuiElement instanceof JToolbarGroup
                     || parentGuiElement instanceof JStatusBarGroup) {
                 JButton m = new JButton();
-                SwingHelper.prepareAbstractButton(m, b, application, false);
+                SwingApplicationsHelper.prepareAbstractButton(m, b, application, false);
                 return m;
             }
             if (parentGuiElement instanceof JMenuBar) {
                 JButton m = new JButton();
-                SwingHelper.prepareAbstractButton(m, b, application, true);
+                SwingApplicationsHelper.prepareAbstractButton(m, b, application, true);
                 return m;
             }
             if (parentGuiElement instanceof JMenu
                     || parentGuiElement instanceof JPopupMenu) {
                 JMenuItem m = new JMenuItem();
-                SwingHelper.prepareAbstractButton(m, b, application, true);
+                SwingApplicationsHelper.prepareAbstractButton(m, b, application, true);
                 return m;
             }
         }

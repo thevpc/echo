@@ -1,7 +1,7 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
 
 public interface AppMenuBar extends AppToolContainer {
-    WritablePValue<Boolean> visible();
+    WritableValue<Boolean> visible();
 }

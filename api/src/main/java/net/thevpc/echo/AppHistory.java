@@ -1,7 +1,7 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.PList;
 import net.thevpc.common.msg.Message;
+import net.thevpc.common.props.ObservableList;
 
 public interface AppHistory {
 
@@ -11,8 +11,8 @@ public interface AppHistory {
 
     void redoAction();
 
-    PList<Message> undoList();
+    ObservableList<Message> undoList();
 
-    PList<Message> redoList();
+    ObservableList<Message> redoList();
 
 }

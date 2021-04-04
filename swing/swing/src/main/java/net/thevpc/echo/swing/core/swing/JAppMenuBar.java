@@ -6,15 +6,15 @@ import net.thevpc.echo.AppMenuBar;
 import net.thevpc.echo.AppWindow;
 import net.thevpc.echo.Application;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
 
 import javax.swing.*;
+import net.thevpc.common.props.WritableValue;
 
 public class JAppMenuBar extends AppToolContainerImpl implements AppMenuBar,JMenuBarComponentSupplier {
-    private WritablePValue<Boolean> visible = Props.of("visible").valueOf(Boolean.class, false);
+    private WritableValue<Boolean> visible = Props.of("visible").valueOf(Boolean.class, false);
     public JAppMenuBar(String rootPath, Application application) {
         super(rootPath, new JMenuBar(), application);
-        SwingHelper.bindVisible((JComponent)rootGuiElement, visible);
+        SwingApplicationsHelper.bindVisible((JComponent)rootGuiElement, visible);
     }
 
     public static AppLayoutMenuBarFactory factory() {
@@ -27,7 +27,7 @@ public class JAppMenuBar extends AppToolContainerImpl implements AppMenuBar,JMen
     }
     
      @Override
-    public WritablePValue<Boolean> visible() {
+    public WritableValue<Boolean> visible() {
         return visible;
     }
 

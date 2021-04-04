@@ -1,11 +1,11 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
 
 public interface AppToolSeparator extends AppTool {
-    WritablePValue<Integer> width();
+    WritableValue<Integer> width();
 
-    WritablePValue<Integer> height();
+    WritableValue<Integer> height();
 
     ItemPath path();
 }

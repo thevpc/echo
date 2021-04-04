@@ -5,14 +5,14 @@
  */
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePDispatcher;
 import net.thevpc.common.msg.Message;
+import net.thevpc.common.props.WritableDispatcher;
 
 /**
  *
  * @author thevpc
  */
-public interface AppErrors extends WritablePDispatcher<Message> {
+public interface AppErrors extends WritableDispatcher<Message> {
 
     void add(Throwable item);
 

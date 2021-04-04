@@ -8,7 +8,7 @@ import net.thevpc.common.msg.StringMessage;
 import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.AppPropertyBinding;
 import net.thevpc.common.props.impl.PropertyContainerSupport;
-import net.thevpc.echo.swing.Applications;
+import net.thevpc.echo.swing.SwingApplications;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -26,12 +26,12 @@ import net.thevpc.echo.swing.core.swing.AppToolSeparatorComponent;
 
 public class DefaultApplication implements Application {
 
-    protected WritablePValue<AppState> state = Props.of("state").valueOf(AppState.class, AppState.NONE);
-    protected WritablePValue<String> name = Props.of("name").valueOf(String.class, "");
+    protected WritableValue<AppState> state = Props.of("state").valueOf(AppState.class, AppState.NONE);
+    protected WritableValue<String> name = Props.of("name").valueOf(String.class, "");
     protected DefaultAppMessages messages = new DefaultAppMessages(this);
     protected DefaultAppLogs logs = new DefaultAppLogs(this);
-    protected WritablePList<AppShutdownVeto> shutdownVetos = Props.of("shutdownVetos").listOf(AppShutdownVeto.class);
-    protected WritablePLMap<String, IconSet> iconSets = Props.of("iconSets").lmapOf(String.class, IconSet.class, x -> x.getId());
+    protected WritableList<AppShutdownVeto> shutdownVetos = Props.of("shutdownVetos").listOf(AppShutdownVeto.class);
+    protected WritableLiMap<String, IconSet> iconSets = Props.of("iconSets").lmapOf(String.class, IconSet.class, x -> x.getId());
     protected AppIconSet activeIconSet = new DefaultAppIconSet(iconSets);
     protected I18n i18n = new DefaultI18n();
     protected PropertyContainerSupport support = new PropertyContainerSupport("app", this);
@@ -39,23 +39,24 @@ public class DefaultApplication implements Application {
     private GlobalAppTools tools = new GlobalAppTools(this);
     private AppHistory history = new DefaultAppUndoManager(this);
     private Map<String, ButtonGroup> buttonGroups = new HashMap<>();
-    private WritablePValue<AppWindow> mainWindow = Props.of("mainWindow").valueOf(AppWindow.class, null);
+    private WritableValue<AppWindow> mainWindow = Props.of("mainWindow").valueOf(AppWindow.class, null);
     private ApplicationBuilderImpl applicationBuilderImpl = new ApplicationBuilderImpl(this);
-    private WritablePValue<AppPropertiesTree> activeProperties = Props.of("activeProperties").valueOf(AppPropertiesTree.class, null);
-    private WritablePValue<String> currentWorkingDirectory = Props.of("currentWorkingDirectory").valueOf(String.class, null);
+    private WritableValue<AppPropertiesTree> activeProperties = Props.of("activeProperties").valueOf(AppPropertiesTree.class, null);
+    private WritableValue<String> currentWorkingDirectory = Props.of("currentWorkingDirectory").valueOf(String.class, null);
     protected AppErrors errors = new DefaultAppErrors(this);
     protected DefaultAppComponentRendererFactory componentRendererFactory = new DefaultAppComponentRendererFactory();
     private List<Semaphore> waitings = new ArrayList<>();
-
+    private AppRootNode appRootNode;
 
     public DefaultApplication() {
         support.add(name);
         support.add(state.readOnly());
-        builder().mainWindowBuilder().get().windowFactory().set(Applications.Windows.Default());
-        builder().mainWindowBuilder().get().menuBarFactory().set(Applications.MenuBars.Default());
-        builder().mainWindowBuilder().get().statusBarFactory().set(Applications.StatusBars.Default());
-        builder().mainWindowBuilder().get().toolBarFactory().set(Applications.ToolBars.Default());
-        builder().mainWindowBuilder().get().workspaceFactory().set(Applications.Workspaces.Default());
+        appRootNode=new AppRootNode();
+        builder().mainWindowBuilder().get().windowFactory().set(SwingApplications.Windows.Default());
+        builder().mainWindowBuilder().get().menuBarFactory().set(SwingApplications.MenuBars.Default());
+        builder().mainWindowBuilder().get().statusBarFactory().set(SwingApplications.StatusBars.Default());
+        builder().mainWindowBuilder().get().toolBarFactory().set(SwingApplications.ToolBars.Default());
+        builder().mainWindowBuilder().get().workspaceFactory().set(SwingApplications.Workspaces.Default());
 
         componentRendererFactory.setToolRenderer(
                 AppToolSeparator.class, new AppToolSeparatorComponent());
@@ -118,22 +119,22 @@ public class DefaultApplication implements Application {
         });
     }
 
-    public WritablePValue<String> currentWorkingDirectory() {
+    public WritableValue<String> currentWorkingDirectory() {
         return currentWorkingDirectory;
     }
 
     @Override
-    public WritablePValue<AppPropertiesTree> activeProperties() {
+    public WritableValue<AppPropertiesTree> activeProperties() {
         return activeProperties;
     }
 
     @Override
-    public WritablePList<AppShutdownVeto> shutdownVetos() {
+    public WritableList<AppShutdownVeto> shutdownVetos() {
         return shutdownVetos;
     }
 
     @Override
-    public WritablePLMap<String, IconSet> iconSets() {
+    public WritableLiMap<String, IconSet> iconSets() {
         return iconSets;
     }
 
@@ -148,12 +149,12 @@ public class DefaultApplication implements Application {
     }
 
     @Override
-    public PValue<String> name() {
+    public ObservableValue<String> name() {
         return name;
     }
 
     @Override
-    public PValue<AppState> state() {
+    public ObservableValue<AppState> state() {
         return state.readOnly();
     }
 
@@ -190,14 +191,13 @@ public class DefaultApplication implements Application {
     }
 
     @Override
-    public WritablePValue<AppWindow> mainWindow() {
+    public WritableValue<AppWindow> mainWindow() {
         return mainWindow;
     }
 
     @Override
-    public AppNode[] nodes() {
-        return rootContainers
-                .stream().map(x -> x.rootNode()).toArray(AppNode[]::new);
+    public AppNode rootNode() {
+        return appRootNode;
     }
 
     @Override
@@ -282,7 +282,7 @@ public class DefaultApplication implements Application {
                 AppState s = (AppState) event.getNewValue();
                 if (s == AppState.CLOSING) {
                     state.set(AppState.CLOSED);
-                }else if (s == AppState.CLOSED) {
+                } else if (s == AppState.CLOSED) {
                     onFreeWaiters();
                 }
             }
@@ -325,7 +325,7 @@ public class DefaultApplication implements Application {
 
     private class ApplicationBuilderImpl implements ApplicationBuilder {
 
-        private final WritablePValue<AppWindowBuilder> windowBuilder = Props.of("windowBuilder").valueOf(AppWindowBuilder.class, new DefaultAppWindowBuilder());
+        private final WritableValue<AppWindowBuilder> windowBuilder = Props.of("windowBuilder").valueOf(AppWindowBuilder.class, new DefaultAppWindowBuilder());
 
         public ApplicationBuilderImpl(DefaultApplication a) {
             PropertyVeto already_started_veto = new PropertyVeto() {
@@ -340,7 +340,7 @@ public class DefaultApplication implements Application {
         }
 
         @Override
-        public PValue<AppWindowBuilder> mainWindowBuilder() {
+        public ObservableValue<AppWindowBuilder> mainWindowBuilder() {
             return windowBuilder.readOnly();
         }
     }
@@ -435,10 +435,49 @@ public class DefaultApplication implements Application {
             Semaphore sem = new Semaphore(1);
             sem.acquire();
             waitings.add(sem);
-            
+
             sem.acquire();
         } catch (InterruptedException ex) {
             //
+        }
+    }
+
+    private class AppRootNode implements AppNode {
+
+        public AppRootNode() {
+        }
+
+        @Override
+        public AppComponent getComponent() {
+            return null;
+        }
+
+        @Override
+        public int getOrder() {
+            return 0;
+        }
+
+        @Override
+        public ItemPath path() {
+            return ItemPath.of();
+        }
+
+        @Override
+        public AppNode[] getChildren() {
+            return rootContainers
+                    .stream().map(x -> x.rootNode())
+                    .toArray(AppNode[]::new);
+        }
+
+        @Override
+        public AppNode get(ItemPath path) {
+            for (AppToolContainer rootContainer : rootContainers) {
+                if (path.startsWith(rootContainer.rootNode().path())) {
+                    path = path.skipFirst();
+                    return rootContainer.rootNode().get(path);
+                }
+            }
+            return null;
         }
     }
 

@@ -1,12 +1,12 @@
 package net.thevpc.echo.swing.core.swing;
 
 import net.thevpc.echo.*;
-import net.thevpc.common.props.WritablePList;
 import net.thevpc.echo.*;
 import net.thevpc.echo.swing.core.BindingNode;
 import net.thevpc.echo.swing.core.GuiComponentNavigator;
 
 import javax.swing.*;
+import net.thevpc.common.props.WritableList;
 
 public class BindingNodeFactory {
 
@@ -18,9 +18,9 @@ public class BindingNodeFactory {
     private GuiComponentNavigator<JMenu> _JMenu = new JMenuGuiComponentNavigator();
     private GuiComponentNavigator<JComponent> _Fallback = new JComponentGuiComponentNavigator();
 
-    public BindingNode createBindingNode(BindingNode parent, Object guiElement, AppToolComponent binding, AppComponent appComponent, Application application, WritablePList<AppComponent> components) {
+    public BindingNode createBindingNode(BindingNode parent, Object guiElement, AppToolComponent binding, AppComponent appComponent, Application application, WritableList<AppComponent> components,AppTools tools) {
 
-        return new BindingNode(parent, guiElement, binding, appComponent, application, components, this, getNavigator(guiElement));
+        return new BindingNode(parent, guiElement, binding, appComponent, application, components, this, getNavigator(guiElement),tools);
     }
 
     private GuiComponentNavigator getNavigator(Object guiElement) {

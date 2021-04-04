@@ -1,8 +1,8 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
 
 public interface AppStatusBar extends AppToolContainer {
 
-    WritablePValue<Boolean> visible();
+    WritableValue<Boolean> visible();
 }

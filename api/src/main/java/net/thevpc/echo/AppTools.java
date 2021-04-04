@@ -1,32 +1,24 @@
 package net.thevpc.echo;
 
 import javax.swing.Action;
-import net.thevpc.common.props.PList;
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
+import net.thevpc.common.props.ObservableList;
 
 public interface AppTools {
 
-    PList<AppTool> all();
+    AppToolsConfig config();
+
+    ObservableList<AppTool> all();
 
     AppTool getTool(String id);
 
     AppComponent[] getComponents(String id);
 
-    AppToolComponent<AppToolFolder> addFolder(String id, String path);
-
     AppToolComponent<AppToolFolder> addFolder(String path);
-
-    AppToolComponent<AppToolSeparator> addSeparator(String id, String path);
 
     AppToolComponent<AppToolSeparator> addSeparator(String path);
 
-    AppToolComponent<AppToolAction> addAction(String id, String path);
-
-    void addAction(Action al, String path, String... paths);
-
-    AppToolComponent<AppToolRadioBox> addRadio(String id, String path);
-
-    AppToolComponent<AppToolCheckBox> addCheck(String id, String path);
+    AppToolAction addAction(Action al, String path, String... paths);
 
     AppToolComponent<AppToolAction> addAction(String path);
 
@@ -34,17 +26,33 @@ public interface AppTools {
 
     AppToolComponent<AppToolCheckBox> addCheck(String path);
 
-    void addCheck(String id, WritablePValue<Boolean> property, String path, String... paths);
+    AppToolCheckBox addCheck(WritableValue<Boolean> property, String path, String... paths);
 
-    <T> void addRadio(String id, String group, WritablePValue<T> property, T value, String path, String... paths);
+    <T> AppToolRadioBox addRadio(String group, WritableValue<T> property, T value, String path, String... paths);
 
     <T extends AppTool> AppToolComponent<T> addTool(T tool, String path);
+
+    AppTool addCustomTool(String id, AppComponentRenderer renderer, String path, int order);
+
+    AppTool addHorizontalGlue(String path);
+
+    AppTool addHorizontalStrut(String path, int size);
+
+    AppTool addHorizontalSeparator(String path);
+
+    AppTool addHorizontalSeparator(String path, int size);
+
+    AppTool addVerticalGlue(String path);
+
+    AppTool addVerticalStrut(String path, int height);
+
+    AppTool addCustomTool(String path, AppComponentRenderer renderer);
 
     <T extends AppTool> void addTool(AppToolComponent<T> tool);
 
     <T extends AppTool> void removeTool(AppToolComponent<T> tool);
 
-    PList<AppComponent> components();
-    
+    ObservableList<AppComponent> components();
+
     void refresh();
 }

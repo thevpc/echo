@@ -23,6 +23,10 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import javax.swing.Action;
+import javax.swing.Box;
+import net.thevpc.echo.AppComponentRenderer;
+import net.thevpc.echo.AppToolsConfig;
+import net.thevpc.echo.CustomAppTool;
 
 import net.thevpc.echo.swing.core.tools.AppToolActionImpl;
 import net.thevpc.echo.swing.core.tools.AppToolCheckBoxImpl;
@@ -30,16 +34,17 @@ import net.thevpc.echo.swing.core.tools.AppToolFolderImpl;
 import net.thevpc.echo.swing.core.tools.AppToolRadioBoxImpl;
 import net.thevpc.echo.swing.core.tools.AppToolSeparatorImpl;
 
-public abstract class DefaultAppToolsBase implements AppTools {
+public abstract class AbstractAppToolsBase implements AppTools {
 
-    public WritablePList<AppComponent> components = Props.of("components").listOf(AppComponent.class);
+    public WritableList<AppComponent> components = Props.of("components").listOf(AppComponent.class);
     protected Map<String, ToolInfo> toolsMap = new HashMap<>();
     protected Application application;
     protected ToolMapResolverPropertyListener toolMapResolverAppPropertyListener = new ToolMapResolverPropertyListener();
-    private WritablePList<AppTool> toolsList = Props.of("tools").listOf(AppTool.class);
+    private WritableList<AppTool> toolsList = Props.of("tools").listOf(AppTool.class);
     private java.util.List tools0 = new ArrayList<>();
-
-    public DefaultAppToolsBase(Application application) {
+    private AppToolsConfig config=new AppToolsConfig();
+    
+    public AbstractAppToolsBase(Application application) {
         this.application = application;
         this.application.state().listeners().add(new PropertyListener() {
             @Override
@@ -56,8 +61,12 @@ public abstract class DefaultAppToolsBase implements AppTools {
         });
     }
 
+    public AppToolsConfig config() {
+        return config;
+    }
+
     @Override
-    public PList<AppTool> all() {
+    public ObservableList<AppTool> all() {
         return toolsList.readOnly();
     }
 
@@ -81,88 +90,56 @@ public abstract class DefaultAppToolsBase implements AppTools {
     }
 
     @Override
-    public AppToolComponent<AppToolFolder> addFolder(String id, String path) {
-        AppToolComponent<AppToolFolder> a = AppToolComponent.of(new AppToolFolderImpl(path), path);
-        addTool(a);
-        return a;
-    }
-
-    @Override
     public AppToolComponent<AppToolFolder> addFolder(String path) {
-        return addFolder(null, path);
-    }
-
-    @Override
-    public AppToolComponent<AppToolSeparator> addSeparator(String id, String path) {
-        AppToolComponent<AppToolSeparator> a = AppToolComponent.of(new AppToolSeparatorImpl(path), path);
+        AppToolComponent<AppToolFolder> a = AppToolComponent.of(new AppToolFolderImpl(path, application,this), path);
         addTool(a);
         return a;
     }
 
     @Override
     public AppToolComponent<AppToolSeparator> addSeparator(String path) {
-        return addSeparator(null, path);
-    }
-
-    @Override
-    public AppToolComponent<AppToolAction> addAction(String id, String path) {
-        ItemPath ipath = ItemPath.of(path);
-        path = ipath.toString();
-        if (id == null) {
-            id = ipath.toString();
-        }
-        AppToolAction action = new AppToolActionImpl(id, null);
-        action.title().set(ipath.name());
-        AppToolComponent<AppToolAction> binding = AppToolComponent.of(action, path);
-        addTool(binding);
-        return binding;
-    }
-
-    @Override
-    public AppToolComponent<AppToolRadioBox> addRadio(String id, String path) {
-        ItemPath ipath = ItemPath.of(path);
-        path = ipath.toString();
-        if (id == null) {
-            id = path.toString();
-        }
-        AppToolRadioBox action = new AppToolRadioBoxImpl(id, null);
-        action.title().set(ipath.name());
-        AppToolComponent<AppToolRadioBox> a = AppToolComponent.of(action, path);
-        addTool(a);
-        return a;
-    }
-
-    @Override
-    public AppToolComponent<AppToolCheckBox> addCheck(String id, String path) {
-        ItemPath ipath = ItemPath.of(path);
-        path = ipath.toString();
-        if (id == null) {
-            id = path.toString();
-        }
-        AppToolCheckBox action = new AppToolCheckBoxImpl(id, null);
-        action.title().set(ipath.name());
-        AppToolComponent<AppToolCheckBox> a = AppToolComponent.of(action, path);
+        AppToolComponent<AppToolSeparator> a = AppToolComponent.of(new AppToolSeparatorImpl(path, application,this), path);
         addTool(a);
         return a;
     }
 
     @Override
     public AppToolComponent<AppToolAction> addAction(String path) {
-        return addAction(null, path);
+        ItemPath ipath = ItemPath.of(path);
+        path = ipath.toString();
+        AppToolAction action = new AppToolActionImpl(ipath.toString(), null, application,this);
+        action.title().setId(path);
+        action.smallIcon().setId("$" + path + ".icon"); //the dollar meens the the icon key is resolved from i18n
+        AppToolComponent<AppToolAction> binding = AppToolComponent.of(action, path);
+        addTool(binding);
+        return binding;
     }
 
     @Override
     public AppToolComponent<AppToolRadioBox> addRadio(String path) {
-        return addRadio(null, path);
+        ItemPath ipath = ItemPath.of(path);
+        path = ipath.toString();
+        AppToolRadioBox action = new AppToolRadioBoxImpl(path, null, application,this);
+        action.title().setId(path);
+        action.smallIcon().setId("$" + path + ".icon"); //the dollar meens the the icon key is resolved from i18n
+        AppToolComponent<AppToolRadioBox> a = AppToolComponent.of(action, path);
+        addTool(a);
+        return a;
     }
 
-    @Override
     public AppToolComponent<AppToolCheckBox> addCheck(String path) {
-        return addCheck(null, path);
+        ItemPath ipath = ItemPath.of(path);
+        path = ipath.toString();
+        AppToolCheckBox action = new AppToolCheckBoxImpl(path, null, application,this);
+        action.title().setId(path);
+        action.smallIcon().setId("$" + path + ".icon"); //the dollar meens the the icon key is resolved from i18n
+        AppToolComponent<AppToolCheckBox> a = AppToolComponent.of(action, path);
+        addTool(a);
+        return a;
     }
 
     @Override
-    public PList<AppComponent> components() {
+    public ObservableList<AppComponent> components() {
         return components.readOnly();
     }
 
@@ -178,22 +155,28 @@ public abstract class DefaultAppToolsBase implements AppTools {
         }
     }
 
-    public void addCheck(String id, WritablePValue<Boolean> property, String path, String... paths) {
+    @Override
+    public AppToolCheckBox addCheck(WritableValue<Boolean> property, String path, String... paths) {
         AppToolComponent<AppToolCheckBox> c = this.addCheck(path);
         AppToolCheckBox tool = c.tool();
-        tool.smallIcon().set(id);
+        path = ItemPath.of(path).toString();
+        tool.title().setId(path);
+        tool.smallIcon().setId("$" + path + ".icon"); //the dollar meens the the icon key is resolved from i18n
         tool.selected().set(property.get());
         tool.selected().bind(property);
         for (int i = 0; i < paths.length; i++) {
             c.copyTo(this, paths[i]);
         }
+        return tool;
     }
 
-    public <T> void addRadio(String id, String group, WritablePValue<T> property, T value, String path, String... paths) {
+    public <T> AppToolRadioBox addRadio(String group, WritableValue<T> property, T value, String path, String... paths) {
         AppToolComponent<AppToolRadioBox> c = this.addRadio(path);
         AppToolRadioBox tool = c.tool();
         tool.group().set(group);
-        tool.smallIcon().set(id);
+        path = ItemPath.of(path).toString();
+        tool.title().setId(path);
+        tool.smallIcon().setId("$" + path + ".icon"); //the dollar meens the the icon key is resolved from i18n
         tool.selected().set(Objects.equals(value, property.get()));
         //property.
 
@@ -209,26 +192,30 @@ public abstract class DefaultAppToolsBase implements AppTools {
         for (int i = 0; i < paths.length; i++) {
             c.copyTo(this, paths[i]);
         }
+        return tool;
     }
 
-    public void addAction(Action al, String path, String... paths) {
+    public AppToolAction addAction(Action al, String path, String... paths) {
         AppToolComponent<AppToolAction> save = this.addAction(path);
         AppToolAction tool = save.tool();
         tool.action().set(al);
-        String iconId = (String) al.getValue("SmallIconId");
-        tool.smallIcon().set(iconId);
-        application.iconSet().id().listeners().add((PropertyEvent event) -> {
-            al.putValue("SmallIconId", tool.smallIcon().get());
-            al.putValue(Action.SMALL_ICON, application.iconSet().icon(tool.smallIcon().get()).get());
-        });
-        tool.smallIcon().listeners().add((PropertyEvent event) -> {
-            al.putValue("SmallIconId", tool.smallIcon().get());
-            al.putValue(Action.SMALL_ICON, application.iconSet().icon(tool.smallIcon().get()).get());
-        });
-        al.putValue(Action.SMALL_ICON, application.iconSet().icon(tool.smallIcon().get()).get());
+        path = ItemPath.of(path).toString();
+//        String iconId = (String) al.getValue("SmallIconId");
+        tool.title().setId(path);
+        tool.smallIcon().setId("$" + path + ".icon"); //the dollar meens the the icon key is resolved from i18n
+//        application.iconSet().id().listeners().add((PropertyEvent event) -> {
+//            al.putValue("SmallIconId", tool.smallIcon().getId());
+//            al.putValue(Action.SMALL_ICON, tool.smallIcon().get());
+//        });
+//        tool.smallIcon().listeners().add((PropertyEvent event) -> {
+//            al.putValue("SmallIconId", tool.smallIcon().getId());
+//            al.putValue(Action.SMALL_ICON, tool.smallIcon().get());
+//        });
+//        al.putValue(Action.SMALL_ICON, tool.smallIcon().get());
         for (int i = 0; i < paths.length; i++) {
             save.copyTo(this, paths[i]);
         }
+        return tool;
     }
 
     public static class ToolInfo {
@@ -330,5 +317,55 @@ public abstract class DefaultAppToolsBase implements AppTools {
             }
         }
     }
+
+    @Override
+    public AppTool addCustomTool(String id, AppComponentRenderer renderer, String path, int order) {
+        CustomAppTool t = new CustomAppTool(id, application,this);
+        addTool(AppToolComponent.of(t, path, order,
+                renderer
+        ));
+        return t;
+    }
+
+    @Override
+    public AppTool addCustomTool(String path, AppComponentRenderer renderer) {
+        return addCustomTool(path, renderer,path,0);
+    }
+
+    @Override
+    public AppTool addHorizontalGlue(String path) {
+        return addCustomTool(path, x->Box.createHorizontalGlue());
+    }
+
+    @Override
+    public AppTool addVerticalGlue(String path) {
+        return addCustomTool(path, x->Box.createVerticalGlue());
+    }
+
+    @Override
+    public AppTool addVerticalStrut(String path,int height) {
+        return addCustomTool(path, x->Box.createVerticalStrut(height));
+    }
+
+    @Override
+    public AppTool addHorizontalStrut(String path,int width) {
+        return addCustomTool(path, x->Box.createHorizontalStrut(width));
+    }
+
+    /**
+     * should show a vertical separator line.but dummy impl could call addHorizontalStrut
+     * @param path path
+     * @param width width
+     */
+    @Override
+    public AppTool addHorizontalSeparator(String path,int width) {
+        return addHorizontalStrut(path, width);
+    }
+    @Override
+    public AppTool addHorizontalSeparator(String path) {
+        return addHorizontalSeparator(path, 5);
+    }
+
+    
 
 }

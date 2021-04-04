@@ -3,8 +3,10 @@ package net.thevpc.echo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ItemPath {
+
     private String[] items;
 
     private ItemPath(String... items) {
@@ -51,6 +53,20 @@ public class ItemPath {
         return path == null ? this : child(path.items);
     }
 
+    public boolean startsWith(ItemPath child) {
+        if (size() >= child.size()) {
+            for (int i = 0; i < child.size(); i++) {
+                String s = this.get(i);
+                String o = child.get(i);
+                if (!Objects.equals(s, o)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
     public ItemPath child(String... items) {
         if (items == null || items.length == 0) {
             return this;
@@ -74,8 +90,12 @@ public class ItemPath {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ItemPath itemPath = (ItemPath) o;
         return Arrays.equals(items, itemPath.items);
     }
@@ -113,5 +133,29 @@ public class ItemPath {
 
     public ItemPath skipFirst() {
         return items.length == 0 ? this : of(Arrays.copyOfRange(items, 1, items.length));
+    }
+
+    public ItemPath subPath(int from) {
+        return ItemPath.of(
+                Arrays.copyOfRange(items, from, items.length)
+        );
+    }
+
+    public ItemPath subPath(int from, int to) {
+        return ItemPath.of(
+                Arrays.copyOfRange(items, from, to)
+        );
+    }
+
+    public ItemPath tail(int size) {
+        return ItemPath.of(
+                Arrays.copyOfRange(items, items.length - size, items.length)
+        );
+    }
+
+    public ItemPath head(int size) {
+        return ItemPath.of(
+                Arrays.copyOfRange(items, 0, size)
+        );
     }
 }

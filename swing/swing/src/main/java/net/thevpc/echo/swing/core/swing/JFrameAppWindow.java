@@ -24,6 +24,7 @@ import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
+import net.thevpc.echo.AppWindowDisplayMode;
 
 public class JFrameAppWindow extends AbstractAppWindow {
 
@@ -164,7 +165,7 @@ public class JFrameAppWindow extends AbstractAppWindow {
                 }
             } else if (aws.is(AppWindowState.OPENED)) {
                 if (!frame.isVisible()) {
-                    SwingHelper.invokeLater(() -> {
+                    SwingApplicationsHelper.invokeLater(() -> {
                         frame.setMinimumSize(new Dimension(600, 400));
                         frame.pack();
                         frame.setVisible(true);
@@ -283,6 +284,7 @@ public class JFrameAppWindow extends AbstractAppWindow {
 
         });
         applyDisplayMode();
+        frame.setLocationRelativeTo(null);
     }
 
     private void applyDisplayMode() {
@@ -330,6 +332,21 @@ public class JFrameAppWindow extends AbstractAppWindow {
     @Override
     public Object component() {
         return frame;
+    }
+
+    @Override
+    public void centerOnDefaultMonitor() {
+        if (frame != null && displayMode().get() != AppWindowDisplayMode.FULLSCREEN) {
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            Rectangle sb = gd.getDefaultConfiguration().getBounds();
+            int swidth = gd.getDisplayMode().getWidth();
+            int sheight = gd.getDisplayMode().getHeight();
+            frame.setLocation(
+                    sb.x
+                    + swidth / 2 - frame.getSize().width / 2,
+                    sb.x
+                    + sheight / 2 - frame.getSize().height / 2);
+        }
     }
 
 }

@@ -1,17 +1,17 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
 
 public interface AppWindowBuilder {
-    WritablePValue<AppLayoutWindowFactory> windowFactory();
+    WritableValue<AppLayoutWindowFactory> windowFactory();
 
-    WritablePValue<AppLayoutMenuBarFactory> menuBarFactory();
+    WritableValue<AppLayoutMenuBarFactory> menuBarFactory();
 
-    WritablePValue<AppLayoutStatusBarFactory> statusBarFactory();
+    WritableValue<AppLayoutStatusBarFactory> statusBarFactory();
 
-    WritablePValue<AppLayoutToolBarFactory> toolBarFactory();
+    WritableValue<AppLayoutToolBarFactory> toolBarFactory();
 
-    WritablePValue<AppLayoutWorkspaceFactory> workspaceFactory();
+    WritableValue<AppLayoutWorkspaceFactory> workspaceFactory();
 
     AppWindow createWindow(String path, Application application);
 

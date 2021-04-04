@@ -1,7 +1,6 @@
 package net.thevpc.echo.swing.core;
 
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
 import net.thevpc.echo.AppWindow;
 import net.thevpc.echo.AppWindowBuilder;
 import net.thevpc.echo.AppToolBar;
@@ -14,36 +13,38 @@ import net.thevpc.echo.AppLayoutStatusBarFactory;
 import net.thevpc.echo.AppLayoutWindowFactory;
 import net.thevpc.echo.AppStatusBar;
 import net.thevpc.echo.AppLayoutMenuBarFactory;
+import net.thevpc.echo.ItemPath;
+import net.thevpc.common.props.WritableValue;
 
 public class DefaultAppWindowBuilder implements AppWindowBuilder {
-    private final WritablePValue<AppLayoutWindowFactory> windowFactory = Props.of("windowFactory").valueOf(AppLayoutWindowFactory.class, null);
-    private final WritablePValue<AppLayoutMenuBarFactory> menuBarFactory = Props.of("menuBarFactory").valueOf(AppLayoutMenuBarFactory.class, null);
-    private final WritablePValue<AppLayoutStatusBarFactory> statusBarFactory = Props.of("statusBarFactory").valueOf(AppLayoutStatusBarFactory.class, null);
-    private final WritablePValue<AppLayoutToolBarFactory> toolBarFactory = Props.of("toolBarFactory").valueOf(AppLayoutToolBarFactory.class, null);
-    private final WritablePValue<AppLayoutWorkspaceFactory> workspaceFactory = Props.of("workspaceFactory").valueOf(AppLayoutWorkspaceFactory.class, null);
+    private final WritableValue<AppLayoutWindowFactory> windowFactory = Props.of("windowFactory").valueOf(AppLayoutWindowFactory.class, null);
+    private final WritableValue<AppLayoutMenuBarFactory> menuBarFactory = Props.of("menuBarFactory").valueOf(AppLayoutMenuBarFactory.class, null);
+    private final WritableValue<AppLayoutStatusBarFactory> statusBarFactory = Props.of("statusBarFactory").valueOf(AppLayoutStatusBarFactory.class, null);
+    private final WritableValue<AppLayoutToolBarFactory> toolBarFactory = Props.of("toolBarFactory").valueOf(AppLayoutToolBarFactory.class, null);
+    private final WritableValue<AppLayoutWorkspaceFactory> workspaceFactory = Props.of("workspaceFactory").valueOf(AppLayoutWorkspaceFactory.class, null);
 
     @Override
-    public WritablePValue<AppLayoutWindowFactory> windowFactory() {
+    public WritableValue<AppLayoutWindowFactory> windowFactory() {
         return windowFactory;
     }
 
     @Override
-    public WritablePValue<AppLayoutMenuBarFactory> menuBarFactory() {
+    public WritableValue<AppLayoutMenuBarFactory> menuBarFactory() {
         return menuBarFactory;
     }
 
     @Override
-    public WritablePValue<AppLayoutStatusBarFactory> statusBarFactory() {
+    public WritableValue<AppLayoutStatusBarFactory> statusBarFactory() {
         return statusBarFactory;
     }
 
     @Override
-    public WritablePValue<AppLayoutToolBarFactory> toolBarFactory() {
+    public WritableValue<AppLayoutToolBarFactory> toolBarFactory() {
         return toolBarFactory;
     }
 
     @Override
-    public WritablePValue<AppLayoutWorkspaceFactory> workspaceFactory() {
+    public WritableValue<AppLayoutWorkspaceFactory> workspaceFactory() {
         return workspaceFactory;
     }
 
@@ -60,21 +61,21 @@ public class DefaultAppWindowBuilder implements AppWindowBuilder {
 
         AppLayoutMenuBarFactory m = menuBarFactory().get();
         if (m != null) {
-            AppMenuBar bar = m.createMenuBar("/menuBar", window, application);
+            AppMenuBar bar = m.createMenuBar(ItemPath.of(path).child("menuBar").toString(), window, application);
             if (bar != null) {
                 window.menuBar().set(bar);
             }
         }
         AppLayoutStatusBarFactory s = statusBarFactory().get();
         if (s != null) {
-            AppStatusBar bar = s.createStatusBar("/statusBar", window, application);
+            AppStatusBar bar = s.createStatusBar(ItemPath.of(path).child("statusBar").toString(), window, application);
             if (bar != null) {
                 window.statusBar().set(bar);
             }
         }
         AppLayoutToolBarFactory t = toolBarFactory().get();
         if (t != null) {
-            AppToolBar bar = t.createToolBar("/toolBar", window, application);
+            AppToolBar bar = t.createToolBar(ItemPath.of(path).child("toolBar").toString(), window, application);
             if (bar != null) {
                 window.toolBar().set(bar);
             }

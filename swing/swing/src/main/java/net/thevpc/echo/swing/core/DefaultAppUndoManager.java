@@ -4,20 +4,20 @@ import net.thevpc.echo.AppHistory;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.UndoableAction;
 import net.thevpc.common.msg.Message;
-import net.thevpc.common.props.PList;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePList;
-import net.thevpc.common.props.WritablePStack;
-import net.thevpc.common.props.impl.WritablePStackImpl;
+import net.thevpc.common.props.impl.WritableStackImpl;
+import net.thevpc.common.props.WritableStack;
+import net.thevpc.common.props.WritableList;
+import net.thevpc.common.props.ObservableList;
 
 public class DefaultAppUndoManager implements AppHistory {
 
     private Application application;
     private int maxEntries = 1000;
-    protected WritablePStack<UndoableAction> undoList = Props.of("undo").stackOf(UndoableAction.class);
-    protected WritablePList<Message> undoListDescription = Props.of("undoDescription").listOf(Message.class);
-    protected WritablePStack<UndoableAction> redoList = Props.of("redo").stackOf(UndoableAction.class);
-    protected WritablePList<Message> redoListDescription = Props.of("redDescription").listOf(Message.class);
+    protected WritableStack<UndoableAction> undoList = Props.of("undo").stackOf(UndoableAction.class);
+    protected WritableList<Message> undoListDescription = Props.of("undoDescription").listOf(Message.class);
+    protected WritableStack<UndoableAction> redoList = Props.of("redo").stackOf(UndoableAction.class);
+    protected WritableList<Message> redoListDescription = Props.of("redDescription").listOf(Message.class);
 
     public DefaultAppUndoManager(Application application) {
         this.application = application;
@@ -38,12 +38,12 @@ public class DefaultAppUndoManager implements AppHistory {
     }
 
     public void discardUndoFirstAction() {
-        ((WritablePStackImpl<UndoableAction>) undoList).remove(0);
+        ((WritableStackImpl<UndoableAction>) undoList).remove(0);
         undoListDescription.remove(0);
     }
 
     public void discardRedoFirstAction() {
-        ((WritablePStackImpl<UndoableAction>) redoList).remove(0);
+        ((WritableStackImpl<UndoableAction>) redoList).remove(0);
         redoListDescription.remove(0);
     }
 
@@ -78,12 +78,12 @@ public class DefaultAppUndoManager implements AppHistory {
     }
 
     @Override
-    public PList<Message> undoList() {
+    public ObservableList<Message> undoList() {
         return undoListDescription.readOnly();
     }
 
     @Override
-    public PList<Message> redoList() {
+    public ObservableList<Message> redoList() {
         return redoListDescription.readOnly();
     }
 

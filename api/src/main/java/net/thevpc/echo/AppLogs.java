@@ -5,14 +5,14 @@
  */
 package net.thevpc.echo;
 
-import net.thevpc.common.props.PList;
 import net.thevpc.common.msg.Message;
+import net.thevpc.common.props.ObservableList;
 
 /**
  *
  * @author thevpc
  */
-public interface AppLogs extends PList<Message> {
+public interface AppLogs extends ObservableList<Message> {
 
     void add(Message message);
 

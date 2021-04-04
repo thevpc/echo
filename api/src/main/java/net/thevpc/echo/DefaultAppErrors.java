@@ -7,11 +7,11 @@ package net.thevpc.echo;
 
 import net.thevpc.common.msg.ExceptionMessage;
 import java.util.logging.Level;
-import net.thevpc.common.props.PDispatcher;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePDispatcher;
 import net.thevpc.common.props.impl.DelegateProperty;
 import net.thevpc.common.msg.Message;
+import net.thevpc.common.props.ObservableDispatcher;
+import net.thevpc.common.props.WritableDispatcher;
 
 /**
  *
@@ -48,11 +48,11 @@ public class DefaultAppErrors extends DelegateProperty<Message> implements AppEr
     }
 
     @Override
-    public PDispatcher<Message> readOnly() {
+    public ObservableDispatcher<Message> readOnly() {
         return base().readOnly();
     }
 
-    private WritablePDispatcher<Message> base() {
-        return (WritablePDispatcher<Message>) base;
+    private WritableDispatcher<Message> base() {
+        return (WritableDispatcher<Message>) base;
     }
 }

@@ -1,9 +1,9 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.PValue;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
 import net.thevpc.common.props.impl.DelegateProperty;
+import net.thevpc.common.props.WritableValue;
+import net.thevpc.common.props.ObservableValue;
 
 public class AppWindowStateSetValue extends DelegateProperty<AppWindowStateSet> {
 
@@ -12,8 +12,8 @@ public class AppWindowStateSetValue extends DelegateProperty<AppWindowStateSet> 
     }
 
     @Override
-    public WritablePValue<AppWindowStateSet> getBase() {
-        return (WritablePValue<AppWindowStateSet>) super.getBase();
+    public WritableValue<AppWindowStateSet> getBase() {
+        return (WritableValue<AppWindowStateSet>) super.getBase();
     }
 
     public void add(AppWindowState a) {
@@ -26,7 +26,7 @@ public class AppWindowStateSetValue extends DelegateProperty<AppWindowStateSet> 
     }
 
     @Override
-    public PValue<AppWindowStateSet> readOnly() {
+    public ObservableValue<AppWindowStateSet> readOnly() {
         return getBase().readOnly();
     }
 

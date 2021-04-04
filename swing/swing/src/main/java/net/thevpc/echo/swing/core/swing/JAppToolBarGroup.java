@@ -5,21 +5,21 @@ import net.thevpc.echo.AppToolBar;
 import net.thevpc.echo.AppWindow;
 import net.thevpc.echo.Application;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
 
 import javax.swing.*;
+import net.thevpc.common.props.WritableValue;
 
 public class JAppToolBarGroup extends AppToolContainerImpl implements AppToolBar, JComponentSupplier {
 
-    private WritablePValue<Boolean> visible = Props.of("visible").valueOf(Boolean.class, false);
+    private WritableValue<Boolean> visible = Props.of("visible").valueOf(Boolean.class, false);
 
     public JAppToolBarGroup(String rootPath, Application application) {
         super(rootPath, new JToolbarGroup(), application);
-        SwingHelper.bindVisible((JComponent) rootGuiElement, visible);
+        SwingApplicationsHelper.bindVisible((JComponent) rootGuiElement, visible);
     }
 
     @Override
-    public WritablePValue<Boolean> visible() {
+    public WritableValue<Boolean> visible() {
         return visible;
     }
 

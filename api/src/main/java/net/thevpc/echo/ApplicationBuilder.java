@@ -1,7 +1,7 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.PValue;
+import net.thevpc.common.props.ObservableValue;
 
 public interface ApplicationBuilder {
-    PValue<AppWindowBuilder> mainWindowBuilder();
+    ObservableValue<AppWindowBuilder> mainWindowBuilder();
 }

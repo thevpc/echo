@@ -3,32 +3,25 @@ package net.thevpc.echo.swing.core.tools;
 import net.thevpc.echo.AbstractAppTool;
 import net.thevpc.echo.AppToolRadioBox;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.AppTools;
 
 public class AppToolRadioBoxImpl extends AbstractAppTool implements AppToolRadioBox {
-    private String id;
-    private WritablePValue<String> group = Props.of("group").valueOf( String.class, null);
-    private WritablePValue<Boolean> selected = Props.of("selected").valueOf( Boolean.class,false);
+    private WritableValue<String> group = Props.of("group").valueOf( String.class, null);
+    private WritableValue<Boolean> selected = Props.of("selected").valueOf( Boolean.class,false);
 
 
-    public AppToolRadioBoxImpl(String id, String group) {
-        super(id);
-        this.id = id;
-    }
-
-
-    @Override
-    public String id() {
-        return id;
+    public AppToolRadioBoxImpl(String id, String group,net.thevpc.echo.Application app, AppTools tools) {
+        super(id, app,tools);
     }
 
     @Override
-    public WritablePValue<String> group() {
+    public WritableValue<String> group() {
         return group;
     }
 
     @Override
-    public WritablePValue<Boolean> selected() {
+    public WritableValue<Boolean> selected() {
         return selected;
     }
 }

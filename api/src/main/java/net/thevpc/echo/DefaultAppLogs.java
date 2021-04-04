@@ -8,15 +8,15 @@ package net.thevpc.echo;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePList;
-import net.thevpc.common.props.impl.ReadOnlyPList;
+import net.thevpc.common.props.impl.ReadOnlyList;
 import net.thevpc.common.msg.Message;
+import net.thevpc.common.props.WritableList;
 
 /**
  *
  * @author thevpc
  */
-public class DefaultAppLogs extends ReadOnlyPList<Message> implements AppLogs {
+public class DefaultAppLogs extends ReadOnlyList<Message> implements AppLogs {
 
     private int maxMessageEntries = 1000;
     private Application app;
@@ -39,8 +39,8 @@ public class DefaultAppLogs extends ReadOnlyPList<Message> implements AppLogs {
         });
     }
 
-    private WritablePList<Message> base() {
-        return (WritablePList<Message>) base;
+    private WritableList<Message> base() {
+        return (WritableList<Message>) base;
     }
 
     @Override

@@ -15,9 +15,9 @@ import net.thevpc.echo.Application;
 import net.thevpc.common.msg.ExceptionMessage;
 import net.thevpc.common.msg.Message;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.error.ErrorInfo;
+import net.thevpc.common.props.WritableValue;
 
 /**
  *
@@ -25,13 +25,13 @@ import org.jdesktop.swingx.error.ErrorInfo;
  */
 public class AppSwingxConfigurator {
 
-    private WritablePValue<Supplier<Boolean>> confirmExit = Props.of("confirmExit").valueOf((Class) Supplier.class, null);
+    private WritableValue<Supplier<Boolean>> confirmExit = Props.of("confirmExit").valueOf((Class) Supplier.class, null);
 
     public AppSwingxConfigurator() {
 
     }
 
-    public WritablePValue<Supplier<Boolean>> confirmExit() {
+    public WritableValue<Supplier<Boolean>> confirmExit() {
         return confirmExit;
     }
 

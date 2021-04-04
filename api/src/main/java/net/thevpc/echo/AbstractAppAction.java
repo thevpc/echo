@@ -26,7 +26,7 @@ public abstract class AbstractAppAction extends AbstractAction {
             description=application.i18n().getString("Action." + id + ".description", x -> "");
         }
         if(iconId==null) {
-            iconId = application.i18n().getString("Action." + id + ".icon", x -> null);
+            iconId = application.i18n().getString("$Action." + id + ".icon", x -> null); //the dollar meens the the icon key is resolved from i18n
         }
         if (iconId == null) {
             iconId = id;

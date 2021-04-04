@@ -10,12 +10,16 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.Icon;
 import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
 import net.thevpc.echo.AppToolWindow;
+import net.thevpc.echo.Application;
+import net.thevpc.echo.props.AppProps;
+import net.thevpc.echo.props.AppWritableIcon;
+import net.thevpc.echo.props.AppWritableString;
 import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
+import org.noos.xing.mydoggy.ToolWindowType;
+import net.thevpc.common.props.WritableValue;
 
 /**
  *
@@ -24,16 +28,31 @@ import org.noos.xing.mydoggy.ToolWindowAnchor;
 public class MyDoggyAppToolWindow implements AppToolWindow {
 
     private MyDoggyAppDockingWorkspace toolWindowManager;
-    private WritablePValue<Boolean> active = Props.of("activated").valueOf(Boolean.class, false);
+    private WritableValue<Boolean> active = Props.of("activated").valueOf(Boolean.class, false);
+    private AppWritableString title;
+    private AppWritableIcon icon;
     private ToolWindow toolWindow;
     private String id;
+    private Application app;
 
-    public MyDoggyAppToolWindow(MyDoggyAppDockingWorkspace toolWindowManager, String id, String title, Icon icon, Component component, ToolWindowAnchor anchor) {
+    public MyDoggyAppToolWindow(MyDoggyAppDockingWorkspace toolWindowManager, String id, Component component, ToolWindowAnchor anchor, Application app) {
+        this.app = app;
         this.toolWindowManager = toolWindowManager;
         this.id = id;
-        toolWindow = toolWindowManager.getToolWindowManager().registerToolWindow(id, title, icon, component, anchor);
-        active.set(toolWindow.isActive());
-        toolWindow.addPropertyChangeListener(new PropertyChangeListener() {
+        this.app = app;
+        this.title = AppProps.of("title", app).strIdOf(id);
+        this.icon = AppProps.of("icon", app).iconIdOf("$"+id + ".icon"); //the dollar meens the the icon key is resolved from i18n
+
+        this.toolWindow = toolWindowManager.getToolWindowManager().registerToolWindow(id, title.get(), icon.get(), component, anchor);
+        for (ToolWindowType value : ToolWindowType.values()) {
+            this.toolWindow.getTypeDescriptor(value).setIdVisibleOnTitleBar(false);
+        }
+        toolWindow.getRepresentativeAnchorDescriptor().setTitle(title.get());
+        toolWindow.getRepresentativeAnchorDescriptor().setIcon(icon.get());
+        this.active.set(toolWindow.isActive());
+        this.title.set(toolWindow.getTitle());
+        this.icon.set(toolWindow.getIcon());
+        this.toolWindow.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 switch (evt.getPropertyName()) {
@@ -44,14 +63,31 @@ public class MyDoggyAppToolWindow implements AppToolWindow {
                 }
             }
         });
-        active.listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                toolWindow.setActive((Boolean) event.getNewValue());
-            }
+        this.active.listeners().add((PropertyEvent event) -> {
+            toolWindow.setActive((Boolean) event.getNewValue());
+        });
+        this.title.listeners().add((PropertyEvent event) -> {
+            String newValue = (String) event.getNewValue();
+            toolWindow.setTitle(newValue);
+            toolWindow.getRepresentativeAnchorDescriptor().setTitle(newValue);
+        });
+        this.icon.listeners().add((PropertyEvent event) -> {
+            Icon newIcon=(Icon) event.getNewValue();
+            toolWindow.setIcon(newIcon);
+            toolWindow.getRepresentativeAnchorDescriptor().setIcon(newIcon);
         });
         toolWindowManager.toolWindows().put(id, this);
         toolWindow.setAvailable(true);
+    }
+
+    @Override
+    public AppWritableString title() {
+        return title;
+    }
+
+    @Override
+    public AppWritableIcon icon() {
+        return icon;
     }
 
     @Override
@@ -59,7 +95,7 @@ public class MyDoggyAppToolWindow implements AppToolWindow {
         return id;
     }
 
-    public WritablePValue<Boolean> active() {
+    public WritableValue<Boolean> active() {
         return active;
     }
 

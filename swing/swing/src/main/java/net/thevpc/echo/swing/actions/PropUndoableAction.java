@@ -12,7 +12,7 @@ import net.thevpc.echo.AppEvent;
 import net.thevpc.echo.UndoableAction;
 import net.thevpc.common.msg.JFormattedMessage;
 import net.thevpc.common.msg.Message;
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
 
 /**
  *
@@ -20,13 +20,13 @@ import net.thevpc.common.props.WritablePValue;
  */
 public class PropUndoableAction<T> implements UndoableAction {
 
-    private WritablePValue<T> prop;
-    private Supplier<WritablePValue<T>> propSupp;
+    private WritableValue<T> prop;
+    private Supplier<WritableValue<T>> propSupp;
     private Supplier<T> newValue;
     private T oldValue;
     private String messageTemplate;
 
-    public PropUndoableAction(Supplier<T> newValue, Supplier<WritablePValue<T>> propSupp, String messageTemplate) {
+    public PropUndoableAction(Supplier<T> newValue, Supplier<WritableValue<T>> propSupp, String messageTemplate) {
         this.propSupp = propSupp;
         this.newValue = newValue;
         this.messageTemplate = messageTemplate;

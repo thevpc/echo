@@ -8,17 +8,17 @@ package net.thevpc.echo;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePList;
-import net.thevpc.common.props.impl.ReadOnlyPList;
+import net.thevpc.common.props.impl.ReadOnlyList;
 import net.thevpc.common.msg.Message;
+import net.thevpc.common.props.WritableList;
 
 /**
  *
  * @author thevpc
  */
-public class DefaultAppMessages extends ReadOnlyPList<Message> implements AppMessages {
+public class DefaultAppMessages extends ReadOnlyList<Message> implements AppMessages {
 
-    protected WritablePList<AppMessageProducer> messageProducers = Props.of("producers").listOf(AppMessageProducer.class);
+    protected WritableList<AppMessageProducer> messageProducers = Props.of("producers").listOf(AppMessageProducer.class);
     private int maxMessageEntries = 1000;
     private boolean _updateMessages;
     private Application app;
@@ -42,12 +42,12 @@ public class DefaultAppMessages extends ReadOnlyPList<Message> implements AppMes
     }
 
     @Override
-    public WritablePList<AppMessageProducer> producers() {
+    public WritableList<AppMessageProducer> producers() {
         return messageProducers;
     }
 
-    private WritablePList<Message> base() {
-        return (WritablePList<Message>) base;
+    private WritableList<Message> base() {
+        return (WritableList<Message>) base;
     }
 
     @Override

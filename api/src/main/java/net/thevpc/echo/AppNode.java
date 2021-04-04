@@ -1,12 +1,15 @@
 package net.thevpc.echo;
 
 public interface AppNode {
+
     AppComponent getComponent();
 
     int getOrder();
 
-    ItemPath getPath();
+    ItemPath path();
 
     AppNode[] getChildren();
+
+    AppNode get(ItemPath path);
 
 }

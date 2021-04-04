@@ -13,11 +13,15 @@ import javax.swing.JComponent;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePValue;
 import net.thevpc.echo.AppContentWindow;
 import net.thevpc.echo.AppWindowStateSet;
+import net.thevpc.echo.Application;
+import net.thevpc.echo.props.AppProps;
+import net.thevpc.echo.props.AppWritableIcon;
+import net.thevpc.echo.props.AppWritableString;
 import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
+import net.thevpc.common.props.WritableValue;
 
 /**
  *
@@ -26,23 +30,26 @@ import org.noos.xing.mydoggy.ContentManager;
 public class MyDoggyAppContentWindow implements AppContentWindow {
 
     private MyDoggyAppDockingWorkspace toolWindowManager;
-    private WritablePValue<Boolean> active = Props.of("activated").valueOf(Boolean.class, false);
-    private WritablePValue<Boolean> enabled = Props.of("enabled").valueOf(Boolean.class, false);
-    private WritablePValue<Boolean> closable = Props.of("closable").valueOf(Boolean.class, false);
-    private WritablePValue<String> title = Props.of("title").valueOf(String.class, "");
-    private WritablePValue<String> icon = Props.of("icon").valueOf(String.class, "");
-    private WritablePValue<JComponent> component = Props.of("component").valueOf(JComponent.class, null);
-    private WritablePValue<AppWindowStateSet> state = Props.of("state").valueOf(AppWindowStateSet.class, new AppWindowStateSet());
+    private WritableValue<Boolean> active = Props.of("activated").valueOf(Boolean.class, false);
+    private WritableValue<Boolean> enabled = Props.of("enabled").valueOf(Boolean.class, false);
+    private WritableValue<Boolean> closable = Props.of("closable").valueOf(Boolean.class, false);
+    private AppWritableString title;
+    private AppWritableIcon icon;
+    private WritableValue<JComponent> component = Props.of("component").valueOf(JComponent.class, null);
+    private WritableValue<AppWindowStateSet> state = Props.of("state").valueOf(AppWindowStateSet.class, new AppWindowStateSet());
     private String id;
     private Content content;
+    private Application app;
 
-    public MyDoggyAppContentWindow(MyDoggyAppDockingWorkspace toolWindowManager, String id, String title, Icon icon, Component component) {
+    public MyDoggyAppContentWindow(MyDoggyAppDockingWorkspace toolWindowManager, String id, Component component,Application app) {
         this.toolWindowManager = toolWindowManager;
         this.id = id;
         this.component.set((JComponent) component);
+        this.title = AppProps.of("title", app).strIdOf(id);
+        this.icon = AppProps.of("icon", app).iconIdOf("$"+id+".icon"); //the dollar meens the the icon key is resolved from i18n
 
         ContentManager contentManager = toolWindowManager.getToolWindowManager().getContentManager();
-        content = contentManager.addContent(id, title, null, component);
+        content = contentManager.addContent(id, title.get(), icon.get(), component);
         content.setEnabled(true);
         content.getContentUI().setCloseable(false);
         content.getContentUI().setMaximizable(false);
@@ -77,7 +84,7 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
         this.icon.listeners().add(new PropertyListener() {
             @Override
             public void propertyUpdated(PropertyEvent event) {
-                content.setIcon(toolWindowManager.application().iconSet().icon((String) event.getNewValue()).get());
+                content.setIcon((Icon) event.getNewValue());
             }
         });
         this.title.listeners().add(new PropertyListener() {
@@ -101,7 +108,7 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
         toolWindowManager.contentWindows().put(id, this);
     }
 
-    public WritablePValue<String> icon() {
+    public WritableValue<Icon> icon() {
         return icon;
     }
 
@@ -111,28 +118,28 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
     }
 
     @Override
-    public WritablePValue<Boolean> closable() {
+    public WritableValue<Boolean> closable() {
         return closable;
     }
 
     @Override
-    public WritablePValue<String> title() {
+    public WritableValue<String> title() {
         return title;
     }
 
     @Override
-    public WritablePValue<JComponent> component() {
+    public WritableValue<JComponent> component() {
         return component;
     }
     
 
     @Override
-    public WritablePValue<Boolean> active() {
+    public WritableValue<Boolean> active() {
         return active;
     }
 
     @Override
-    public WritablePValue<AppWindowStateSet> state() {
+    public WritableValue<AppWindowStateSet> state() {
         return state;
     }
 

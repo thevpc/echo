@@ -3,7 +3,6 @@ package net.thevpc.echo.swing;
 import net.thevpc.echo.*;
 import net.thevpc.echo.swing.core.DefaultApplication;
 import net.thevpc.common.iconset.IconSet;
-import net.thevpc.common.props.PList;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.swing.win.InternalWindowsHelper;
@@ -12,7 +11,10 @@ import net.thevpc.swing.plaf.UIPlafManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Locale;
 import net.thevpc.echo.swing.actions.CloseWindowsAction;
 import net.thevpc.echo.swing.actions.DeiconifyWindowsAction;
 import net.thevpc.echo.swing.actions.IconAction;
@@ -25,10 +27,11 @@ import net.thevpc.echo.swing.core.swing.JAppToolBarGroup;
 import net.thevpc.echo.swing.core.swing.JComponentSupplier;
 import net.thevpc.echo.swing.core.swing.JFrameAppWindow;
 import net.thevpc.echo.swing.core.swing.JStatusBarGroupStatusBar;
+import net.thevpc.common.props.ObservableList;
 
-public class Applications {
+public class SwingApplications {
 
-    private Applications() {
+    private SwingApplications() {
     }
 
     public static class Apps {
@@ -120,7 +123,7 @@ public class Applications {
 
         public static void addToolActions(Application application, String path) {
             if (path == null) {
-                path = "/mainWindow/menuBar/View/Tool Windows";
+                path = "/mainWindow/menuBar/View/ToolWindows";
             }
             AppTools tools = application.tools();
             tools.addFolder(path);
@@ -129,14 +132,14 @@ public class Applications {
                 AppWorkspace ws = application.mainWindow().get().workspace().get();
                 if (ws != null && ws instanceof AppDockingWorkspace) {
                     AppDockingWorkspace dws = (AppDockingWorkspace) ws;
-                    PList<AppToolWindow> values = dws.toolWindows().values();
+                    ObservableList<AppToolWindow> values = dws.toolWindows().values();
                     java.util.List<AppToolWindow> list = new ArrayList<>();
                     for (AppToolWindow value : values) {
                         list.add(value);
                     }
                     list.sort((a, b) -> a.id().compareTo(b.id()));
                     for (AppToolWindow value : list) {
-                        tools.addCheck("ToolWindow-" + value.id(), value.active(), finalPath + "/" + value.id());
+                        tools.addCheck(value.active(), finalPath + "/" + value.id());
                     }
                 }
             });
@@ -158,8 +161,10 @@ public class Applications {
                 if (d != null) {
                     if (d.width <= 16 && d.height <= 16) {
                         tools.addAction(new IconAction(application, iconset.getId()), path + "/Small/" + iconset.getId());
-                    } else if (d.width <= 32 && d.height <= 32) {
+                    } else if (d.width <= 24 && d.height <= 24) {
                         tools.addAction(new IconAction(application, iconset.getId()), path + "/Large/" + iconset.getId());
+                    } else if (d.width <= 32 && d.height <= 32) {
+                        tools.addAction(new IconAction(application, iconset.getId()), path + "/Larger/" + iconset.getId());
                     } else {
                         tools.addAction(new IconAction(application, iconset.getId()), path + "/Huge/" + iconset.getId());
                     }
@@ -201,6 +206,22 @@ public class Applications {
             }
         }
 
+        public static void addViewLocaleActions(Application application, Locale[] locales) {
+            addViewLocaleActions(application, locales, null);
+        }
+
+        public static void addViewLocaleActions(Application application, Locale[] locales, String path) {
+            if (path == null) {
+                path = "/mainWindow/menuBar/View/Lang";
+            }
+            AppTools tools = application.tools();
+            tools.addFolder(path);
+            tools.addRadio(path, application.i18n().locale(), Locale.getDefault(), path + "/system-locale");
+            for (Locale locale : locales) {
+                tools.addRadio(path, application.i18n().locale(), locale, path + "/" + locale + "-locale");
+            }
+        }
+
         public static void addViewAppearanceActions(Application application) {
             addAppearanceActions(application, null);
         }
@@ -212,11 +233,40 @@ public class Applications {
             }
             String finalPath = path;
             runAfterStart(application, () -> {
-                tools.addRadio("Normal", "MainWindowDisplayMode", application.mainWindow().get().displayMode(), AppWindowDisplayMode.NORMAL, finalPath + "/Normal");
-                tools.addRadio("FullScreen", "MainWindowDisplayMode", application.mainWindow().get().displayMode(), AppWindowDisplayMode.FULLSCREEN, finalPath + "/FullScreen");
+                AppToolAction a = tools.addAction(
+                        new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        AppWindow w = application.mainWindow().get();
+                        AppWindowDisplayMode dm = w.displayMode().get();
+                        if (dm == null) {
+                            dm = AppWindowDisplayMode.NORMAL;
+                        }
+                        switch (dm) {
+                            case NORMAL: {
+                                w.displayMode().set(AppWindowDisplayMode.FULLSCREEN);
+                                break;
+                            }
+                            default: {
+                                w.displayMode().set(AppWindowDisplayMode.NORMAL);
+                                break;
+                            }
+                        }
+                    }
+                },
+                        finalPath + "/Switch"
+                /*,
+                        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.ALT_MASK + KeyEvent.SHIFT_MASK),
+                        JComponent.WHEN_IN_FOCUSED_WINDOW*/
+                );
+                a.accelerator().set("alt shift F");
+
                 tools.addSeparator(finalPath + "/Separator1");
-                tools.addCheck(null, application.mainWindow().get().toolBar().get().visible(), finalPath + "/Toolbar");
-                tools.addCheck(null, application.mainWindow().get().statusBar().get().visible(), finalPath + "/StatusBar");
+                tools.addRadio(finalPath, application.mainWindow().get().displayMode(), AppWindowDisplayMode.NORMAL, finalPath + "/Normal");
+                tools.addRadio(finalPath, application.mainWindow().get().displayMode(), AppWindowDisplayMode.FULLSCREEN, finalPath + "/FullScreen");
+                tools.addSeparator(finalPath + "/Separator2");
+                tools.addCheck(application.mainWindow().get().toolBar().get().visible(), finalPath + "/Toolbar");
+                tools.addCheck(application.mainWindow().get().statusBar().get().visible(), finalPath + "/StatusBar");
             });
         }
 

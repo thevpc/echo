@@ -5,9 +5,8 @@
  */
 package net.thevpc.echo;
 
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import net.thevpc.common.props.PMap;
+import net.thevpc.common.props.ObservableMap;
 
 /**
  *
@@ -15,15 +14,15 @@ import net.thevpc.common.props.PMap;
  */
 public interface AppDockingWorkspace extends AppWorkspace {
 
-    AppContentWindow addContent(String id, String title, ImageIcon icon, JComponent component);
-
-    AppToolWindow addTool(String id, String title, ImageIcon icon, JComponent component, AppToolWindowAnchor anchor);
+    AppContentWindow addContent(String id, JComponent component);
+    
+    AppToolWindow addTool(String id, JComponent component, AppToolWindowAnchor anchor);
 
     Application application();
 
-    PMap<String, AppToolWindow> toolWindows();
+    ObservableMap<String, AppToolWindow> toolWindows();
 
-    PMap<String, AppContentWindow> contentWindows();
+    ObservableMap<String, AppContentWindow> contentWindows();
 
     AppContentWindow getContent(String id);
 

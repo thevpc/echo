@@ -3,8 +3,6 @@ package net.thevpc.echo.swing.core;
 import net.thevpc.echo.swing.core.swing.BindingNodeFactory;
 import net.thevpc.echo.swing.core.swing.DefaultNodeSupplierContext;
 import net.thevpc.echo.swing.core.tools.AppToolFolderImpl;
-import net.thevpc.common.props.WritablePList;
-import net.thevpc.echo.AppToolSeparator;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.AppToolComponent;
 import net.thevpc.echo.AppNode;
@@ -12,21 +10,28 @@ import net.thevpc.echo.AppComponent;
 import net.thevpc.echo.ItemPath;
 
 import java.util.ArrayList;
-import java.util.List;
+import net.thevpc.common.props.WritableList;
+import net.thevpc.echo.AppTools;
 
 public class BindingNode implements AppNode {
+
     protected Application application;
     protected BindingNode parent;
     protected Object guiElement;
     protected AppComponent appComponent;
     protected AppToolComponent binding;
     protected java.util.List<BindingNode> children = new ArrayList<>();
-    private WritablePList<AppComponent> components;
+    private WritableList<AppComponent> components;
     private BindingNodeFactory factory;
     private GuiComponentNavigator supplier;
+    private AppTools tools;
 
-    public BindingNode(BindingNode parent, Object guiElement, AppToolComponent binding, AppComponent appComponent, Application application, WritablePList<AppComponent> components, BindingNodeFactory factory, GuiComponentNavigator navigator) {
+    public BindingNode(BindingNode parent, Object guiElement, 
+            AppToolComponent binding, AppComponent appComponent, 
+            Application application, WritableList<AppComponent> components, 
+            BindingNodeFactory factory, GuiComponentNavigator navigator,AppTools tools) {
         this.parent = parent;
+        this.tools = tools;
         this.guiElement = guiElement;
         this.binding = binding;
         this.appComponent = appComponent;
@@ -48,25 +53,26 @@ public class BindingNode implements AppNode {
         return binding;
     }
 
-    public ItemPath path() {
-        return binding.path();
-    }
 
     public String name() {
         return binding.path().name();
     }
 
     public BindingNode add(AppToolComponent b) {
-        if (b.path().size() == 0) {
+        if(!b.path().startsWith(path())){
             throw new IllegalArgumentException("Invalid path");
         }
-        ItemPath parentPath = b.path().parent();
+        ItemPath subPath=b.path().subPath(path().size());
+        if(subPath.isEmpty()){
+            throw new IllegalArgumentException("Invalid path");
+        }
+        ItemPath parentPath = subPath.parent();
         BindingNode goodNode = this;
         if (!this.binding.path().equals(parentPath)) {
             goodNode = get(parentPath);
         }
         int u = goodNode.getItemCount();
-        int index=-1;
+        int index = -1;
         for (int i = 0; i < u; i++) {
             BindingNode child = goodNode.children.get(i);
             int o = child.binding.order();
@@ -74,18 +80,23 @@ public class BindingNode implements AppNode {
                 index = i;
             }
         }
-        if (index>=0 && index<u-1) {
+        if (index >= 0 && index < u - 1) {
             return goodNode.addChildItem(index + 1, b);
         } else {
             return goodNode.addChildItem(u, b);
         }
     }
 
-    public BindingNode addChildItem(int i, AppToolComponent b) {
-        Object ii = addChildItemGui(i, b);
-        BindingNode bn = factory.createBindingNode(this, ii, b, b, application, components);
+    public BindingNode addChildItem(int i, AppToolComponent toolComponent) {
+        Object ii = addChildItemGui(i, toolComponent);
+        BindingNode bn = factory.createBindingNode(this, ii, toolComponent, toolComponent, application, components,tools);
         children.add(i, bn);
-        components.add(b);
+        components.add(toolComponent);
+//        application.i18n().locale().listeners().add(e -> {
+//            SwingApplicationsHelper.updateToolComponent(toolComponent, application);
+//        });
+//        SwingApplicationsHelper.updateToolComponent(toolComponent, application);
+
         return bn;
     }
 
@@ -101,14 +112,16 @@ public class BindingNode implements AppNode {
                 return child.get(path.skipFirst());
             }
         }
-        if(path.size()==1){
-            
+        if (path.size() == 1) {
+
         }
         ItemPath absPath = binding.path().child(path.first());
         BindingNode n = addChildItem(children.size(),
-                AppToolComponent.of(new AppToolFolderImpl(absPath.toString()), absPath.toString())
+                AppToolComponent.of(new AppToolFolderImpl(absPath.toString(), application,
+                        tools
+                ), absPath.toString())
         );
-        if(path.size()==1){
+        if (path.size() == 1) {
             return n;
         }
         return n.get(path.skipFirst());
@@ -137,7 +150,7 @@ public class BindingNode implements AppNode {
     }
 
     @Override
-    public ItemPath getPath() {
+    public ItemPath path() {
         return binding.path();
     }
 
@@ -146,4 +159,9 @@ public class BindingNode implements AppNode {
         return children.toArray(new BindingNode[0]);
     }
 
+    @Override
+    public String toString() {
+        return "BindingNode{" + binding + '}';
+    }
+    
 }

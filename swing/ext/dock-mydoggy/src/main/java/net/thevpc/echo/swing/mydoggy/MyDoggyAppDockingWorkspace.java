@@ -7,14 +7,16 @@ package net.thevpc.echo.swing.mydoggy;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import net.thevpc.common.i18n.I18nString;
+import net.thevpc.common.props.PropertyEvent;
+import net.thevpc.common.props.PropertyListener;
 
 import net.thevpc.echo.*;
-import net.thevpc.echo.*;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritablePMap;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 import net.thevpc.echo.swing.core.swing.JComponentSupplier;
+import net.thevpc.common.props.WritableMap;
 
 /**
  *
@@ -25,8 +27,8 @@ public class MyDoggyAppDockingWorkspace implements AppDockingWorkspace, JCompone
     private MyDoggyToolWindowManager toolWindowManager;
     private Application application;
     private AppWindow window;
-    private WritablePMap<String, AppToolWindow> toolWindows = Props.of("toolWindows").mapOf(String.class, AppToolWindow.class);
-    private WritablePMap<String, AppContentWindow> contentWindows = Props.of("contentWindows").mapOf(String.class, AppContentWindow.class);
+    private WritableMap<String, AppToolWindow> toolWindows = Props.of("toolWindows").mapOf(String.class, AppToolWindow.class);
+    private WritableMap<String, AppContentWindow> contentWindows = Props.of("contentWindows").mapOf(String.class, AppContentWindow.class);
 
     public static AppLayoutWorkspaceFactory factory() {
         return new AppLayoutWorkspaceFactory() {
@@ -39,8 +41,8 @@ public class MyDoggyAppDockingWorkspace implements AppDockingWorkspace, JCompone
 
     public MyDoggyAppDockingWorkspace(AppWindow window) {
         this(new MyDoggyToolWindowManager());
-        this.window=window;
-        this.application=window.application();
+        this.window = window;
+        this.application = window.application();
     }
 
     public MyDoggyAppDockingWorkspace(MyDoggyToolWindowManager toolWindowManager) {
@@ -62,12 +64,12 @@ public class MyDoggyAppDockingWorkspace implements AppDockingWorkspace, JCompone
     }
 
     @Override
-    public WritablePMap<String, AppToolWindow> toolWindows() {
+    public WritableMap<String, AppToolWindow> toolWindows() {
         return toolWindows;
     }
 
     @Override
-    public WritablePMap<String, AppContentWindow> contentWindows() {
+    public WritableMap<String, AppContentWindow> contentWindows() {
         return contentWindows;
     }
 
@@ -82,18 +84,18 @@ public class MyDoggyAppDockingWorkspace implements AppDockingWorkspace, JCompone
     }
 
     @Override
-    public AppContentWindow addContent(String id, String title, ImageIcon icon, JComponent component) {
+    public AppContentWindow addContent(String id, JComponent component) {
         AppContentWindow w = contentWindows.get(id);
         if (w != null) {
-            throw new IllegalArgumentException("Already Registered");
+            throw new IllegalArgumentException("already Registered");
         }
-        MyDoggyAppContentWindow c = new MyDoggyAppContentWindow(this, id, title, icon, component);
+        MyDoggyAppContentWindow c = new MyDoggyAppContentWindow(this, id, component, application);
         contentWindows.put(id, c);
         return c;
     }
 
     @Override
-    public AppToolWindow addTool(String id, String title, ImageIcon icon, JComponent component, AppToolWindowAnchor anchor) {
+    public AppToolWindow addTool(String id, JComponent component, AppToolWindowAnchor anchor) {
         ToolWindowAnchor jdanchor = ToolWindowAnchor.LEFT;
         switch (anchor) {
             case TOP: {
@@ -113,7 +115,7 @@ public class MyDoggyAppDockingWorkspace implements AppDockingWorkspace, JCompone
                 break;
             }
         }
-        MyDoggyAppToolWindow t = new MyDoggyAppToolWindow(this, id, title, icon, component, jdanchor);
+        MyDoggyAppToolWindow t = new MyDoggyAppToolWindow(this, id, component, jdanchor, application);
         toolWindows.put(id, t);
         return t;
     }

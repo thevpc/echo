@@ -5,7 +5,9 @@
  */
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.echo.props.AppWritableIcon;
+import net.thevpc.echo.props.AppWritableString;
+import net.thevpc.common.props.WritableValue;
 
 /**
  *
@@ -15,6 +17,10 @@ public interface AppToolWindow {
 
     String id();
 
-    WritablePValue<Boolean> active();
+    WritableValue<Boolean> active();
+
+    AppWritableString title();
+
+    AppWritableIcon icon();
 
 }

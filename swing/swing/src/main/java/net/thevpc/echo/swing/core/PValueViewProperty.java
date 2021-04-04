@@ -3,21 +3,21 @@ package net.thevpc.echo.swing.core;
 import net.thevpc.echo.AppPropertiesNodeItem;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.swing.actions.PropUndoableAction;
-import net.thevpc.common.props.PValue;
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
+import net.thevpc.common.props.ObservableValue;
 
 public class PValueViewProperty extends AbstractPropertiesNode implements AppPropertiesNodeItem {
 
     final Application application;
-    final PValue value;
+    final ObservableValue value;
     final Object[] values;
     Object evaluated;
 
-    public PValueViewProperty(String type,Application application, PValue wv) {
+    public PValueViewProperty(String type,Application application, ObservableValue wv) {
         this(type,application, wv, null);
     }
 
-    public PValueViewProperty(String type,Application application, PValue value, Object[] values) {
+    public PValueViewProperty(String type,Application application, ObservableValue value, Object[] values) {
         super(type);
         this.value = value;
         this.evaluated = value.get();
@@ -42,7 +42,7 @@ public class PValueViewProperty extends AbstractPropertiesNode implements AppPro
 
     @Override
     public boolean isEditable() {
-        return value instanceof WritablePValue;
+        return value instanceof WritableValue;
     }
 
     @Override
@@ -56,8 +56,8 @@ public class PValueViewProperty extends AbstractPropertiesNode implements AppPro
 
     @Override
     public void setValue(Object aValue) {
-        if (value instanceof WritablePValue) {
-            application.history().doAction(new PropUndoableAction(() -> aValue, () -> (WritablePValue) value, "Update " + value.name()));
+        if (value instanceof WritableValue) {
+            application.history().doAction(new PropUndoableAction(() -> aValue, () -> (WritableValue) value, "Update " + value.name()));
             evaluated = value.get();
         }
     }

@@ -28,24 +28,24 @@ import java.util.Set;
 
 public abstract class AbstractAppWindow implements AppWindow {
 
-    public WritablePValue<String> title = Props.of("title").valueOf(String.class, null);
-    public WritablePValue<ImageIcon> icon = Props.of("icon").valueOf(ImageIcon.class, null);
-    public WritablePValue<AppWindowDisplayMode> displayMode = Props.of("displayMode")
+    public WritableValue<String> title = Props.of("title").valueOf(String.class, null);
+    public WritableValue<ImageIcon> icon = Props.of("icon").valueOf(ImageIcon.class, null);
+    public WritableValue<AppWindowDisplayMode> displayMode = Props.of("displayMode")
             .adjust(e -> {
                 if (e.getNewValue() == null) {
                     return AppWindowDisplayMode.NORMAL;
                 }
-                return null;
+                return e.getNewValue();
             })
             .valueOf(AppWindowDisplayMode.class, AppWindowDisplayMode.NORMAL);
     public AppWindowStateSetValue state = new AppWindowStateSetValue("state");
-    private WritablePValue<AppMenuBar> menuBar = Props.of("menuBar").valueOf(AppMenuBar.class, null);
-    private WritablePValue<AppStatusBar> statusBar = Props.of("statusBar").valueOf(AppStatusBar.class, null);
-    private WritablePValue<AppToolBar> toolBar = Props.of("toolBar").valueOf(AppToolBar.class, null);
-    private WritablePValue<AppWorkspace> workspace = Props.of("workspace").valueOf(AppWorkspace.class, null);
+    private WritableValue<AppMenuBar> menuBar = Props.of("menuBar").valueOf(AppMenuBar.class, null);
+    private WritableValue<AppStatusBar> statusBar = Props.of("statusBar").valueOf(AppStatusBar.class, null);
+    private WritableValue<AppToolBar> toolBar = Props.of("toolBar").valueOf(AppToolBar.class, null);
+    private WritableValue<AppWorkspace> workspace = Props.of("workspace").valueOf(AppWorkspace.class, null);
     private Application application;
     private PropertyContainerSupport s;
-    private DefaultAppToolsBase tools;
+    private AbstractAppToolsBase tools;
     private List<AppToolContainer> rootContainers = new ArrayList<>();
     private ItemPath rootPath;
     private AppNode root;
@@ -66,7 +66,7 @@ public abstract class AbstractAppWindow implements AppWindow {
             }
 
             @Override
-            public ItemPath getPath() {
+            public ItemPath path() {
                 return rootPath;
             }
 
@@ -78,22 +78,36 @@ public abstract class AbstractAppWindow implements AppWindow {
                 }
                 return nn.toArray(new AppNode[0]);
             }
+
+            @Override
+            public AppNode get(ItemPath path) {
+                if (path.isEmpty()) {
+                    return this;
+                }
+                for (AppToolContainer rootContainer : rootContainers) {
+                    if (path.startsWith(rootContainer.rootNode().path())) {
+                        return rootContainer.rootNode().get(path);
+                    }
+                }
+                return null;
+            }
+
         };
-        tools = new DefaultAppToolsBase(application) {
+        tools = new AbstractAppToolsBase(application) {
             @Override
             public <T extends AppTool> void addTool(AppToolComponent<T> tool) {
-                String first = tool.path().first();
-                AppToolComponent subBinding = AppToolComponent.of(tool.tool(), tool.path().skipFirst().toString(), tool.order(), tool.renderer());
+//                String first = tool.path().first();
                 Set<String> available = new HashSet<>();
+//                if (tool.path().startsWith(rootNode().getPath())) {
                 for (AppNode node : nodes()) {
                     AppToolContainer c = (AppToolContainer) node.getComponent();
-                    ItemPath path = c.rootNode().getPath();
-                    available.add(path.first());
-                    if (path.first().equals(first)) {
-                        c.tools().addTool(subBinding);
+                    available.add(c.path().toString());
+                    if (tool.path().startsWith(node.path())) {
+                        c.tools().addTool(tool);
                         return;
                     }
                 }
+
                 throw new IllegalArgumentException("Unable to resolve to a valid path '" + tool.path() + "' . root nodes start with one of : " + available);
             }
 
@@ -134,7 +148,7 @@ public abstract class AbstractAppWindow implements AppWindow {
     }
 
     @Override
-    public WritablePValue<AppWindowDisplayMode> displayMode() {
+    public WritableValue<AppWindowDisplayMode> displayMode() {
         return displayMode;
     }
 
@@ -144,32 +158,32 @@ public abstract class AbstractAppWindow implements AppWindow {
     }
 
     @Override
-    public WritablePValue<AppMenuBar> menuBar() {
+    public WritableValue<AppMenuBar> menuBar() {
         return menuBar;
     }
 
     @Override
-    public WritablePValue<AppStatusBar> statusBar() {
+    public WritableValue<AppStatusBar> statusBar() {
         return statusBar;
     }
 
     @Override
-    public WritablePValue<AppToolBar> toolBar() {
+    public WritableValue<AppToolBar> toolBar() {
         return toolBar;
     }
 
     @Override
-    public WritablePValue<AppWorkspace> workspace() {
+    public WritableValue<AppWorkspace> workspace() {
         return workspace;
     }
 
     @Override
-    public WritablePValue<String> title() {
+    public WritableValue<String> title() {
         return title;
     }
 
     @Override
-    public WritablePValue<ImageIcon> icon() {
+    public WritableValue<ImageIcon> icon() {
         return icon;
     }
 

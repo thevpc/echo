@@ -1,21 +1,31 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.echo.props.AppWritableIcon;
+import net.thevpc.echo.props.AppWritableString;
+import net.thevpc.common.props.WritableValue;
 
 
 public interface AppTool {
 
     String id();
 
-    WritablePValue<String> smallIcon();
+    AppWritableIcon smallIcon();
 
-    WritablePValue<String> largeIcon();
+    AppWritableIcon largeIcon();
 
-    WritablePValue<Boolean> enabled();
+    WritableValue<Integer> mnemonic();
+    
+    WritableValue<String> accelerator();
+    
+    WritableValue<Boolean> enabled();
 
-    WritablePValue<Boolean> visible();
+    WritableValue<Boolean> visible();
 
-    WritablePValue<String> title();
+    AppWritableString title();
+    
+    AppWritableString tooltip();
+    
+    AppTools tools();
 
     <T extends AppTool> AppToolComponent<T> copyTo(AppTools tools, String newPath);
 }

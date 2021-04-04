@@ -5,8 +5,9 @@
  */
 package net.thevpc.echo;
 
+import javax.swing.Icon;
 import javax.swing.JComponent;
-import net.thevpc.common.props.WritablePValue;
+import net.thevpc.common.props.WritableValue;
 
 /**
  *
@@ -16,15 +17,15 @@ public interface AppContentWindow {
 
     String id();
 
-    WritablePValue<Boolean> active();
+    WritableValue<Boolean> active();
 
-    WritablePValue<String> title();
+    WritableValue<String> title();
 
-    WritablePValue<String> icon();
+    WritableValue<Icon> icon();
 
-    WritablePValue<Boolean> closable();
+    WritableValue<Boolean> closable();
     
-    WritablePValue<JComponent> component();
+    WritableValue<JComponent> component();
 
-    WritablePValue<AppWindowStateSet> state();
+    WritableValue<AppWindowStateSet> state();
 }
