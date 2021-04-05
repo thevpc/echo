@@ -49,4 +49,6 @@ public interface Application extends PropertyContainer {
     AppComponentRendererFactory componentRendererFactory();
 
     public void waitFor();
+    
+    public AppDialogBuilder newDialog();
 }

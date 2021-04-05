@@ -18,13 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
+import net.thevpc.echo.swing.core.dialog.SwingAppDialog;
 import net.thevpc.echo.swing.core.swing.AppToolActionComponent;
 import net.thevpc.echo.swing.core.swing.AppToolCheckBoxComponent;
 import net.thevpc.echo.swing.core.swing.AppToolFolderComponent;
 import net.thevpc.echo.swing.core.swing.AppToolRadioBoxComponent;
 import net.thevpc.echo.swing.core.swing.AppToolSeparatorComponent;
 
-public class DefaultApplication implements Application {
+public class SwingApplication implements Application {
 
     protected WritableValue<AppState> state = Props.of("state").valueOf(AppState.class, AppState.NONE);
     protected WritableValue<String> name = Props.of("name").valueOf(String.class, "");
@@ -48,7 +49,7 @@ public class DefaultApplication implements Application {
     private List<Semaphore> waitings = new ArrayList<>();
     private AppRootNode appRootNode;
 
-    public DefaultApplication() {
+    public SwingApplication() {
         support.add(name);
         support.add(state.readOnly());
         appRootNode=new AppRootNode();
@@ -79,7 +80,7 @@ public class DefaultApplication implements Application {
                 }
                 AppWindow n = event.getNewValue();
                 if (n != null) {
-                    n.state().vetos().add(new WinPropertyVetoImpl(DefaultApplication.this, n));
+                    n.state().vetos().add(new WinPropertyVetoImpl(SwingApplication.this, n));
                     addRootContainer(n);
                 }
             }
@@ -90,13 +91,13 @@ public class DefaultApplication implements Application {
             public void vetoableChange(PropertyEvent e) {
                 AppState a = e.getNewValue();
 //                if (a == AppState.CLOSING) {
-//                    DefaultAppEvent evt = new DefaultAppEvent(DefaultApplication.this, state);
+//                    DefaultAppEvent evt = new DefaultAppEvent(SwingApplication.this, state);
 //                    for (AppShutdownVeto v : shutdownVetos) {
 //                        v.vetoableChange(evt);
 //                    }
 //                }
 //                if (a == AppState.CLOSED) {
-//                    DefaultAppEvent evt = new DefaultAppEvent(DefaultApplication.this, state);
+//                    DefaultAppEvent evt = new DefaultAppEvent(SwingApplication.this, state);
 //                    for (AppShutdownVeto v : shutdownVetos) {
 //                        v.vetoableChange(evt);
 //                    }
@@ -327,7 +328,7 @@ public class DefaultApplication implements Application {
 
         private final WritableValue<AppWindowBuilder> windowBuilder = Props.of("windowBuilder").valueOf(AppWindowBuilder.class, new DefaultAppWindowBuilder());
 
-        public ApplicationBuilderImpl(DefaultApplication a) {
+        public ApplicationBuilderImpl(SwingApplication a) {
             PropertyVeto already_started_veto = new PropertyVeto() {
                 @Override
                 public void vetoableChange(PropertyEvent e) {
@@ -348,9 +349,9 @@ public class DefaultApplication implements Application {
     private static class WinPropertyVetoImpl implements PropertyVeto {
 
         private final AppWindow n;
-        private final DefaultApplication a;
+        private final SwingApplication a;
 
-        public WinPropertyVetoImpl(DefaultApplication a, AppWindow n) {
+        public WinPropertyVetoImpl(SwingApplication a, AppWindow n) {
             this.n = n;
             this.a = a;
         }
@@ -481,4 +482,9 @@ public class DefaultApplication implements Application {
         }
     }
 
+    @Override
+    public AppDialogBuilder newDialog() {
+        return SwingAppDialog.of(this);
+    }
+    
 }

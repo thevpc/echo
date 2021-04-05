@@ -12,7 +12,7 @@ import net.thevpc.echo.AppToolCheckBox;
 import net.thevpc.echo.AppToolFolder;
 import java.awt.Component;
 
-import net.thevpc.echo.swing.core.DefaultApplication;
+import net.thevpc.echo.swing.core.SwingApplication;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -149,16 +149,16 @@ public class SwingApplicationsHelper {
         if (group != null) {
             String s = group.get();
             if (s != null) {
-                ((DefaultApplication) application).getButtonGroup(s).add(button);
+                ((SwingApplication) application).getButtonGroup(s).add(button);
             }
             group.listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     if (event.getOldValue() != null) {
-                        ((DefaultApplication) application).getButtonGroup((String) event.getOldValue()).remove(button);
+                        ((SwingApplication) application).getButtonGroup((String) event.getOldValue()).remove(button);
                     }
                     if (event.getNewValue() != null) {
-                        ((DefaultApplication) application).getButtonGroup((String) event.getNewValue()).add(button);
+                        ((SwingApplication) application).getButtonGroup((String) event.getNewValue()).add(button);
                     }
                 }
             });
@@ -346,8 +346,8 @@ public class SwingApplicationsHelper {
         );
     }
 
-    public static void registerStandardAction(Action b, String actionId, Application app) {
-        registerAction(b, "Action." + actionId, "$Action." + actionId + ".icon", app);
+    public static Action registerStandardAction(Action b, String actionId, Application app) {
+        return registerAction(b, "Action." + actionId, "$Action." + actionId + ".icon", app);
     }
 
     public static Action registerAction(Action b, String messageId, String iconId, Application app) {

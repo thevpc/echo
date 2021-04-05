@@ -1,7 +1,7 @@
 package net.thevpc.echo.swing;
 
 import net.thevpc.echo.*;
-import net.thevpc.echo.swing.core.DefaultApplication;
+import net.thevpc.echo.swing.core.SwingApplication;
 import net.thevpc.common.iconset.IconSet;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
@@ -40,7 +40,7 @@ public class SwingApplications {
         }
 
         public static Application Default() {
-            return new DefaultApplication();
+            return new SwingApplication();
         }
     }
 

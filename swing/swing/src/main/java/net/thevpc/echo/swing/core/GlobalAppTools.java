@@ -14,7 +14,7 @@ public class GlobalAppTools extends AbstractAppToolsBase {
 
     private List<AppToolComponent> tools0 = new ArrayList<>();
 
-    public GlobalAppTools(DefaultApplication application) {
+    public GlobalAppTools(SwingApplication application) {
         super(application);
         this.application.state().listeners().add(new PropertyListener() {
             @Override
