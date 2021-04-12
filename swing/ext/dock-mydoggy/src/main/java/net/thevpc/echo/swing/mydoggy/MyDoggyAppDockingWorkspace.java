@@ -5,11 +5,7 @@
  */
 package net.thevpc.echo.swing.mydoggy;
 
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import net.thevpc.common.i18n.I18nString;
-import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.common.props.PropertyListener;
 
 import net.thevpc.echo.*;
 import net.thevpc.common.props.Props;

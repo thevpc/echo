@@ -14,20 +14,22 @@ import net.thevpc.echo.Application;
  *
  * @author thevpc
  */
-public class IconAction extends AbstractAppAction {
-    
-    private String iconSet;
+public class IconSizeAction extends AbstractAppAction {
 
-    public IconAction(Application aplctn, String iconSet) {
-        super(aplctn, "IconSet_" + iconSet);
-        this.iconSet = iconSet;
+    private int size;
+
+    public IconSizeAction(Application aplctn, int size) {
+        super(aplctn, "IconSetSize_" + size);
+        this.size = size;
     }
 
     @Override
     public void actionPerformedImpl(ActionEvent e) {
-        getApplication().iconSets().id().set(iconSet);
+        getApplication().iconSets()
+                .config().set(getApplication().iconSets().config().get().setSize(size));
     }
-        @Override
+
+    @Override
     public void refresh() {
 
     }

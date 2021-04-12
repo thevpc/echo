@@ -9,7 +9,9 @@ import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import net.thevpc.common.iconset.util.IconUtils;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.Props;
@@ -41,12 +43,12 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
     private Content content;
     private Application app;
 
-    public MyDoggyAppContentWindow(MyDoggyAppDockingWorkspace toolWindowManager, String id, Component component,Application app) {
+    public MyDoggyAppContentWindow(MyDoggyAppDockingWorkspace toolWindowManager, String id, Component component, Application app) {
         this.toolWindowManager = toolWindowManager;
         this.id = id;
         this.component.set((JComponent) component);
         this.title = AppProps.of("title", app).strIdOf(id);
-        this.icon = AppProps.of("icon", app).iconIdOf("$"+id+".icon"); //the dollar meens the the icon key is resolved from i18n
+        this.icon = AppProps.of("icon", app).iconIdOf("$" + id + ".icon"); //the dollar meens the the icon key is resolved from i18n
 
         ContentManager contentManager = toolWindowManager.getToolWindowManager().getContentManager();
         content = contentManager.addContent(id, title.get(), icon.get(), component);
@@ -62,9 +64,8 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 switch (evt.getPropertyName()) {
-                    case "visible": 
-                    case "selected": 
-                    {
+                    case "visible":
+                    case "selected": {
                         active.set(content.isVisible() && content.isSelected());
                         break;
                     }
@@ -84,7 +85,7 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
         this.icon.listeners().add(new PropertyListener() {
             @Override
             public void propertyUpdated(PropertyEvent event) {
-                content.setIcon((Icon) event.getNewValue());
+                content.setIcon(resizeIcon((Icon) event.getNewValue()));
             }
         });
         this.title.listeners().add(new PropertyListener() {
@@ -106,6 +107,21 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
             }
         });
         toolWindowManager.contentWindows().put(id, this);
+    }
+
+    public static Icon resizeIcon(Icon icon) {
+        if (icon == null) {
+            return icon;
+        }
+        if (icon instanceof ImageIcon) {
+            return new ImageIcon(IconUtils.getScaledImage(((ImageIcon) icon).getImage(), 8, 8));
+        } else {
+            return resizeIcon(
+                    new ImageIcon(
+                            IconUtils.iconToImage(icon)
+                    )
+            );
+        }
     }
 
     public WritableValue<Icon> icon() {
@@ -131,7 +147,6 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
     public WritableValue<JComponent> component() {
         return component;
     }
-    
 
     @Override
     public WritableValue<Boolean> active() {

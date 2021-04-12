@@ -3,7 +3,6 @@ package net.thevpc.echo.swing.core;
 import net.thevpc.echo.*;
 import net.thevpc.common.i18n.DefaultI18n;
 import net.thevpc.common.i18n.I18n;
-import net.thevpc.common.iconset.IconSet;
 import net.thevpc.common.msg.StringMessage;
 import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.AppPropertyBinding;
@@ -18,12 +17,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
+import net.thevpc.common.iconset.DefaultIconsets;
 import net.thevpc.echo.swing.core.dialog.SwingAppDialog;
 import net.thevpc.echo.swing.core.swing.AppToolActionComponent;
 import net.thevpc.echo.swing.core.swing.AppToolCheckBoxComponent;
 import net.thevpc.echo.swing.core.swing.AppToolFolderComponent;
 import net.thevpc.echo.swing.core.swing.AppToolRadioBoxComponent;
 import net.thevpc.echo.swing.core.swing.AppToolSeparatorComponent;
+import net.thevpc.common.iconset.IconSets;
 
 public class SwingApplication implements Application {
 
@@ -32,9 +33,8 @@ public class SwingApplication implements Application {
     protected DefaultAppMessages messages = new DefaultAppMessages(this);
     protected DefaultAppLogs logs = new DefaultAppLogs(this);
     protected WritableList<AppShutdownVeto> shutdownVetos = Props.of("shutdownVetos").listOf(AppShutdownVeto.class);
-    protected WritableLiMap<String, IconSet> iconSets = Props.of("iconSets").lmapOf(String.class, IconSet.class, x -> x.getId());
-    protected AppIconSet activeIconSet = new DefaultAppIconSet(iconSets);
-    protected I18n i18n = new DefaultI18n();
+    protected IconSets iconSets = new DefaultIconsets("iconSets");
+    protected I18n i18n = new DefaultI18n("application");
     protected PropertyContainerSupport support = new PropertyContainerSupport("app", this);
     private List<AppToolContainer> rootContainers = new ArrayList<>();
     private GlobalAppTools tools = new GlobalAppTools(this);
@@ -135,13 +135,8 @@ public class SwingApplication implements Application {
     }
 
     @Override
-    public WritableLiMap<String, IconSet> iconSets() {
+    public IconSets iconSets() {
         return iconSets;
-    }
-
-    @Override
-    public AppIconSet iconSet() {
-        return activeIconSet;
     }
 
     @Override

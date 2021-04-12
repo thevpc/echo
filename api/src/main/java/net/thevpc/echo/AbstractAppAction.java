@@ -34,8 +34,8 @@ public abstract class AbstractAppAction extends AbstractAction {
         putValue(NAME, name);
         putValue(SHORT_DESCRIPTION, description);
         putValue("SmallIconId", iconId);
-        putValue(SMALL_ICON, application.iconSet().icon(iconId).get());
-        application.iconSet().icon(iconId).listeners().add(new PropertyListener() {
+        putValue(SMALL_ICON, application.iconSets().icon(iconId).get());
+        application.iconSets().icon(iconId).listeners().add(new PropertyListener() {
             @Override
             public void propertyUpdated(PropertyEvent event) {
                 putValue(SMALL_ICON, event.getNewValue());

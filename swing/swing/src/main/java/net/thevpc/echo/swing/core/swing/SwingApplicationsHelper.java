@@ -31,6 +31,7 @@ import net.thevpc.common.props.WritableValue;
 import net.thevpc.common.props.ObservableValue;
 
 public class SwingApplicationsHelper {
+
     private static final Logger LOG = Logger.getLogger(SwingApplicationsHelper.class.getName());
 
     public static void bindVisible(Component t, WritableValue<Boolean> p) {
@@ -261,11 +262,11 @@ public class SwingApplicationsHelper {
                 String id2 = app.i18n().getString(iconId.substring(1), x -> null);
                 if (id2 != null) {
                     iconId = id2;
-                }else{
+                } else {
                     LOG.log(Level.FINER, "missing button icon message binding for {0}", iconId);
                 }
             }
-            b.setIcon(app.iconSet().icon(iconId).get());
+            b.setIcon(app.iconSets().icon(iconId).get());
         }
         String messageId = (String) b.getClientProperty("message-id");
         if (messageId != null) {
@@ -280,11 +281,11 @@ public class SwingApplicationsHelper {
                 String id2 = app.i18n().getString(iconId.substring(1), x -> null);
                 if (id2 != null) {
                     iconId = id2;
-                }else{
+                } else {
                     LOG.log(Level.FINER, "missing action icon message binding for {0}", iconId);
                 }
             }
-            b.putValue(AbstractAction.SMALL_ICON, app.iconSet().icon(iconId).get());
+            b.putValue(AbstractAction.SMALL_ICON, app.iconSets().icon(iconId).get());
         }
         String messageId = (String) b.getValue("message-id");
         if (messageId != null) {
@@ -306,13 +307,13 @@ public class SwingApplicationsHelper {
         b.putClientProperty("icon-id", iconId);
         b.putClientProperty("message-id", messageId);
         ButtonUpdaterPropertyListener li = new ButtonUpdaterPropertyListener(b, app);
-        app.iconSet().id().listeners().add(li);
+        app.iconSets().listeners().add(li);
         app.i18n().locale().listeners().add(li);
         updateButton(b, app);
     }
 
     public static void unregisterButton(AbstractButton b, Application app) {
-        app.iconSet().id().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
+        app.iconSets().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
                 && ((ButtonUpdaterPropertyListener) x).b == b
         );
         app.i18n().locale().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
@@ -332,13 +333,13 @@ public class SwingApplicationsHelper {
 
     public static void registerString(I18nString b, Application app) {
         I18nStringUpdaterPropertyListener li = new I18nStringUpdaterPropertyListener(b, app);
-        app.iconSet().id().listeners().add(li);
+        app.iconSets().listeners().add(li);
         app.i18n().locale().listeners().add(li);
         updateString(b, app);
     }
 
     public static void unregisterString(I18nString b, Application app) {
-        app.iconSet().id().listeners().removeIf(x -> x instanceof I18nStringUpdaterPropertyListener
+        app.iconSets().listeners().removeIf(x -> x instanceof I18nStringUpdaterPropertyListener
                 && ((I18nStringUpdaterPropertyListener) x).b == b
         );
         app.i18n().locale().listeners().removeIf(x -> x instanceof I18nStringUpdaterPropertyListener
@@ -354,7 +355,9 @@ public class SwingApplicationsHelper {
         b.putValue("icon-id", iconId);
         b.putValue("message-id", messageId);
         ActionUpdaterPropertyListener li = new ActionUpdaterPropertyListener(b, app);
-        app.iconSet().id().listeners().add(li);
+        if (iconId != null) {
+            app.iconSets().listeners().add(li);
+        }
         app.i18n().locale().listeners().add(li);
         updateAction(b, app);
         return b;
@@ -368,7 +371,7 @@ public class SwingApplicationsHelper {
     }
 
     public static void unregisterAction(Action b, Application app) {
-        app.iconSet().id().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
+        app.iconSets().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
                 && ((ButtonUpdaterPropertyListener) x).b == b
         );
         app.i18n().locale().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener

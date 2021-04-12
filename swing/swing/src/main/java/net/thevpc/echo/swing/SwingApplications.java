@@ -10,9 +10,7 @@ import net.thevpc.swing.plaf.UIPlaf;
 import net.thevpc.swing.plaf.UIPlafManager;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Locale;
 import net.thevpc.echo.swing.actions.CloseWindowsAction;
@@ -28,6 +26,9 @@ import net.thevpc.echo.swing.core.swing.JComponentSupplier;
 import net.thevpc.echo.swing.core.swing.JFrameAppWindow;
 import net.thevpc.echo.swing.core.swing.JStatusBarGroupStatusBar;
 import net.thevpc.common.props.ObservableList;
+import net.thevpc.echo.swing.actions.FontRelativeSizeAction;
+import net.thevpc.echo.swing.actions.FontSizeAbsoluteAction;
+import net.thevpc.echo.swing.actions.IconSizeAction;
 
 public class SwingApplications {
 
@@ -113,7 +114,9 @@ public class SwingApplications {
             application.tools().addFolder("/mainWindow/menuBar/View");
             addViewToolActions(application);
             addViewPlafActions(application);
+            addViewFontSizeActions(application);
             addViewIconActions(application);
+            addViewIconSizeActions(application);
             addViewAppearanceActions(application);
         }
 
@@ -146,31 +149,73 @@ public class SwingApplications {
 
         }
 
+        public static void addViewFontSizeActions(Application application) {
+            addFontSizeRelativeActions(application, null);
+            addFontSizeAbsoluteActions(application, null);
+        }
+
+        public static void addFontSizeRelativeActions(Application application, String path, float... sizes) {
+            if (path == null) {
+                path = "/mainWindow/menuBar/View/Font/Sizes";
+            }
+            if (sizes == null || sizes.length == 0) {
+                sizes = new float[]{0.5f, 0.8f, 1.0f, 1.2f, 1.4f, 1.6f, 2f, 2.5f};
+            }
+            AppTools tools = application.tools();
+            tools.addFolder(path);
+            for (int i = 0; i < sizes.length; i++) {
+                float size = sizes[i];
+                tools.addAction(new FontRelativeSizeAction(application, size), path + "/*" + size);
+            }
+//            tools.addCustomTool(path + "/**", (c)->new JSlider(0, 6));
+        }
+
+        public static void addFontSizeAbsoluteActions(Application application, String path, float... sizes) {
+            if (path == null) {
+                path = "/mainWindow/menuBar/View/Font/Sizes";
+            }
+            if (sizes == null || sizes.length == 0) {
+                sizes = new float[]{8f, 10f, 12f, 14f, 16f, 18f, 20f, 28f};
+            }
+            AppTools tools = application.tools();
+            tools.addFolder(path);
+            for (int i = 0; i < sizes.length; i++) {
+                float size = sizes[i];
+                tools.addAction(new FontSizeAbsoluteAction(application, size), path + "/" + size);
+            }
+        }
+
+        public static void addViewIconSizeActions(Application application) {
+            addIconSizeActions(application, null);
+        }
+
+        public static void addIconSizeActions(Application application, String path, int... sizes) {
+            if (path == null) {
+                path = "/mainWindow/menuBar/View/Icons/Sizes";
+            }
+            if (sizes == null || sizes.length == 0) {
+                sizes = new int[]{8, 16, 24, 32, 48};
+            }
+            AppTools tools = application.tools();
+            tools.addFolder(path);
+            for (int i = 0; i < sizes.length; i++) {
+                int size = sizes[i];
+                tools.addAction(new IconSizeAction(application, size), path + "/" + size);
+            }
+        }
+
         public static void addViewIconActions(Application application) {
             addIconActions(application, null);
         }
 
         public static void addIconActions(Application application, String path) {
             if (path == null) {
-                path = "/mainWindow/menuBar/View/Icons";
+                path = "/mainWindow/menuBar/View/Icons/Packs";
             }
             AppTools tools = application.tools();
             tools.addFolder(path);
             for (IconSet iconset : application.iconSets().values()) {
-                Dimension d = iconset.getSize();
-                if (d != null) {
-                    if (d.width <= 16 && d.height <= 16) {
-                        tools.addAction(new IconAction(application, iconset.getId()), path + "/Small/" + iconset.getId());
-                    } else if (d.width <= 24 && d.height <= 24) {
-                        tools.addAction(new IconAction(application, iconset.getId()), path + "/Large/" + iconset.getId());
-                    } else if (d.width <= 32 && d.height <= 32) {
-                        tools.addAction(new IconAction(application, iconset.getId()), path + "/Larger/" + iconset.getId());
-                    } else {
-                        tools.addAction(new IconAction(application, iconset.getId()), path + "/Huge/" + iconset.getId());
-                    }
-                } else {
-                    tools.addAction(new IconAction(application, iconset.getId()), path + "/Custom/" + iconset.getId());
-                }
+                tools.addAction(new IconAction(application, iconset.getId()), path + "/" + iconset.getId());
             }
         }
 
@@ -198,9 +243,10 @@ public class SwingApplications {
                 String id = item.getId();
                 String pname = id.replace("/", "_");
                 String nname = item.getName();
-                tools.addAction(new PlafAction(application, id, nname, null, nname), path + "/" + q + "/" + pname);
                 if (item.isContrast()) {
                     q = "Contrast";
+                    tools.addAction(new PlafAction(application, id, nname, null, nname), path + "/" + q + "/" + pname);
+                } else {
                     tools.addAction(new PlafAction(application, id, nname, null, nname), path + "/" + q + "/" + pname);
                 }
             }

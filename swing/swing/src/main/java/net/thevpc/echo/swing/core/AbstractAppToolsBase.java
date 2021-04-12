@@ -203,7 +203,7 @@ public abstract class AbstractAppToolsBase implements AppTools {
 //        String iconId = (String) al.getValue("SmallIconId");
         tool.title().setId(path);
         tool.smallIcon().setId("$" + path + ".icon"); //the dollar meens the the icon key is resolved from i18n
-//        application.iconSet().id().listeners().add((PropertyEvent event) -> {
+//        application.iconSet().listeners().add((PropertyEvent event) -> {
 //            al.putValue("SmallIconId", tool.smallIcon().getId());
 //            al.putValue(Action.SMALL_ICON, tool.smallIcon().get());
 //        });

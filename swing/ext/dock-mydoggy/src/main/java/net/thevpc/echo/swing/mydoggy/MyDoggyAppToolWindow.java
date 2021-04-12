@@ -73,6 +73,7 @@ public class MyDoggyAppToolWindow implements AppToolWindow {
         });
         this.icon.listeners().add((PropertyEvent event) -> {
             Icon newIcon=(Icon) event.getNewValue();
+            newIcon=MyDoggyAppContentWindow.resizeIcon(newIcon);
             toolWindow.setIcon(newIcon);
             toolWindow.getRepresentativeAnchorDescriptor().setIcon(newIcon);
         });

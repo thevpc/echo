@@ -22,7 +22,7 @@ public class AppWritableIcon extends WritableValueImpl<Icon> {
     public AppWritableIcon(String name, Application app) {
         super(name, PropertyType.of(String.class), null);
         this.app = app;
-        app.iconSet().id().listeners().add(e -> {
+        app.iconSets().listeners().add(e -> {
             reevalValue();
         });
     }
@@ -43,7 +43,7 @@ public class AppWritableIcon extends WritableValueImpl<Icon> {
                     return;
                 }
             }
-            superSet(app.iconSet().icon(iconId).get());
+            superSet(app.iconSets().icon(iconId).get());
         }
     }
 

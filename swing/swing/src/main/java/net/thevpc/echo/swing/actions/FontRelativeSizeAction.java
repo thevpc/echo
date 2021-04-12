@@ -9,25 +9,27 @@ import java.awt.event.ActionEvent;
 
 import net.thevpc.echo.AbstractAppAction;
 import net.thevpc.echo.Application;
+import net.thevpc.swing.plaf.UIPlafManager;
 
 /**
  *
  * @author thevpc
  */
-public class IconAction extends AbstractAppAction {
-    
-    private String iconSet;
+public class FontRelativeSizeAction extends AbstractAppAction {
 
-    public IconAction(Application aplctn, String iconSet) {
-        super(aplctn, "IconSet_" + iconSet);
-        this.iconSet = iconSet;
+    private float size;
+
+    public FontRelativeSizeAction(Application aplctn, float size) {
+        super(aplctn, "FontSize_" + size);
+        this.size = size;
     }
 
     @Override
     public void actionPerformedImpl(ActionEvent e) {
-        getApplication().iconSets().id().set(iconSet);
+        UIPlafManager.getCurrentManager().resizeRelativeFonts(size);
     }
-        @Override
+
+    @Override
     public void refresh() {
 
     }
