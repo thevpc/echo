@@ -95,6 +95,18 @@ public abstract class AbstractAppWindow implements AppWindow {
         };
         tools = new AbstractAppToolsBase(application) {
             @Override
+            public AppTool getToolByPath(ItemPath path0) {
+               for (AppNode node : nodes()) {
+                    AppToolContainer c = (AppToolContainer) node.getComponent();
+                    ItemPath path = c.rootNode().path();
+                    if (path0.startsWith(path)) {
+                        return c.tools().getToolByPath(path0);
+                    }
+                }
+                return null;
+            }
+
+            @Override
             public <T extends AppTool> void addTool(AppToolComponent<T> tool) {
 //                String first = tool.path().first();
                 Set<String> available = new HashSet<>();

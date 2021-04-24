@@ -35,7 +35,7 @@ public class AppToolFolderComponent implements AppComponentRenderer {
                     || parentGuiElement instanceof JPopupMenu
                     ) {
                 JMenu m = new JMenu();
-                SwingApplicationsHelper.prepareAbstractButton(m, b, application,true);
+                SwingApplicationsUtils.prepareAbstractButton(m, b, application,true);
                 return m;
             }
         }

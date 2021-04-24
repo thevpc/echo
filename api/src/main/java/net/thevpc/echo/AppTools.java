@@ -10,6 +10,12 @@ public interface AppTools {
 
     ObservableList<AppTool> all();
 
+    default AppTool getToolByPath(String path) {
+        return getToolByPath(path == null ? null : ItemPath.of(path));
+    }
+
+    AppTool getToolByPath(ItemPath path);
+
     AppTool getTool(String id);
 
     AppComponent[] getComponents(String id);
@@ -18,17 +24,10 @@ public interface AppTools {
 
     AppToolComponent<AppToolSeparator> addSeparator(String path);
 
+    AppToolActionBuilder addAction();
+
+    @Deprecated
     AppToolAction addAction(Action al, String path, String... paths);
-
-    AppToolComponent<AppToolAction> addAction(String path);
-
-    AppToolComponent<AppToolRadioBox> addRadio(String path);
-
-    AppToolComponent<AppToolCheckBox> addCheck(String path);
-
-    AppToolCheckBox addCheck(WritableValue<Boolean> property, String path, String... paths);
-
-    <T> AppToolRadioBox addRadio(String group, WritableValue<T> property, T value, String path, String... paths);
 
     <T extends AppTool> AppToolComponent<T> addTool(T tool, String path);
 
@@ -55,4 +54,8 @@ public interface AppTools {
     ObservableList<AppComponent> components();
 
     void refresh();
+
+    <T> AppToolRadioBoxBuilder addRadio();
+
+    <T> AppToolCheckBoxBuilder addCheck();
 }

@@ -25,6 +25,7 @@ import net.thevpc.echo.swing.core.swing.AppToolFolderComponent;
 import net.thevpc.echo.swing.core.swing.AppToolRadioBoxComponent;
 import net.thevpc.echo.swing.core.swing.AppToolSeparatorComponent;
 import net.thevpc.common.iconset.IconSets;
+import net.thevpc.swing.plaf.UIPlafManager;
 
 public class SwingApplication implements Application {
 
@@ -40,6 +41,7 @@ public class SwingApplication implements Application {
     private GlobalAppTools tools = new GlobalAppTools(this);
     private AppHistory history = new DefaultAppUndoManager(this);
     private Map<String, ButtonGroup> buttonGroups = new HashMap<>();
+    private WritableValue<String> plaf = Props.of("plaf").valueOf(String.class, null);
     private WritableValue<AppWindow> mainWindow = Props.of("mainWindow").valueOf(AppWindow.class, null);
     private ApplicationBuilderImpl applicationBuilderImpl = new ApplicationBuilderImpl(this);
     private WritableValue<AppPropertiesTree> activeProperties = Props.of("activeProperties").valueOf(AppPropertiesTree.class, null);
@@ -108,6 +110,13 @@ public class SwingApplication implements Application {
             @Override
             public void propertyUpdated(PropertyEvent event) {
                 if (event.getNewValue() == AppState.CLOSING) {
+                    AppWindow mw = mainWindow.get();
+                    if(
+                            !mw.state().is(AppWindowState.CLOSING)
+                            && !mw.state().is(AppWindowState.CLOSED)
+                            ){
+                        mw.close();
+                    }
                     state.set(AppState.CLOSED);
                 }
             }
@@ -118,10 +127,28 @@ public class SwingApplication implements Application {
             }
 
         });
+        plaf.listeners().add(new PropertyListener() {
+            @Override
+            public void propertyUpdated(PropertyEvent event) {
+                String nv=event.getNewValue();
+                if(nv!=null){
+                    UIPlafManager.INSTANCE.apply(nv);
+                }
+            }
+        });
     }
+    
 
     public WritableValue<String> currentWorkingDirectory() {
         return currentWorkingDirectory;
+    }
+
+    public WritableValue<String> plaf() {
+        return plaf;
+    }
+
+    public void setPlaf(WritableValue<String> plaf) {
+        this.plaf = plaf;
     }
 
     @Override
@@ -170,11 +197,12 @@ public class SwingApplication implements Application {
     @Override
     public Application shutdown() {
         switch (state.get()) {
+            case CLOSING:
             case CLOSED: {
                 break;
             }
             default: {
-                state.set(AppState.CLOSED);
+                state.set(AppState.CLOSING);
                 break;
             }
         }

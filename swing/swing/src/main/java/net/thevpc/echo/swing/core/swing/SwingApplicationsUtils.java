@@ -30,9 +30,9 @@ import net.thevpc.common.i18n.I18nString;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.common.props.ObservableValue;
 
-public class SwingApplicationsHelper {
+public class SwingApplicationsUtils {
 
-    private static final Logger LOG = Logger.getLogger(SwingApplicationsHelper.class.getName());
+    private static final Logger LOG = Logger.getLogger(SwingApplicationsUtils.class.getName());
 
     public static void bindVisible(Component t, WritableValue<Boolean> p) {
         t.addPropertyChangeListener((PropertyChangeEvent evt) -> {
@@ -472,19 +472,19 @@ public class SwingApplicationsHelper {
                     b.run();
                 }
             };
-            SwingApplicationsHelper.registerStandardAction(a, actionId, app);
+            SwingApplicationsUtils.registerStandardAction(a, actionId, app);
             actions.add(a);
             return a;
         }
 
         public Action registerStandardAction(Action b, String actionId) {
-            SwingApplicationsHelper.registerStandardAction(b, actionId, app);
+            SwingApplicationsUtils.registerStandardAction(b, actionId, app);
             actions.add(b);
             return b;
         }
 
         public <T extends AbstractButton> T registerStandardButton(T b, String actionId) {
-            SwingApplicationsHelper.registerstandardButton(b, actionId, app);
+            SwingApplicationsUtils.registerstandardButton(b, actionId, app);
             buttons.add(b);
             return b;
         }
@@ -492,12 +492,12 @@ public class SwingApplicationsHelper {
         public void unregisterAll() {
             for (Iterator<Action> it = actions.iterator(); it.hasNext();) {
                 Action action = it.next();
-                SwingApplicationsHelper.unregisterAction(action, app);
+                SwingApplicationsUtils.unregisterAction(action, app);
                 it.remove();
             }
             for (Iterator<AbstractButton> it = buttons.iterator(); it.hasNext();) {
                 AbstractButton button = it.next();
-                SwingApplicationsHelper.unregisterButton(button, app);
+                SwingApplicationsUtils.unregisterButton(button, app);
                 it.remove();
             }
         }

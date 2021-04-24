@@ -7,11 +7,24 @@ import net.thevpc.echo.AppToolComponent;
 import net.thevpc.echo.ItemPath;
 
 import java.util.*;
+import net.thevpc.echo.AppTool;
 
 public class ContainerAppTools extends AbstractAppToolsBase {
 
     public ContainerAppTools(Application application) {
         super(application);
+    }
+
+    @Override
+    public AppTool getToolByPath(ItemPath path0) {
+        for (AppNode node : this.application.rootNode().getChildren()) {
+            AppToolContainer c = (AppToolContainer) node.getComponent();
+            ItemPath path = c.rootNode().path();
+            if (path0.startsWith(path)) {
+                return c.tools().getToolByPath(path0);
+            }
+        }
+        return null;
     }
 
     @Override

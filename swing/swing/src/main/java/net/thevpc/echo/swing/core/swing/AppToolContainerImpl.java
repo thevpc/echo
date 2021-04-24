@@ -15,6 +15,7 @@ import net.thevpc.echo.swing.core.BindingNode;
 import net.thevpc.echo.swing.core.AbstractAppToolsBase;
 
 public class AppToolContainerImpl implements AppToolContainer {
+
     private PropertyContainerSupport s;
     private BindingNode root;
     private Application application;
@@ -27,7 +28,15 @@ public class AppToolContainerImpl implements AppToolContainer {
         s = new PropertyContainerSupport(rootPath.toString(), this);
         BindingNodeFactory factory = new BindingNodeFactory();
 
-        tools=new AbstractAppToolsBase(application) {
+        tools = new AbstractAppToolsBase(application) {
+            @Override
+            public AppTool getToolByPath(ItemPath path0) {
+                if (path0.equals(root.path()) && root.getBinding() != null) {
+                    return root.getBinding().tool();
+                }
+                return root.getToolByPath(path0);
+            }
+
             @Override
             public <T extends AppTool> void addTool(AppToolComponent<T> tool) {
                 root.add(tool);
@@ -38,7 +47,7 @@ public class AppToolContainerImpl implements AppToolContainer {
 
             }
         };
-        this.root = factory.createBindingNode(null, rootGuiElement, AppToolComponent.of(null, rootPath), this, application, tools.components,tools);
+        this.root = factory.createBindingNode(null, rootGuiElement, AppToolComponent.of(null, rootPath), this, application, tools.components, tools);
     }
 
     @Override

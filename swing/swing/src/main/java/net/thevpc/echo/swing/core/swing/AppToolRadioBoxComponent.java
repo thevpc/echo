@@ -19,14 +19,14 @@ public class AppToolRadioBoxComponent implements AppComponentRenderer {
                     || parentGuiElement instanceof JMenuBar
             ) {
                 JRadioButton m = new JRadioButton();
-                SwingApplicationsHelper.prepareAbstractButton(m, b, application,true);
+                SwingApplicationsUtils.prepareAbstractButton(m, b, application,true);
                 return m;
             }
             if (parentGuiElement instanceof JMenu
                     || parentGuiElement instanceof JPopupMenu
                     ) {
                 JRadioButtonMenuItem m = new JRadioButtonMenuItem();
-                SwingApplicationsHelper.prepareAbstractButton(m, b, application,true);
+                SwingApplicationsUtils.prepareAbstractButton(m, b, application,true);
                 return m;
             }
         }

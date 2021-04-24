@@ -11,6 +11,8 @@ import net.thevpc.echo.ItemPath;
 
 import java.util.ArrayList;
 import net.thevpc.common.props.WritableList;
+import net.thevpc.echo.AppTool;
+import net.thevpc.echo.AppToolContainer;
 import net.thevpc.echo.AppTools;
 
 public class BindingNode implements AppNode {
@@ -26,10 +28,10 @@ public class BindingNode implements AppNode {
     private GuiComponentNavigator supplier;
     private AppTools tools;
 
-    public BindingNode(BindingNode parent, Object guiElement, 
-            AppToolComponent binding, AppComponent appComponent, 
-            Application application, WritableList<AppComponent> components, 
-            BindingNodeFactory factory, GuiComponentNavigator navigator,AppTools tools) {
+    public BindingNode(BindingNode parent, Object guiElement,
+            AppToolComponent binding, AppComponent appComponent,
+            Application application, WritableList<AppComponent> components,
+            BindingNodeFactory factory, GuiComponentNavigator navigator, AppTools tools) {
         this.parent = parent;
         this.tools = tools;
         this.guiElement = guiElement;
@@ -53,17 +55,16 @@ public class BindingNode implements AppNode {
         return binding;
     }
 
-
     public String name() {
         return binding.path().name();
     }
 
     public BindingNode add(AppToolComponent b) {
-        if(!b.path().startsWith(path())){
+        if (!b.path().startsWith(path())) {
             throw new IllegalArgumentException("Invalid path");
         }
-        ItemPath subPath=b.path().subPath(path().size());
-        if(subPath.isEmpty()){
+        ItemPath subPath = b.path().subPath(path().size());
+        if (subPath.isEmpty()) {
             throw new IllegalArgumentException("Invalid path");
         }
         ItemPath parentPath = subPath.parent();
@@ -89,7 +90,7 @@ public class BindingNode implements AppNode {
 
     public BindingNode addChildItem(int i, AppToolComponent toolComponent) {
         Object ii = addChildItemGui(i, toolComponent);
-        BindingNode bn = factory.createBindingNode(this, ii, toolComponent, toolComponent, application, components,tools);
+        BindingNode bn = factory.createBindingNode(this, ii, toolComponent, toolComponent, application, components, tools);
         children.add(i, bn);
         components.add(toolComponent);
 //        application.i18n().locale().listeners().add(e -> {
@@ -163,5 +164,19 @@ public class BindingNode implements AppNode {
     public String toString() {
         return "BindingNode{" + binding + '}';
     }
-    
+
+    public AppTool getToolByPath(ItemPath path0) {
+        if (path0.equals(path()) && getBinding() != null) {
+            return getBinding().tool();
+        }
+        if (path0.startsWith(path())) {
+            for (BindingNode node : getChildren()) {
+                AppTool x = node.getToolByPath(path0);
+                if(x!=null){
+                    return x;
+                }
+            }
+        }
+        return null;
+    }
 }

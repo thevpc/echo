@@ -15,7 +15,7 @@ public class JStatusBarGroupStatusBar extends AppToolContainerImpl implements Ap
 
     public JStatusBarGroupStatusBar(String rootPath, Application application) {
         super(rootPath, new JStatusBarGroup(), application);
-        SwingApplicationsHelper.bindVisible((JComponent) rootGuiElement, visible);
+        SwingApplicationsUtils.bindVisible((JComponent) rootGuiElement, visible);
     }
 
     @Override

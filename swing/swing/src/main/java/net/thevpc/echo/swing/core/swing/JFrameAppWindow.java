@@ -25,6 +25,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 import net.thevpc.echo.AppWindowDisplayMode;
+import net.thevpc.echo.AppWindowStateSetValue;
 
 public class JFrameAppWindow extends AbstractAppWindow {
 
@@ -153,6 +154,9 @@ public class JFrameAppWindow extends AbstractAppWindow {
                     } finally {
                         _in_windowClosing = false;
                     }
+                    if(frame.isVisible()){
+                        frame.setVisible(false);
+                    }
                 }
             } else if (aws.is(AppWindowState.CLOSED)) {
                 if (!_in_windowClosed) {
@@ -162,10 +166,13 @@ public class JFrameAppWindow extends AbstractAppWindow {
                     } finally {
                         _in_windowClosed = false;
                     }
+                    if(frame.isVisible()){
+                        frame.setVisible(false);
+                    }
                 }
             } else if (aws.is(AppWindowState.OPENED)) {
                 if (!frame.isVisible()) {
-                    SwingApplicationsHelper.invokeLater(() -> {
+                    SwingApplicationsUtils.invokeLater(() -> {
                         frame.setMinimumSize(new Dimension(600, 400));
                         frame.pack();
                         frame.setVisible(true);
@@ -349,4 +356,13 @@ public class JFrameAppWindow extends AbstractAppWindow {
         }
     }
 
+    @Override
+    public void close() {
+        AppWindowStateSetValue _state = state();
+        if (!_state.is(AppWindowState.CLOSING)
+                && !_state.is(AppWindowState.CLOSED)) {
+            frame.setVisible(false);
+            frame.dispose();
+        }
+    }
 }

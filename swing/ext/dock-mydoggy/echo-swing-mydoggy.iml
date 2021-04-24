@@ -11,6 +11,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Maven: net.thevpc.more.mydoggy:mydoggy-api:1.5.1" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.more.mydoggy:mydoggy-plaf:1.5.1" level="project" />
+    <orderEntry type="library" name="Maven: tablelayout:TableLayout:20050920" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.more.mydoggy:mydoggy-res:1.5.1" level="project" />
+    <orderEntry type="module" module-name="echo-swing" />
     <orderEntry type="module" module-name="echo-api" />
     <orderEntry type="module" module-name="thevpc-common-i18n" />
     <orderEntry type="module" module-name="thevpc-common-iconset" />

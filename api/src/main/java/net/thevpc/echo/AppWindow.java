@@ -27,4 +27,6 @@ public interface AppWindow extends AppToolContainer {
     void centerOnDefaultMonitor();
     
     Object component();
+
+    public void close();
 }

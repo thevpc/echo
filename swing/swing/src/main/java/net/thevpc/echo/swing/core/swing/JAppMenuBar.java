@@ -14,7 +14,7 @@ public class JAppMenuBar extends AppToolContainerImpl implements AppMenuBar,JMen
     private WritableValue<Boolean> visible = Props.of("visible").valueOf(Boolean.class, false);
     public JAppMenuBar(String rootPath, Application application) {
         super(rootPath, new JMenuBar(), application);
-        SwingApplicationsHelper.bindVisible((JComponent)rootGuiElement, visible);
+        SwingApplicationsUtils.bindVisible((JComponent)rootGuiElement, visible);
     }
 
     public static AppLayoutMenuBarFactory factory() {

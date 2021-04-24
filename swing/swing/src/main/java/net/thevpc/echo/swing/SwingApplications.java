@@ -15,9 +15,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import net.thevpc.echo.swing.actions.CloseWindowsAction;
 import net.thevpc.echo.swing.actions.DeiconifyWindowsAction;
-import net.thevpc.echo.swing.actions.IconAction;
 import net.thevpc.echo.swing.actions.IconifyWindowsAction;
-import net.thevpc.echo.swing.actions.PlafAction;
 import net.thevpc.echo.swing.actions.QuitAction;
 import net.thevpc.echo.swing.actions.TileWindowsAction;
 import net.thevpc.echo.swing.core.swing.JAppMenuBar;
@@ -28,7 +26,7 @@ import net.thevpc.echo.swing.core.swing.JStatusBarGroupStatusBar;
 import net.thevpc.common.props.ObservableList;
 import net.thevpc.echo.swing.actions.FontRelativeSizeAction;
 import net.thevpc.echo.swing.actions.FontSizeAbsoluteAction;
-import net.thevpc.echo.swing.actions.IconSizeAction;
+import net.thevpc.echo.swing.core.swing.JAppPopupMenu;
 
 public class SwingApplications {
 
@@ -90,7 +88,7 @@ public class SwingApplications {
         public static void addQuitAction(Application application) {
             runAfterStart(application, () -> {
                 AppTools tools = application.tools();
-                tools.addAction(new QuitAction(application), "/mainWindow/menuBar/File/QuitAction");
+                tools.addAction().bind(new QuitAction(application)).path("/mainWindow/menuBar/File/QuitAction").tool();
             });
         }
 
@@ -103,10 +101,10 @@ public class SwingApplications {
                     p.putClientProperty(InternalWindowsHelper.class.getName(), wins);
                 }
                 AppTools tools = application.tools();
-                tools.addAction(new TileWindowsAction(application, wins), "/mainWindow/menuBar/Windows/TileWindowsAction");
-                tools.addAction(new IconifyWindowsAction(application, wins), "/mainWindow/menuBar/Windows/IconifyWindowsAction");
-                tools.addAction(new DeiconifyWindowsAction(application, wins), "/mainWindow/menuBar/Windows/DeiconifyWindowsAction");
-                tools.addAction(new CloseWindowsAction(application, wins), "/mainWindow/menuBar/Windows/CloseWindowsAction");
+                tools.addAction().bind(new TileWindowsAction(application, wins)).path("/mainWindow/menuBar/Windows/TileWindowsAction").tool();
+                tools.addAction().bind(new IconifyWindowsAction(application, wins)).path("/mainWindow/menuBar/Windows/IconifyWindowsAction").tool();
+                tools.addAction().bind(new DeiconifyWindowsAction(application, wins)).path("/mainWindow/menuBar/Windows/DeiconifyWindowsAction").tool();
+                tools.addAction().bind(new CloseWindowsAction(application, wins)).path("/mainWindow/menuBar/Windows/CloseWindowsAction").tool();
             });
         }
 
@@ -116,7 +114,6 @@ public class SwingApplications {
             addViewPlafActions(application);
             addViewFontSizeActions(application);
             addViewIconActions(application);
-            addViewIconSizeActions(application);
             addViewAppearanceActions(application);
         }
 
@@ -129,7 +126,7 @@ public class SwingApplications {
                 path = "/mainWindow/menuBar/View/ToolWindows";
             }
             AppTools tools = application.tools();
-            tools.addFolder(path);
+            tools.addFolder(path).tool().smallIcon().setId("tool-windows");
             String finalPath = path;
             runAfterStart(application, () -> {
                 AppWorkspace ws = application.mainWindow().get().workspace().get();
@@ -140,9 +137,14 @@ public class SwingApplications {
                     for (AppToolWindow value : values) {
                         list.add(value);
                     }
-                    list.sort((a, b) -> a.id().compareTo(b.id()));
-                    for (AppToolWindow value : list) {
-                        tools.addCheck(value.active(), finalPath + "/" + value.id());
+                    if (!list.isEmpty()) {
+                        list.sort((a, b) -> a.id().compareTo(b.id()));
+                        for (AppToolWindow value : list) {
+                            tools.addCheck()
+                                    .bind(value.active())
+                                    .path(finalPath + "/" + value.id())
+                                    .tool();
+                        }
                     }
                 }
             });
@@ -165,7 +167,7 @@ public class SwingApplications {
             tools.addFolder(path);
             for (int i = 0; i < sizes.length; i++) {
                 float size = sizes[i];
-                tools.addAction(new FontRelativeSizeAction(application, size), path + "/*" + size);
+                tools.addAction().bind(new FontRelativeSizeAction(application, size)).path(path + "/*" + size).tool();
             }
 //            tools.addCustomTool(path + "/**", (c)->new JSlider(0, 6));
         }
@@ -181,26 +183,7 @@ public class SwingApplications {
             tools.addFolder(path);
             for (int i = 0; i < sizes.length; i++) {
                 float size = sizes[i];
-                tools.addAction(new FontSizeAbsoluteAction(application, size), path + "/" + size);
-            }
-        }
-
-        public static void addViewIconSizeActions(Application application) {
-            addIconSizeActions(application, null);
-        }
-
-        public static void addIconSizeActions(Application application, String path, int... sizes) {
-            if (path == null) {
-                path = "/mainWindow/menuBar/View/Icons/Sizes";
-            }
-            if (sizes == null || sizes.length == 0) {
-                sizes = new int[]{8, 16, 24, 32, 48};
-            }
-            AppTools tools = application.tools();
-            tools.addFolder(path);
-            for (int i = 0; i < sizes.length; i++) {
-                int size = sizes[i];
-                tools.addAction(new IconSizeAction(application, size), path + "/" + size);
+                tools.addAction().bind(new FontSizeAbsoluteAction(application, size)).path(path + "/" + size).tool();
             }
         }
 
@@ -208,14 +191,36 @@ public class SwingApplications {
             addIconActions(application, null);
         }
 
-        public static void addIconActions(Application application, String path) {
-            if (path == null) {
-                path = "/mainWindow/menuBar/View/Icons/Packs";
-            }
+        public static void addIconActions(Application application, String path, int... sizes) {
             AppTools tools = application.tools();
-            tools.addFolder(path);
+            if (path == null) {
+                path = "/mainWindow/menuBar/View/Icons";
+            }
+            tools.addFolder(path).tool().smallIcon().setId("icons");
+            tools.addFolder(path + "/Packs");
             for (IconSet iconset : application.iconSets().values()) {
-                tools.addAction(new IconAction(application, iconset.getId()), path + "/" + iconset.getId());
+                tools.addRadio()
+                        .id("IconSet." + iconset.getId())
+                        .group(path + "/Packs")
+                        .bind(application.iconSets().id())
+                        .value(iconset.getId())
+                        .path(path + "/Packs/" + iconset.getId())
+                        .tool();
+            }
+            if (sizes == null || sizes.length == 0) {
+                sizes = new int[]{8, 16, 24, 32, 48};
+            }
+            tools.addFolder(path + "/Sizes");
+            for (int i = 0; i < sizes.length; i++) {
+                int size = sizes[i];
+                tools.addRadio()
+                        .group(path + "/Sizes")
+                        .path(path + "/Sizes/" + size)
+                        .value(size)
+                        .bind(() -> application.iconSets().config().get() == null ? 16 : application.iconSets().config().get().getWidth(),
+                                (v) -> application.iconSets().config().set(
+                                        application.iconSets().config().get().setSize(size)
+                                )).tool();
             }
         }
 
@@ -228,7 +233,7 @@ public class SwingApplications {
                 path = "/mainWindow/menuBar/View/Plaf";
             }
             AppTools tools = application.tools();
-            tools.addFolder(path);
+            tools.addFolder(path).tool().smallIcon().setId("themes");
             for (UIPlaf item : UIPlafManager.INSTANCE.items()) {
                 String q = "Other";
                 if (item.isSystem()) {
@@ -242,13 +247,16 @@ public class SwingApplications {
                 }
                 String id = item.getId();
                 String pname = id.replace("/", "_");
-                String nname = item.getName();
                 if (item.isContrast()) {
                     q = "Contrast";
-                    tools.addAction(new PlafAction(application, id, nname, null, nname), path + "/" + q + "/" + pname);
-                } else {
-                    tools.addAction(new PlafAction(application, id, nname, null, nname), path + "/" + q + "/" + pname);
                 }
+                tools.addRadio()
+                        .id("Plaf." + id)
+                        .group(path)
+                        .bind(((SwingApplication) application).plaf())
+                        .value(id)
+                        .path(path + "/" + q + "/" + pname)
+                        .tool();
             }
         }
 
@@ -261,10 +269,22 @@ public class SwingApplications {
                 path = "/mainWindow/menuBar/View/Lang";
             }
             AppTools tools = application.tools();
-            tools.addFolder(path);
-            tools.addRadio(path, application.i18n().locale(), Locale.getDefault(), path + "/system-locale");
+            tools.addFolder(path).tool().smallIcon().setId("locales");
+            tools.addRadio()
+                    .id("Locale.System")
+                    .group(path)
+                    .bind(application.i18n().locale())
+                    .value(Locale.getDefault())
+                    .path(path + "/system-locale")
+                    .tool();
             for (Locale locale : locales) {
-                tools.addRadio(path, application.i18n().locale(), locale, path + "/" + locale + "-locale");
+                tools.addRadio()
+                        .id("Locale." + locale.toString())
+                        .group(path)
+                        .bind(application.i18n().locale())
+                        .value(locale)
+                        .path(path + "/" + locale + "-locale")
+                        .tool();
             }
         }
 
@@ -277,9 +297,10 @@ public class SwingApplications {
             if (path == null) {
                 path = "/mainWindow/menuBar/View/Appearance";
             }
+            tools.addFolder(path).tool().smallIcon().setId("appareance");
             String finalPath = path;
             runAfterStart(application, () -> {
-                AppToolAction a = tools.addAction(
+                AppToolAction a = tools.addAction().bind(
                         new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -299,20 +320,39 @@ public class SwingApplications {
                             }
                         }
                     }
-                },
-                        finalPath + "/Switch"
-                /*,
+                }).path(
+                                finalPath + "/Switch"
+                        /*,
                         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.ALT_MASK + KeyEvent.SHIFT_MASK),
                         JComponent.WHEN_IN_FOCUSED_WINDOW*/
-                );
+                        ).tool();
                 a.accelerator().set("alt shift F");
 
                 tools.addSeparator(finalPath + "/Separator1");
-                tools.addRadio(finalPath, application.mainWindow().get().displayMode(), AppWindowDisplayMode.NORMAL, finalPath + "/Normal");
-                tools.addRadio(finalPath, application.mainWindow().get().displayMode(), AppWindowDisplayMode.FULLSCREEN, finalPath + "/FullScreen");
+                tools.addRadio()
+                        .id("AppWindowDisplayMode.normal")
+                        .group(finalPath)
+                        .bind(application.mainWindow().get().displayMode())
+                        .value(AppWindowDisplayMode.NORMAL)
+                        .path(finalPath + "/Normal")
+                        .tool();
+                tools.addRadio()
+                        .id("AppWindowDisplayMode.FullScreen")
+                        .group(finalPath)
+                        .bind(application.mainWindow().get().displayMode())
+                        .value(AppWindowDisplayMode.FULLSCREEN)
+                        .path(finalPath + "/FullScreen")
+                        .tool();
+
                 tools.addSeparator(finalPath + "/Separator2");
-                tools.addCheck(application.mainWindow().get().toolBar().get().visible(), finalPath + "/Toolbar");
-                tools.addCheck(application.mainWindow().get().statusBar().get().visible(), finalPath + "/StatusBar");
+                tools.addCheck()
+                        .bind(application.mainWindow().get().toolBar().get().visible())
+                        .path(finalPath + "/Toolbar")
+                        .tool();
+                tools.addCheck()
+                        .bind(application.mainWindow().get().statusBar().get().visible())
+                        .path(finalPath + "/StatusBar")
+                        .tool();
             });
         }
 
@@ -349,6 +389,37 @@ public class SwingApplications {
 
         public static ComponentAppWorkspace Component(JComponent component) {
             return new ComponentAppWorkspace(component == null ? new JPanel() : component);
+        }
+
+    }
+
+    public static class Components {
+
+        private Components() {
+        }
+
+        public static AppMenuBar createMenuBar(Application app) {
+            return createMenuBar(app, "/");
+        }
+
+        public static AppPopupMenu createPopupMenu(Application app) {
+            return createPopupMenu(app, "/");
+        }
+
+        public static AppToolBar createToolBar(Application app) {
+            return createToolBar(app, "/");
+        }
+
+        public static AppMenuBar createMenuBar(Application app, String rootPath) {
+            return new JAppMenuBar(rootPath, app);
+        }
+
+        public static AppPopupMenu createPopupMenu(Application app, String rootPath) {
+            return new JAppPopupMenu(rootPath, app);
+        }
+
+        public static AppToolBar createToolBar(Application app, String rootPath) {
+            return new JAppToolBarGroup(rootPath, app);
         }
 
     }

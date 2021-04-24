@@ -15,7 +15,7 @@ public class JAppToolBarGroup extends AppToolContainerImpl implements AppToolBar
 
     public JAppToolBarGroup(String rootPath, Application application) {
         super(rootPath, new JToolbarGroup(), application);
-        SwingApplicationsHelper.bindVisible((JComponent) rootGuiElement, visible);
+        SwingApplicationsUtils.bindVisible((JComponent) rootGuiElement, visible);
     }
 
     @Override

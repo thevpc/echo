@@ -1,6 +1,5 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.iconset.IconSet;
 import net.thevpc.common.i18n.I18n;
 import net.thevpc.common.props.*;
 import net.thevpc.common.iconset.IconSets;
