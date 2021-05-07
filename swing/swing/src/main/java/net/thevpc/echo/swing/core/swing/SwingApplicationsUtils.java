@@ -4,11 +4,9 @@ import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.echo.AppToolAction;
 import net.thevpc.echo.AppToolSeparator;
-import net.thevpc.echo.AppToolRadioBox;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.AppToolComponent;
 import net.thevpc.echo.AppTool;
-import net.thevpc.echo.AppToolCheckBox;
 import net.thevpc.echo.AppToolFolder;
 import java.awt.Component;
 
@@ -29,6 +27,7 @@ import java.util.logging.Logger;
 import net.thevpc.common.i18n.I18nString;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.common.props.ObservableValue;
+import net.thevpc.echo.AppToolToggle;
 
 public class SwingApplicationsUtils {
 
@@ -102,6 +101,10 @@ public class SwingApplicationsUtils {
             button.setText(tool.title().get());
         } else {
             button.setText(null);
+            tool.title().listeners().add((PropertyEvent event) -> {
+                button.setToolTipText((String) event.getNewValue());
+            });
+            button.setToolTipText(tool.title().get());
         }
         tool.enabled().listeners().add((PropertyEvent event) -> {
             button.setEnabled((Boolean) event.getNewValue());
@@ -137,29 +140,25 @@ public class SwingApplicationsUtils {
         }
 
         ObservableValue<String> group = null;
-        if (tool instanceof AppToolCheckBox) {
-            AppToolCheckBox cc = (AppToolCheckBox) tool;
-            group = cc.group();
-            button.setSelected(cc.selected().get());
-        }
-        if (tool instanceof AppToolRadioBox) {
-            AppToolRadioBox cc = (AppToolRadioBox) tool;
+        if (tool instanceof AppToolToggle) {
+            AppToolToggle cc = (AppToolToggle) tool;
             group = cc.group();
             button.setSelected(cc.selected().get());
         }
         if (group != null) {
             String s = group.get();
+            SwingApplication swingApp = (SwingApplication) application;
             if (s != null) {
-                ((SwingApplication) application).getButtonGroup(s).add(button);
+                swingApp.getButtonGroup(s).add(button);
             }
             group.listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     if (event.getOldValue() != null) {
-                        ((SwingApplication) application).getButtonGroup((String) event.getOldValue()).remove(button);
+                        swingApp.getButtonGroup((String) event.getOldValue()).remove(button);
                     }
                     if (event.getNewValue() != null) {
-                        ((SwingApplication) application).getButtonGroup((String) event.getNewValue()).add(button);
+                        swingApp.getButtonGroup((String) event.getNewValue()).add(button);
                     }
                 }
             });
@@ -178,30 +177,15 @@ public class SwingApplicationsUtils {
             });
         }
 
-        if (tool instanceof AppToolCheckBox) {
+        if (tool instanceof AppToolToggle) {
             button.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    ((AppToolCheckBox) tool).selected().set(e.getStateChange() == ItemEvent.SELECTED);
+                    ((AppToolToggle) tool).selected().set(e.getStateChange() == ItemEvent.SELECTED);
                 }
             });
-            button.setSelected(((AppToolCheckBox) tool).selected().get());
-            ((AppToolCheckBox) tool).selected().listeners().add(new PropertyListener() {
-                @Override
-                public void propertyUpdated(PropertyEvent event) {
-                    button.setSelected(event.getNewValue());
-                }
-            });
-        }
-        if (tool instanceof AppToolRadioBox) {
-            button.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    ((AppToolRadioBox) tool).selected().set(e.getStateChange() == ItemEvent.SELECTED);
-                }
-            });
-            button.setSelected(((AppToolRadioBox) tool).selected().get());
-            ((AppToolRadioBox) tool).selected().listeners().add(new PropertyListener() {
+            button.setSelected(((AppToolToggle) tool).selected().get());
+            ((AppToolToggle) tool).selected().listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     button.setSelected(event.getNewValue());
@@ -218,20 +202,8 @@ public class SwingApplicationsUtils {
             prepareAbstractButton(m, b, application, true);
             return m;
         }
-        if (t instanceof AppToolRadioBox) {
-            AppToolRadioBox a = (AppToolRadioBox) t;
-            JRadioButtonMenuItem m = new JRadioButtonMenuItem();
-            m.addItemListener(new ItemListener() {
-                @Override
-                public void itemStateChanged(ItemEvent e) {
-                    a.selected().set(e.getStateChange() == ItemEvent.SELECTED);
-                }
-            });
-            prepareAbstractButton(m, b, application, true);
-            return m;
-        }
-        if (t instanceof AppToolCheckBox) {
-            AppToolCheckBox a = (AppToolCheckBox) t;
+        if (t instanceof AppToolToggle) {
+            AppToolToggle a = (AppToolToggle) t;
             JCheckBoxMenuItem m = new JCheckBoxMenuItem();
             m.addItemListener(new ItemListener() {
                 @Override

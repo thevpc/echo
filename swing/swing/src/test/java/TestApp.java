@@ -29,11 +29,11 @@ public class TestApp {
 //        a.addToolAction(("/toolBar/Exit"))
 //                .tool().getActionListener().set(e -> JOptionPane.showMessageDialog(null, "Exit"));
         mwt.addSeparator(("/menuBar/File/Sep"));
-        mwt.addCheck().group("group1").path("/menuBar/File/Check").tool();
-        mwt.addRadio().path("/menuBar/File/Radio").tool().group().set("group1");
-        mwt.addRadio().path("/menuBar/File/Folder/Radio").tool();
+        mwt.addToggle().group("group1").path("/menuBar/File/Check").tool();
+        mwt.addToggle().buttonType(AppToolButtonType.RADIO).path("/menuBar/File/Radio").tool().group().set("group1");
+        mwt.addToggle().buttonType(AppToolButtonType.RADIO).path("/menuBar/File/Folder/Radio").tool();
         mwt.addSeparator("/statusBar/Default/Fill").tool().width().set(Integer.MAX_VALUE);
-        mwt.addRadio().path("/statusBar/Default/Radio").tool();
+        mwt.addToggle().buttonType(AppToolButtonType.RADIO).path("/statusBar/Default/Radio").tool();
 
         dump(a.rootNode(), "");
     }

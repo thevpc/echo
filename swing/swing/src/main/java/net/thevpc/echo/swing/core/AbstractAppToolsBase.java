@@ -23,14 +23,12 @@ import javax.swing.Action;
 import javax.swing.Box;
 import net.thevpc.echo.AppComponentRenderer;
 import net.thevpc.echo.AppToolActionBuilder;
-import net.thevpc.echo.AppToolCheckBoxBuilder;
-import net.thevpc.echo.AppToolRadioBoxBuilder;
 import net.thevpc.echo.AppToolsConfig;
 import net.thevpc.echo.CustomAppTool;
 
-import net.thevpc.echo.swing.core.tools.AppToolActionImpl;
 import net.thevpc.echo.swing.core.tools.AppToolFolderImpl;
 import net.thevpc.echo.swing.core.tools.AppToolSeparatorImpl;
+import net.thevpc.echo.AppToolToggleBuilder;
 
 public abstract class AbstractAppToolsBase implements AppTools {
 
@@ -120,12 +118,8 @@ public abstract class AbstractAppToolsBase implements AppTools {
 
     
 
-    public <T> AppToolRadioBoxBuilder addRadio() {
-        return new DefaultAppToolRadioBoxBuilder(this);
-    }
-    
-    public <T> AppToolCheckBoxBuilder addCheck() {
-        return new DefaultAppToolCheckBoxBuilder(this);
+    public AppToolToggleBuilder addToggle() {
+        return new DefaultAppToolToggleBuilder(this);
     }
 
     @Override

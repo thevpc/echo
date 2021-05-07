@@ -20,9 +20,8 @@ import java.util.logging.Level;
 import net.thevpc.common.iconset.DefaultIconsets;
 import net.thevpc.echo.swing.core.dialog.SwingAppDialog;
 import net.thevpc.echo.swing.core.swing.AppToolActionComponent;
-import net.thevpc.echo.swing.core.swing.AppToolCheckBoxComponent;
+import net.thevpc.echo.swing.core.swing.AppToolToggleComponent;
 import net.thevpc.echo.swing.core.swing.AppToolFolderComponent;
-import net.thevpc.echo.swing.core.swing.AppToolRadioBoxComponent;
 import net.thevpc.echo.swing.core.swing.AppToolSeparatorComponent;
 import net.thevpc.common.iconset.IconSets;
 import net.thevpc.swing.plaf.UIPlafManager;
@@ -65,10 +64,7 @@ public class SwingApplication implements Application {
                 AppToolSeparator.class, new AppToolSeparatorComponent());
         componentRendererFactory.setToolRenderer(
                 AppToolFolder.class, new AppToolFolderComponent());
-        componentRendererFactory.setToolRenderer(
-                AppToolRadioBox.class, new AppToolRadioBoxComponent());
-        componentRendererFactory.setToolRenderer(
-                AppToolCheckBox.class, new AppToolCheckBoxComponent());
+        componentRendererFactory.setToolRenderer(AppToolToggle.class, new AppToolToggleComponent());
         componentRendererFactory.setToolRenderer(
                 AppToolAction.class, new AppToolActionComponent());
 

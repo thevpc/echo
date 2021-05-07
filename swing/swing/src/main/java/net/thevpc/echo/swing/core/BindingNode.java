@@ -73,8 +73,13 @@ public class BindingNode implements AppNode {
             goodNode = get(parentPath);
         }
         int u = goodNode.getItemCount();
+        int z = goodNode.children.size();
+        u=z;//
         int index = -1;
         for (int i = 0; i < u; i++) {
+//            if(i>=z){
+//                System.out.print("");
+//            }
             BindingNode child = goodNode.children.get(i);
             int o = child.binding.order();
             if (o <= b.order()) {

@@ -6,7 +6,7 @@ import javax.swing.*;
 import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 
-public class AppToolActionComponent implements AppComponentRenderer {
+public class AppToolToggleComponent implements AppComponentRenderer {
 
     @Override
     public Object createGuiComponent(AppComponentRendererContext context) {
@@ -15,16 +15,33 @@ public class AppToolActionComponent implements AppComponentRenderer {
         Application application=context.getApplication();
         if (appComponent instanceof AppToolComponent) {
             AppToolComponent b = (AppToolComponent) appComponent;
-            AppToolAction tool = (AppToolAction) b.tool();
+            AppToolToggle tool = (AppToolToggle) b.tool();
             if (parentGuiElement instanceof JToolBar
                     || parentGuiElement instanceof JToolbarGroup
                     || parentGuiElement instanceof JStatusBarGroup) {
-                JButton m = new JButton();
+                AbstractButton m=null;
+                switch(tool.buttonType()){
+                    case BUTTON:{
+                        m=new JToggleButton();
+                        break;
+                    }
+                    case CHECK:{
+                        m=new JCheckBox();
+                        break;
+                    }
+                    case RADIO:{
+                        m=new JRadioButton();
+                        break;
+                    }
+                    default:{
+                        throw new IllegalArgumentException("unsupported button type "+tool.buttonType());
+                    }
+                }
                 SwingApplicationsUtils.prepareAbstractButton(m, b, application, false);
                 return m;
             }
             if (parentGuiElement instanceof JMenuBar) {
-                JButton m = new JButton();
+                JCheckBox m = new JCheckBox();
                 SwingApplicationsUtils.prepareAbstractButton(m, b, application, true);
                 return m;
             }
@@ -33,7 +50,24 @@ public class AppToolActionComponent implements AppComponentRenderer {
                     || parentGuiElement instanceof JDropDownButton
                     || parentGuiElement instanceof JDropDownLabel
                     ) {
-                JMenuItem m = new JMenuItem();
+                AbstractButton m=null;
+                switch(tool.buttonType()){
+                    case BUTTON:{
+                        m=new JToggleButton();
+                        break;
+                    }
+                    case CHECK:{
+                        m=new JCheckBoxMenuItem();
+                        break;
+                    }
+                    case RADIO:{
+                        m=new JRadioButtonMenuItem();
+                        break;
+                    }
+                    default:{
+                        throw new IllegalArgumentException("unsupported button type "+tool.buttonType());
+                    }
+                }
                 SwingApplicationsUtils.prepareAbstractButton(m, b, application, true);
                 return m;
             }

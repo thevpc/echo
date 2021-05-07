@@ -1,12 +1,13 @@
 package net.thevpc.echo.swing.core.swing;
 
 import net.thevpc.echo.*;
-import net.thevpc.echo.*;
 import net.thevpc.echo.swing.core.BindingNode;
 import net.thevpc.echo.swing.core.GuiComponentNavigator;
 
 import javax.swing.*;
 import net.thevpc.common.props.WritableList;
+import net.thevpc.common.swing.button.JDropDownButton;
+import net.thevpc.common.swing.label.JDropDownLabel;
 
 public class BindingNodeFactory {
 
@@ -16,6 +17,8 @@ public class BindingNodeFactory {
     private GuiComponentNavigator<JToolbarGroup> _JToolbarGroup = new JToolbarGroupGuiComponentNavigator();
     private GuiComponentNavigator<JStatusBarGroup> _JStatusBarGroup = new JStatusBarGroupGuiComponentNavigator();
     private GuiComponentNavigator<JMenu> _JMenu = new JMenuGuiComponentNavigator();
+    private GuiComponentNavigator<JDropDownButton> _JDropDownButton = new JDropDownButtonGuiComponentNavigator();
+    private GuiComponentNavigator<JDropDownLabel> _JDropDownLabel = new JDropDownLabelGuiComponentNavigator();
     private GuiComponentNavigator<JComponent> _Fallback = new JComponentGuiComponentNavigator();
 
     public BindingNode createBindingNode(BindingNode parent, Object guiElement, AppToolComponent binding, AppComponent appComponent, Application application, WritableList<AppComponent> components,AppTools tools) {
@@ -24,6 +27,12 @@ public class BindingNodeFactory {
     }
 
     private GuiComponentNavigator getNavigator(Object guiElement) {
+        if (guiElement instanceof JDropDownButton) {
+            return _JDropDownButton;
+        }
+        if (guiElement instanceof JDropDownLabel) {
+            return _JDropDownLabel;
+        }
         if (guiElement instanceof JMenu) {
             return _JMenu;
         }
@@ -57,7 +66,7 @@ public class BindingNodeFactory {
                 return guiComponent;
             }
         }
-        AppComponentRenderer renderer = context.getApplication().componentRendererFactory().getBuilder(context.getAppComponent());
+        AppComponentRenderer renderer = context.getApplication().componentRendererFactory().getRenderer(context.getAppComponent());
         guiComponent = renderer.createGuiComponent(context);
         if (guiComponent != null) {
             return guiComponent;

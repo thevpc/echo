@@ -76,24 +76,20 @@ class DefaultAppToolActionBuilder implements AppToolActionBuilder {
         components = new ArrayList<>();
         String path = paths.get(0);
         AppToolComponent<AppToolAction> c = null;
-        {
-            ItemPath ipath = ItemPath.of(path);
-            String _id = id;
-            if (_id == null) {
-                _id = ipath.isEmpty() ? "unknown" : ipath.name();
-            }
-            path = ipath.toString();
-            AppToolAction action = new AppToolActionImpl(_id, null, tools.application, tools);
-            action.title().setId(_id);
-            action.smallIcon().setId("$" + _id + ".icon"); //the dollar meens the the icon key is resolved from i18n
-            c = AppToolComponent.of(action, path);
-            tools.addTool(c);
-            components.add(c);
+        ItemPath ipath = ItemPath.of(path);
+        String _id = id;
+        if (_id == null) {
+            _id = ipath.isEmpty() ? "Action.Unknown" : "Action."+ipath.name();
         }
+        path = ipath.toString();
+        AppToolAction action = new AppToolActionImpl(_id, null, tools.application, tools);
+        action.title().setId(_id);
+        action.smallIcon().setId("$" + _id + ".icon"); //the dollar means the the icon key is resolved from i18n
+        c = AppToolComponent.of(action, path);
+        tools.addTool(c);
+        components.add(c);
+
         AppToolAction tool = c.tool();
-        path = ItemPath.of(path).toString();
-        tool.title().setId(path);
-        tool.smallIcon().setId("$" + path + ".icon"); //the dollar meens the the icon key is resolved from i18n
         tool.action().set(al == null ? new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {

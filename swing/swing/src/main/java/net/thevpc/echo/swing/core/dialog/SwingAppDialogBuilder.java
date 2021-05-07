@@ -28,6 +28,7 @@ public class SwingAppDialogBuilder implements AppDialogBuilder {
 
     private Application app;
     private String titleId;
+    private List<Object> titleParameters=new ArrayList<>();
     private JComponent mainComponent;
     private List<String> buttonIds;
     private String defaultId;
@@ -53,8 +54,10 @@ public class SwingAppDialogBuilder implements AppDialogBuilder {
         return this;
     }
 
-    public SwingAppDialogBuilder setTitleId(String titleId) {
+    public SwingAppDialogBuilder setTitleId(String titleId,Object ...params) {
         this.titleId = titleId;
+        this.titleParameters.clear();
+        this.titleParameters.addAll(Arrays.asList(params));
         return this;
     }
 
@@ -184,7 +187,7 @@ public class SwingAppDialogBuilder implements AppDialogBuilder {
                 }
             };
         }
-        SwingAppDialog a = new SwingAppDialog(app, _titleId);
+        SwingAppDialog a = new SwingAppDialog(app, _titleId,titleParameters);
         if (preferredSize != null) {
             a.setPreferredSize(preferredSize);
         }

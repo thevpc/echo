@@ -1,7 +1,6 @@
 package net.thevpc.echo;
 
 import javax.swing.Action;
-import net.thevpc.common.props.WritableValue;
 import net.thevpc.common.props.ObservableList;
 
 public interface AppTools {
@@ -55,7 +54,5 @@ public interface AppTools {
 
     void refresh();
 
-    <T> AppToolRadioBoxBuilder addRadio();
-
-    <T> AppToolCheckBoxBuilder addCheck();
+    AppToolToggleBuilder addToggle();
 }

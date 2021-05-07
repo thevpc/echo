@@ -114,7 +114,7 @@ public class MyDoggyAppContentWindow implements AppContentWindow {
             return icon;
         }
         if (icon instanceof ImageIcon) {
-            return new ImageIcon(IconUtils.getScaledImage(((ImageIcon) icon).getImage(), 8, 8));
+            return new ImageIcon(IconUtils.getFixedSizeImage(((ImageIcon) icon).getImage(), 8, 8));
         } else {
             return resizeIcon(
                     new ImageIcon(

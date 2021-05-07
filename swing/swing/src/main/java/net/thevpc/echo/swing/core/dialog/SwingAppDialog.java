@@ -12,6 +12,7 @@ import net.thevpc.echo.AppDialogAction;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
@@ -23,10 +24,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import net.thevpc.common.swing.GridBagLayoutSupport;
-import net.thevpc.common.swing.JDialog2;
+import net.thevpc.common.swing.layout.GridBagLayoutSupport;
+import net.thevpc.common.swing.dialog.JDialog2;
 import net.thevpc.common.swing.SwingUtilities3;
+import net.thevpc.echo.AppWindow;
 import net.thevpc.echo.Application;
+import net.thevpc.echo.swing.core.swing.JFrameAppWindow;
 
 /**
  *
@@ -44,16 +47,24 @@ public class SwingAppDialog extends JDialog2 implements AppDialog {
         return new SwingAppDialogBuilder(app);
     }
 
-    public SwingAppDialog(Application app, String titleId, JComponent mainComponent, String[] buttonIds, String defaultId, AppDialogAction cons) {
-        this(app, titleId);
+    public SwingAppDialog(Application app, String titleId, JComponent mainComponent, String[] buttonIds, String defaultId, AppDialogAction cons, Object... params) {
+        this(app, titleId, params);
         build(mainComponent, buttonIds, defaultId, cons);
     }
 
-    public SwingAppDialog(Application app, String titleId) {
+    public SwingAppDialog(Application app, String titleId, Object... params) {
         super((JFrame) app.mainWindow().get().component(),
-                app.i18n().getString(titleId), true
+                buildMessage(app, titleId, params), true
         );
         this.app = app;
+    }
+
+    private static String buildMessage(Application app1, String titleId, Object... params) {
+        String m = app1.i18n().getString(titleId);
+        if (params.length > 0) {
+            m = MessageFormat.format(m, params);
+        }
+        return m;
     }
 
     @Override
@@ -81,6 +92,10 @@ public class SwingAppDialog extends JDialog2 implements AppDialog {
 
     public String showDialog() {
         this.selectedButton = null;
+        AppWindow f = app.mainWindow().get();
+        if (f instanceof JFrameAppWindow) {
+            setLocationRelativeTo(((JFrameAppWindow) f).getFrame());
+        }
         setVisible(true);
         return selectedButton;
     }

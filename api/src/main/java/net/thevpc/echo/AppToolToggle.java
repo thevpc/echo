@@ -2,8 +2,10 @@ package net.thevpc.echo;
 
 import net.thevpc.common.props.WritableValue;
 
-public interface AppToolRadioBox extends AppTool {
+public interface AppToolToggle extends AppTool{
     String id();
+    
+    AppToolButtonType buttonType();
 
     WritableValue<String> group();
 

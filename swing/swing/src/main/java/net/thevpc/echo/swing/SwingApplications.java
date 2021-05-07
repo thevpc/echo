@@ -140,7 +140,7 @@ public class SwingApplications {
                     if (!list.isEmpty()) {
                         list.sort((a, b) -> a.id().compareTo(b.id()));
                         for (AppToolWindow value : list) {
-                            tools.addCheck()
+                            tools.addToggle()
                                     .bind(value.active())
                                     .path(finalPath + "/" + value.id())
                                     .tool();
@@ -199,11 +199,10 @@ public class SwingApplications {
             tools.addFolder(path).tool().smallIcon().setId("icons");
             tools.addFolder(path + "/Packs");
             for (IconSet iconset : application.iconSets().values()) {
-                tools.addRadio()
+                tools.<String>addToggle().buttonType(AppToolButtonType.RADIO)
                         .id("IconSet." + iconset.getId())
                         .group(path + "/Packs")
-                        .bind(application.iconSets().id())
-                        .value(iconset.getId())
+                        .bind(application.iconSets().id(), iconset.getId())
                         .path(path + "/Packs/" + iconset.getId())
                         .tool();
             }
@@ -213,14 +212,25 @@ public class SwingApplications {
             tools.addFolder(path + "/Sizes");
             for (int i = 0; i < sizes.length; i++) {
                 int size = sizes[i];
-                tools.addRadio()
+                tools.addToggle().buttonType(AppToolButtonType.RADIO)
                         .group(path + "/Sizes")
                         .path(path + "/Sizes/" + size)
-                        .value(size)
-                        .bind(() -> application.iconSets().config().get() == null ? 16 : application.iconSets().config().get().getWidth(),
-                                (v) -> application.iconSets().config().set(
-                                        application.iconSets().config().get().setSize(size)
-                                )).tool();
+                        .bind(new AppToolToggleModel() {
+                            @Override
+                            public boolean isSelected() {
+                                return size == (application.iconSets().config().get() == null ? 16 : application.iconSets().config().get().getWidth());
+                            }
+
+                            @Override
+                            public void setSelected(boolean b) {
+                                if (b) {
+                                    application.iconSets().config().set(
+                                            application.iconSets().config().get().setSize(size)
+                                    );
+                                }
+                            }
+                        })
+;
             }
         }
 
@@ -250,13 +260,13 @@ public class SwingApplications {
                 if (item.isContrast()) {
                     q = "Contrast";
                 }
-                tools.addRadio()
+                AppToolToggle tool = tools.<String>addToggle().buttonType(AppToolButtonType.RADIO)
                         .id("Plaf." + id)
                         .group(path)
-                        .bind(((SwingApplication) application).plaf())
-                        .value(id)
+                        .bind(((SwingApplication) application).plaf(), id)
                         .path(path + "/" + q + "/" + pname)
                         .tool();
+                tool.smallIcon().setId(null);//remove icon binding...
             }
         }
 
@@ -270,19 +280,17 @@ public class SwingApplications {
             }
             AppTools tools = application.tools();
             tools.addFolder(path).tool().smallIcon().setId("locales");
-            tools.addRadio()
+            tools.addToggle().buttonType(AppToolButtonType.RADIO)
                     .id("Locale.System")
                     .group(path)
-                    .bind(application.i18n().locale())
-                    .value(Locale.getDefault())
+                    .bind(application.i18n().locale(), Locale.getDefault())
                     .path(path + "/system-locale")
                     .tool();
             for (Locale locale : locales) {
-                tools.addRadio()
+                tools.addToggle().buttonType(AppToolButtonType.RADIO)
                         .id("Locale." + locale.toString())
                         .group(path)
-                        .bind(application.i18n().locale())
-                        .value(locale)
+                        .bind(application.i18n().locale(), locale)
                         .path(path + "/" + locale + "-locale")
                         .tool();
             }
@@ -329,27 +337,25 @@ public class SwingApplications {
                 a.accelerator().set("alt shift F");
 
                 tools.addSeparator(finalPath + "/Separator1");
-                tools.addRadio()
-                        .id("AppWindowDisplayMode.normal")
+                tools.addToggle().buttonType(AppToolButtonType.RADIO)
+                        .id("AppWindowDisplayMode.Normal")
                         .group(finalPath)
-                        .bind(application.mainWindow().get().displayMode())
-                        .value(AppWindowDisplayMode.NORMAL)
+                        .bind(application.mainWindow().get().displayMode(), AppWindowDisplayMode.NORMAL)
                         .path(finalPath + "/Normal")
                         .tool();
-                tools.addRadio()
+                tools.<AppWindowDisplayMode>addToggle().buttonType(AppToolButtonType.RADIO)
                         .id("AppWindowDisplayMode.FullScreen")
                         .group(finalPath)
-                        .bind(application.mainWindow().get().displayMode())
-                        .value(AppWindowDisplayMode.FULLSCREEN)
+                        .bind(application.mainWindow().get().displayMode(), AppWindowDisplayMode.FULLSCREEN)
                         .path(finalPath + "/FullScreen")
                         .tool();
 
                 tools.addSeparator(finalPath + "/Separator2");
-                tools.addCheck()
+                tools.addToggle()
                         .bind(application.mainWindow().get().toolBar().get().visible())
                         .path(finalPath + "/Toolbar")
                         .tool();
-                tools.addCheck()
+                tools.addToggle()
                         .bind(application.mainWindow().get().statusBar().get().visible())
                         .path(finalPath + "/StatusBar")
                         .tool();

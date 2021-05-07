@@ -20,7 +20,7 @@ public interface AppDialogBuilder {
 
     public AppDialogBuilder setPreferredSize(int width, int heigth);
 
-    public AppDialogBuilder setTitleId(String titleId);
+    public AppDialogBuilder setTitleId(String titleId,Object ...params);
 
     public AppDialogBuilder setInputTextFieldContent(String headerId, String initialValue);
 

@@ -21,7 +21,7 @@ public class DefaultAppComponentRendererFactory implements AppComponentRendererF
     }
 
     @Override
-    public AppComponentRenderer getBuilder(AppComponent a) {
+    public AppComponentRenderer getRenderer(AppComponent a) {
         if(a instanceof AppToolComponent){
             AppTool tool = ((AppToolComponent) a).tool();
             return trenderers.get(tool.getClass());
