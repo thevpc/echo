@@ -5,9 +5,11 @@
  */
 package net.thevpc.echo.props;
 
-import javax.swing.Icon;
 import net.thevpc.common.props.Props.PropsBuilder;
 import net.thevpc.echo.Application;
+import net.thevpc.echo.api.AppImage;
+import net.thevpc.echo.api.Str;
+import net.thevpc.echo.api.WritableStr;
 
 /**
  *
@@ -28,30 +30,23 @@ public class AppProps {
             this.app = app;
         }
 
-        public AppWritableString strOf(String value) {
-            AppWritableString p = new AppWritableString(name, app);
+        public WritableStr strOf(Str value) {
+            WritableStr p = new WritableStr(name);
             p.set(value);
             prepare(p);
             return p;
         }
 
-        public AppWritableString strIdOf(String value) {
-            AppWritableString p = new AppWritableString(name, app);
-            p.setId(value);
-            prepare(p);
-            return p;
-        }
-
-        public AppWritableIcon iconOf(Icon value) {
-            AppWritableIcon p = new AppWritableIcon(name, app);
+        public WritableImage iconOf(AppImage value) {
+            WritableImage p = new WritableImage(name, app);
             p.set(value);
             prepare(p);
             return p;
         }
 
-        public AppWritableIcon iconIdOf(String value) {
-            AppWritableIcon p = new AppWritableIcon(name, app);
-            p.setId(value);
+        public WritableImage iconIdOf(Str value) {
+            WritableImage p = new WritableImage(name, app);
+            p.set(value);
             prepare(p);
             return p;
         }

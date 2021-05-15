@@ -3,11 +3,11 @@ package net.thevpc.echo;
 import java.util.HashSet;
 import java.util.Set;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.impl.DelegateProperty;
+import net.thevpc.common.props.impl.DelegateWritableProperty;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.common.props.ObservableValue;
 
-public class AppWindowStateSetValue extends DelegateProperty<AppWindowStateSet> {
+public class AppWindowStateSetValue extends DelegateWritableProperty {
 
     public AppWindowStateSetValue(String name) {
         super(Props.of(name).valueOf(AppWindowStateSet.class, new AppWindowStateSet()));
@@ -20,6 +20,10 @@ public class AppWindowStateSetValue extends DelegateProperty<AppWindowStateSet> 
 
     public void add(AppWindowState a) {
         getBase().set(getBase().get().add(a));
+    }
+
+    public void remove(AppWindowState a) {
+        getBase().set(getBase().get().remove(a));
     }
 
     public boolean is(AppWindowState a) {

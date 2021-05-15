@@ -2,13 +2,21 @@ package net.thevpc.echo;
 
 import net.thevpc.common.i18n.I18n;
 import net.thevpc.common.props.*;
-import net.thevpc.common.iconset.IconSets;
+import net.thevpc.echo.api.WritableStr;
+import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.components.AppContainer;
+import net.thevpc.echo.api.components.AppFrame;
+import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.iconset.IconSets;
+import net.thevpc.echo.impl.components.AppContainerChildren;
 
 public interface Application extends PropertyContainer {
 
-    ObservableValue<String> name();
+    WritableStr name();
 
     ObservableValue<AppState> state();
+
+    ApplicationStartupConfig startupConfig();
 
     Application start();
 
@@ -16,13 +24,10 @@ public interface Application extends PropertyContainer {
 
     Application shutdown();
 
-    AppTools tools();
+    WritableValue<AppFrame> mainFrame();
 
-    WritableValue<AppWindow> mainWindow();
-
-    AppNode rootNode();
-
-    ApplicationBuilder builder();
+//    AppNode rootNode();
+    AppContainer root();
 
     AppHistory history();
 
@@ -36,17 +41,22 @@ public interface Application extends PropertyContainer {
 
     WritableValue<AppPropertiesTree> activeProperties();
 
-    void runFront(Runnable run);
+    void runUI(Runnable run);
 
-    void runBack(Runnable run);
+    void runWorker(Runnable run);
 
     AppErrors errors();
 
-    WritableValue<String> currentWorkingDirectory();
-
-    AppComponentRendererFactory componentRendererFactory();
+    WritableString currentWorkingDirectory();
 
     public void waitFor();
-    
-    public AppDialogBuilder newDialog();
+
+    ApplicationToolkit toolkit();
+
+    WritableString plaf();
+
+    AppContainer<AppComponent, AppTool> container();
+
+    AppContainerChildren<AppComponent, AppTool> components();
+
 }

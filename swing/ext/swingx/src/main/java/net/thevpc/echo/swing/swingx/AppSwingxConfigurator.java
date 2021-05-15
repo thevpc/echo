@@ -18,6 +18,7 @@ import net.thevpc.common.props.Props;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.error.ErrorInfo;
 import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.swing.SwingApplicationToolkit;
 
 /**
  *
@@ -36,14 +37,17 @@ public class AppSwingxConfigurator {
     }
 
     public void configure(Application app) {
+        if (!(app.toolkit() instanceof SwingApplicationToolkit)) {
+            return;
+        }
 
         app.shutdownVetos().add(new AppShutdownVeto() {
             @Override
             public void vetoableChange(AppEvent event) {
                 int a = JOptionPane.showConfirmDialog(
-                        (Component) app.mainWindow().get().component(), "Are you sure you want to exit "
-                                +app.mainWindow().get().title().get()
-                                +"?", "Exit?", JOptionPane.OK_CANCEL_OPTION);
+                        (Component) app.mainFrame().get().peer().toolkitComponent(), "Are you sure you want to exit "
+                        + app.mainFrame().get().tool().title().get()
+                        + "?", "Exit?", JOptionPane.OK_CANCEL_OPTION);
                 if (a == JOptionPane.OK_OPTION) {
                     Supplier<Boolean> e = confirmExit().get();
                     if (e != null) {
@@ -63,12 +67,12 @@ public class AppSwingxConfigurator {
             if (v != null) {
                 app.logs().add(v);
                 if (v instanceof ExceptionMessage) {
-                    JXErrorPane.showDialog((Component) app.mainWindow().get().component(),
+                    JXErrorPane.showDialog((Component) app.mainFrame().get().peer().toolkitComponent(),
                             new ErrorInfo(null, v.getText(), null, null, ((ExceptionMessage) v).getError(), v.getLevel(), null)
                     );
                 } else {
                     JXErrorPane.showDialog(
-                            (Component) app.mainWindow().get().component(),
+                            (Component) app.mainFrame().get().peer().toolkitComponent(),
                             new ErrorInfo(null, v.getText(), null, null, null, v.getLevel(), null)
                     );
                 }

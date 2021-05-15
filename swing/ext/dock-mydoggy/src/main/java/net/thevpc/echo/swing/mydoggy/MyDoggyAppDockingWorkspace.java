@@ -8,112 +8,156 @@ package net.thevpc.echo.swing.mydoggy;
 import javax.swing.JComponent;
 
 import net.thevpc.echo.*;
-import net.thevpc.common.props.Props;
-import org.noos.xing.mydoggy.ToolWindowAnchor;
+import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.peers.AppWindowPeer;
+import net.thevpc.echo.api.peers.AppWorkspacePeer;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
-import net.thevpc.echo.swing.core.swing.JComponentSupplier;
-import net.thevpc.common.props.WritableMap;
+import net.thevpc.common.swing.win.InternalWindowsHelper;
+import net.thevpc.echo.swing.peers.SwingPeer;
+import org.noos.xing.mydoggy.Content;
+import org.noos.xing.mydoggy.ToolWindowAnchor;
 
 /**
  *
  * @author thevpc
  */
-public class MyDoggyAppDockingWorkspace implements AppDockingWorkspace, JComponentSupplier {
+public class MyDoggyAppDockingWorkspace implements SwingPeer, AppWorkspacePeer {
 
-    private MyDoggyToolWindowManager toolWindowManager;
+    private InternalWindowsHelper desktop;
+    private MyDoggyToolWindowManager toolkitComponent;
+    private Content desktopWindow;
     private Application application;
-    private AppWindow window;
-    private WritableMap<String, AppToolWindow> toolWindows = Props.of("toolWindows").mapOf(String.class, AppToolWindow.class);
-    private WritableMap<String, AppContentWindow> contentWindows = Props.of("contentWindows").mapOf(String.class, AppContentWindow.class);
 
-    public static AppLayoutWorkspaceFactory factory() {
-        return new AppLayoutWorkspaceFactory() {
-            @Override
-            public AppWorkspace createWorkspace(AppWindow window) {
-                return new MyDoggyAppDockingWorkspace(window);
-            }
-        };
-    }
-
-    public MyDoggyAppDockingWorkspace(AppWindow window) {
-        this(new MyDoggyToolWindowManager());
-        this.window = window;
-        this.application = window.application();
-    }
-
-    public MyDoggyAppDockingWorkspace(MyDoggyToolWindowManager toolWindowManager) {
-        this.toolWindowManager = toolWindowManager;
+    public MyDoggyAppDockingWorkspace() {
     }
 
     @Override
-    public Application application() {
+    public void install(AppComponent comp) {
+        if(toolkitComponent==null){
+            this.application=comp.app();
+            toolkitComponent=new MyDoggyToolWindowManager();
+            if (desktopEnabled()) {
+                desktop = new InternalWindowsHelper();
+                desktopWindow = toolkitComponent.getContentManager()
+                        .addContent("Desktop", null, null,  this.desktop.getDesktop());
+                desktopWindow.setEnabled(true);
+                desktopWindow.getContentUI().setCloseable(false);
+                desktopWindow.getContentUI().setMaximizable(false);
+                desktopWindow.getContentUI().setMinimizable(false);
+                desktopWindow.getContentUI().setMinimizable(false);
+            }
+        }
+    }
+
+    public Application app() {
         return application;
     }
 
     @Override
-    public JComponent component() {
-        return toolWindowManager;
-    }
-
-    public MyDoggyToolWindowManager getToolWindowManager() {
-        return toolWindowManager;
+    public Object toolkitComponent() {
+        return toolkitComponent;
     }
 
     @Override
-    public WritableMap<String, AppToolWindow> toolWindows() {
-        return toolWindows;
+    public void tileDesktop(boolean vertical) {
+        desktop.tileFrames();
     }
 
     @Override
-    public WritableMap<String, AppContentWindow> contentWindows() {
-        return contentWindows;
-    }
-
-    @Override
-    public AppContentWindow getContent(String id) {
-        return contentWindows.get(id);
-    }
-
-    @Override
-    public AppToolWindow getTool(String id) {
-        return toolWindows.get(id);
-    }
-
-    @Override
-    public AppContentWindow addContent(String id, JComponent component) {
-        AppContentWindow w = contentWindows.get(id);
-        if (w != null) {
-            throw new IllegalArgumentException("already Registered");
+    public void iconDesktop(boolean iconify) {
+        if (iconify) {
+            desktop.iconifyFrames();
+        } else {
+            desktop.deiconifyFrames();
         }
-        MyDoggyAppContentWindow c = new MyDoggyAppContentWindow(this, id, component, application);
-        contentWindows.put(id, c);
-        return c;
     }
 
     @Override
-    public AppToolWindow addTool(String id, JComponent component, AppToolWindowAnchor anchor) {
+    public void closeAllDesktop() {
+        desktop.closeFrames();
+    }
+
+    @Override
+    public AppWindowPeer addWindowImpl(String id, AppComponent component, AppWindowAnchor anchor) {
         ToolWindowAnchor jdanchor = ToolWindowAnchor.LEFT;
         switch (anchor) {
             case TOP: {
                 jdanchor = ToolWindowAnchor.TOP;
-                break;
+                return new MyDoggyAppToolWindow();
             }
             case BOTTOM: {
                 jdanchor = ToolWindowAnchor.BOTTOM;
-                break;
+                return new MyDoggyAppToolWindow();
             }
             case LEFT: {
                 jdanchor = ToolWindowAnchor.LEFT;
-                break;
+                return new MyDoggyAppToolWindow();
             }
             case RIGHT: {
                 jdanchor = ToolWindowAnchor.RIGHT;
-                break;
+                return new MyDoggyAppToolWindow();
+            }
+            case CONTENT: {
+                return new MyDoggyAppContentWindow();
+            }
+            case DESKTOP: {
+                if (!desktopEnabled()) {
+                    return new MyDoggyAppContentWindow();
+                } else {
+                    return new MyDoggyAppDesktopWindow();
+                }
             }
         }
-        MyDoggyAppToolWindow t = new MyDoggyAppToolWindow(this, id, component, jdanchor, application);
-        toolWindows.put(id, t);
-        return t;
+        throw new IllegalArgumentException("unsupported");
     }
 
+    @Override
+    public void removeWindowImpl(String id, AppWindowPeer a) {
+        if(a instanceof MyDoggyAppDesktopWindow){
+
+        }else if(a instanceof MyDoggyAppToolWindow){
+
+        }else if(a instanceof MyDoggyAppContentWindow){
+
+        }
+//        JComponent j = ((MyDoggyAbstractWindow)atw);
+//        Content c = gcomponent().getContentManager().getContentByComponent(j);
+//        if (c != null) {
+//            gcomponent().getContentManager().removeContent(c);
+//            return;
+//        }
+//        ToolWindow tw = gcomponent().getToolWindow(id);
+//        if (tw != null) {
+//            gcomponent().unregisterToolWindow(id);
+//        }
+//        if (desktop != null) {
+//            JInternalFrame w = desktop.getWindow(new WindowPath(id));
+//            if (w != null) {
+//                desktop.removeWindow(w);
+//            }
+//        }
+    }
+
+    @Override
+    public JComponent jcomponent() {
+        return (JComponent) awtComponent();
+    }
+
+    public InternalWindowsHelper getDesktop() {
+        return desktop;
+    }
+
+    public MyDoggyToolWindowManager getToolkitComponent() {
+        return toolkitComponent;
+    }
+
+    @Override
+    public boolean dockingSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean desktopEnabled() {
+        return true;
+    }
 }

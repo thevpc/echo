@@ -7,7 +7,7 @@ import java.util.*;
  * @author Taha BEN SALAH (taha.bensalah@gmail.com)
  * %creationtime 13 juil. 2006 22:14:21
  */
-class _ClassMap<V> {
+public class _ClassMap<V> {
 
     private static final long serialVersionUID = 1L;
     private static Comparator<Class> CLASS_HIERARCHY_COMPARATOR = new Comparator<Class>() {

@@ -13,13 +13,12 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="echo-api" />
     <orderEntry type="module" module-name="thevpc-common-i18n" />
-    <orderEntry type="module" module-name="thevpc-common-iconset" />
-    <orderEntry type="library" name="Maven: com.kitfox.svg:svg-salamander:1.0" level="project" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-props:1.0.0" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-props" />
     <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-msg:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-swing:2.3.9" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-swing" />
     <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-plaf:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: com.kitfox.svg:svg-salamander:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.5.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.opentest4j:opentest4j:1.2.0" level="project" />

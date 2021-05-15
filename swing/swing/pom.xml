@@ -72,6 +72,12 @@
             <artifactId>thevpc-common-plaf</artifactId>
             <version>1.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.kitfox.svg</groupId>
+            <artifactId>svg-salamander</artifactId>
+            <version>1.0</version>
+        </dependency>
+        
 
         <!-- ##############################
                 THIRD PARTY COMPILE DEPENDENCIES 

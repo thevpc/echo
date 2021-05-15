@@ -1,5 +1,8 @@
-package net.thevpc.echo;
-
-public interface AppComponentRenderer {
-    Object createGuiComponent(AppComponentRendererContext context);
-}
+//package net.thevpc.echo;
+//
+//import net.thevpc.echo.api.components.AppComponent;
+//
+//public interface AppComponentRenderer {
+//
+//    AppComponent createComponent(AppComponentRendererContext context);
+//}

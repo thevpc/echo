@@ -5,99 +5,135 @@
  */
 package net.thevpc.echo.swing.mydoggy;
 
-import java.awt.Component;
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.Icon;
 import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.common.props.Props;
-import net.thevpc.echo.AppToolWindow;
+import net.thevpc.common.props.WritableBoolean;
+import net.thevpc.echo.AppWindowAnchor;
 import net.thevpc.echo.Application;
+import net.thevpc.echo.api.AppImage;
+import net.thevpc.echo.api.components.AppWindow;
+import net.thevpc.echo.api.peers.AppWindowPeer;
 import net.thevpc.echo.props.AppProps;
-import net.thevpc.echo.props.AppWritableIcon;
-import net.thevpc.echo.props.AppWritableString;
+import net.thevpc.echo.props.WritableImage;
+import net.thevpc.echo.api.WritableStr;
 import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
 import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.AppWindowStateSet;
+import net.thevpc.echo.swing.peers.SwingPeer;
+import net.thevpc.echo.swing.icons.SwingAppImage;
+import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 
 /**
  *
  * @author thevpc
  */
-public class MyDoggyAppToolWindow implements AppToolWindow {
+public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
 
-    private MyDoggyAppDockingWorkspace toolWindowManager;
-    private WritableValue<Boolean> active = Props.of("activated").valueOf(Boolean.class, false);
-    private AppWritableString title;
-    private AppWritableIcon icon;
+    protected AppWindow win;
+    protected MyDoggyToolWindowManager toolWindowManager;
     private ToolWindow toolWindow;
-    private String id;
     private Application app;
 
-    public MyDoggyAppToolWindow(MyDoggyAppDockingWorkspace toolWindowManager, String id, Component component, ToolWindowAnchor anchor, Application app) {
-        this.app = app;
-        this.toolWindowManager = toolWindowManager;
-        this.id = id;
-        this.app = app;
-        this.title = AppProps.of("title", app).strIdOf(id);
-        this.icon = AppProps.of("icon", app).iconIdOf("$"+id + ".icon"); //the dollar meens the the icon key is resolved from i18n
+    private static AppWindowAnchor toAppToolWindowAnchor(ToolWindowAnchor a) {
+        switch (a) {
+            case TOP:
+                return AppWindowAnchor.TOP;
+            case BOTTOM:
+                return AppWindowAnchor.BOTTOM;
+            case LEFT:
+                return AppWindowAnchor.LEFT;
+            case RIGHT:
+                return AppWindowAnchor.RIGHT;
+        }
+        throw new IllegalArgumentException("unsupported");
+    }
+    private static ToolWindowAnchor toMyDoggyAnchor(AppWindowAnchor a) {
+        switch (a) {
+            case TOP:
+                return ToolWindowAnchor.TOP;
+            case BOTTOM:
+                return ToolWindowAnchor.BOTTOM;
+            case LEFT:
+                return ToolWindowAnchor.LEFT;
+            case RIGHT:
+                return ToolWindowAnchor.RIGHT;
+        }
+        throw new IllegalArgumentException("unsupported");
+    }
 
-        this.toolWindow = toolWindowManager.getToolWindowManager().registerToolWindow(id, title.get(), icon.get(), component, anchor);
+    public void install(AppComponent comp) {
+        this.win = (AppWindow) comp;
+        this.app = win.app();
+        toolWindowManager = (MyDoggyToolWindowManager) win.parent().peer().toolkitComponent();
+        Icon aim = win.tool().smallIcon().get()==null?null:
+                (Icon) win.tool().smallIcon().get().peer().toolkitImage()
+                ;
+
+        this.toolWindow = toolWindowManager.registerToolWindow(
+                win.tool().id(), win.tool().title().get()
+                        .getValue(app), aim,
+                (Component) win.tool().component().get().peer().toolkitComponent()
+                , toMyDoggyAnchor(win.tool().anchor().get()));
         for (ToolWindowType value : ToolWindowType.values()) {
             this.toolWindow.getTypeDescriptor(value).setIdVisibleOnTitleBar(false);
         }
-        toolWindow.getRepresentativeAnchorDescriptor().setTitle(title.get());
-        toolWindow.getRepresentativeAnchorDescriptor().setIcon(icon.get());
-        this.active.set(toolWindow.isActive());
-        this.title.set(toolWindow.getTitle());
-        this.icon.set(toolWindow.getIcon());
+        toolWindow.getRepresentativeAnchorDescriptor().setTitle(
+                win.tool().title().get().getValue(app)
+        );
+        toolWindow.getRepresentativeAnchorDescriptor().setIcon(aim);
+        win.tool().active().set(toolWindow.isActive());
+//        win.tool().title().set(toolWindow.getTitle());
+        Icon ic = toolWindow.getIcon();
+//        this.icon.set(ic == null ? null : new SwingAppImage(ic));
         this.toolWindow.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 switch (evt.getPropertyName()) {
                     case "active": {
-                        active.set((Boolean) evt.getNewValue());
+                        win.tool().active().set((Boolean) evt.getNewValue());
                         break;
                     }
                 }
             }
         });
-        this.active.listeners().add((PropertyEvent event) -> {
+        win.tool().active().listeners().add((PropertyEvent event) -> {
             toolWindow.setActive((Boolean) event.getNewValue());
         });
-        this.title.listeners().add((PropertyEvent event) -> {
+        win.tool().title().listeners().add((PropertyEvent event) -> {
             String newValue = (String) event.getNewValue();
             toolWindow.setTitle(newValue);
             toolWindow.getRepresentativeAnchorDescriptor().setTitle(newValue);
         });
-        this.icon.listeners().add((PropertyEvent event) -> {
-            Icon newIcon=(Icon) event.getNewValue();
-            newIcon=MyDoggyAppContentWindow.resizeIcon(newIcon);
-            toolWindow.setIcon(newIcon);
-            toolWindow.getRepresentativeAnchorDescriptor().setIcon(newIcon);
+        win.tool().smallIcon().listeners().add((PropertyEvent event) -> {
+            AppImage i=event.getNewValue();
+            Icon ii = getIcon(i);
+            toolWindow.setIcon(ii);
+            toolWindow.getRepresentativeAnchorDescriptor().setIcon(ii);
         });
-        toolWindowManager.toolWindows().put(id, this);
         toolWindow.setAvailable(true);
     }
 
-    @Override
-    public AppWritableString title() {
-        return title;
+    private Icon getIcon(AppImage i) {
+        if(i !=null){
+            i = i.scaleTo(16,16);
+        }
+        Icon ii = i == null ? null : (Icon) i.peer().toolkitImage();
+        return ii;
     }
 
     @Override
-    public AppWritableIcon icon() {
-        return icon;
+    public Object toolkitComponent() {
+        return toolWindow;
     }
 
     @Override
-    public String id() {
-        return id;
-    }
+    public void centerOnDesktop() {
 
-    public WritableValue<Boolean> active() {
-        return active;
     }
-
 }

@@ -11,6 +11,8 @@
     <modules>
         <module>api</module>
         <module>swing</module>
+        <module>jfx</module>
+        <module>demos/echo-demo</module>
     </modules>
     <properties>
     </properties>

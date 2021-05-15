@@ -100,6 +100,78 @@ public class AppWindowStateSet {
             }
         }
     }
+    private static void remove(EnumSet<AppWindowState> values, AppWindowState a) {
+        switch (a) {
+            case ACTIVATED: {
+                values.add(AppWindowState.DEACTIVATED);
+                values.remove(AppWindowState.ACTIVATED);
+                break;
+            }
+            case DEACTIVATED: {
+                values.add(AppWindowState.ACTIVATED);
+                values.remove(AppWindowState.DEACTIVATED);
+                break;
+            }
+            case NORMAL: {
+                values.add(AppWindowState.NORMAL);
+                values.remove(AppWindowState.ICONIFIED);
+                values.remove(AppWindowState.DEACTIVATED);
+                values.remove(AppWindowState.MAXIMIZED_BOTH);
+                values.remove(AppWindowState.MAXIMIZED_HORIZ);
+                values.remove(AppWindowState.MAXIMIZED_VERT);
+                break;
+            }
+            case MAXIMIZED_VERT: {
+                values.remove(AppWindowState.MAXIMIZED_VERT);
+                values.add(AppWindowState.NORMAL);
+                if (values.contains(AppWindowState.MAXIMIZED_BOTH)) {
+                    values.remove(AppWindowState.MAXIMIZED_HORIZ);
+                }
+                break;
+            }
+            case MAXIMIZED_HORIZ: {
+                values.remove(AppWindowState.MAXIMIZED_HORIZ);
+                values.add(AppWindowState.NORMAL);
+                if (values.contains(AppWindowState.MAXIMIZED_BOTH)) {
+                    values.remove(AppWindowState.MAXIMIZED_VERT);
+                }
+                break;
+            }
+            case MAXIMIZED_BOTH: {
+                values.remove(AppWindowState.MAXIMIZED_BOTH);
+                values.remove(AppWindowState.MAXIMIZED_VERT);
+                values.remove(AppWindowState.MAXIMIZED_HORIZ);
+                values.add(AppWindowState.NORMAL);
+                break;
+            }
+            case ICONIFIED: {
+                values.remove(AppWindowState.ICONIFIED);
+                values.add(AppWindowState.DEICONIFIED);
+                break;
+            }
+            case DEICONIFIED: {
+                values.remove(AppWindowState.DEICONIFIED);
+                values.add(AppWindowState.ICONIFIED);
+                break;
+            }
+            case CLOSED: {
+                values.remove(AppWindowState.CLOSED);
+                break;
+            }
+            case CLOSING: {
+                values.remove(AppWindowState.CLOSING);
+                break;
+            }
+            case OPENING: {
+                values.remove(AppWindowState.OPENING);
+                break;
+            }
+            case OPENED: {
+                values.remove(AppWindowState.OPENED);
+                break;
+            }
+        }
+    }
 
     public boolean is(AppWindowState a) {
         return values.contains(a);
@@ -110,6 +182,12 @@ public class AppWindowStateSet {
     }
 
     public AppWindowStateSet add(AppWindowState a) {
+        EnumSet<AppWindowState> values0 = EnumSet.noneOf(AppWindowState.class);
+        values0.addAll(values);
+        add(values0, a);
+        return new AppWindowStateSet(values0);
+    }
+    public AppWindowStateSet remove(AppWindowState a) {
         EnumSet<AppWindowState> values0 = EnumSet.noneOf(AppWindowState.class);
         values0.addAll(values);
         add(values0, a);

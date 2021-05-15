@@ -64,11 +64,6 @@
         </dependency>
         <dependency>
             <groupId>net.thevpc.common</groupId>
-            <artifactId>thevpc-common-iconset</artifactId>
-            <version>1.0.0</version><!--updated-->
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.common</groupId>
             <artifactId>thevpc-common-props</artifactId>
             <version>1.0.0</version>
         </dependency>

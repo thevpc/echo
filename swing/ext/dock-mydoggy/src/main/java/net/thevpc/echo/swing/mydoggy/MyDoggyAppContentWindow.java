@@ -5,157 +5,120 @@
  */
 package net.thevpc.echo.swing.mydoggy;
 
-import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import net.thevpc.common.iconset.util.IconUtils;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
-import net.thevpc.common.props.Props;
-import net.thevpc.echo.AppContentWindow;
-import net.thevpc.echo.AppWindowStateSet;
-import net.thevpc.echo.Application;
-import net.thevpc.echo.props.AppProps;
-import net.thevpc.echo.props.AppWritableIcon;
-import net.thevpc.echo.props.AppWritableString;
+import net.thevpc.echo.api.AppImage;
+import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.components.AppWindow;
+import net.thevpc.echo.api.peers.AppWindowPeer;
+import net.thevpc.echo.swing.icons.SwingAppImage;
+import net.thevpc.echo.swing.peers.SwingPeer;
 import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
-import net.thevpc.common.props.WritableValue;
+import org.noos.xing.mydoggy.Dockable;
+import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
- *
  * @author thevpc
  */
-public class MyDoggyAppContentWindow implements AppContentWindow {
+public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
 
-    private MyDoggyAppDockingWorkspace toolWindowManager;
-    private WritableValue<Boolean> active = Props.of("activated").valueOf(Boolean.class, false);
-    private WritableValue<Boolean> enabled = Props.of("enabled").valueOf(Boolean.class, false);
-    private WritableValue<Boolean> closable = Props.of("closable").valueOf(Boolean.class, false);
-    private AppWritableString title;
-    private AppWritableIcon icon;
-    private WritableValue<JComponent> component = Props.of("component").valueOf(JComponent.class, null);
-    private WritableValue<AppWindowStateSet> state = Props.of("state").valueOf(AppWindowStateSet.class, new AppWindowStateSet());
-    private String id;
+    protected AppWindow win;
+    protected MyDoggyToolWindowManager toolWindowManager;
     private Content content;
-    private Application app;
 
-    public MyDoggyAppContentWindow(MyDoggyAppDockingWorkspace toolWindowManager, String id, Component component, Application app) {
-        this.toolWindowManager = toolWindowManager;
-        this.id = id;
-        this.component.set((JComponent) component);
-        this.title = AppProps.of("title", app).strIdOf(id);
-        this.icon = AppProps.of("icon", app).iconIdOf("$" + id + ".icon"); //the dollar meens the the icon key is resolved from i18n
 
-        ContentManager contentManager = toolWindowManager.getToolWindowManager().getContentManager();
-        content = contentManager.addContent(id, title.get(), icon.get(), component);
-        content.setEnabled(true);
-        content.getContentUI().setCloseable(false);
-        content.getContentUI().setMaximizable(false);
-        content.getContentUI().setMinimizable(false);
-        content.getContentUI().setMinimizable(false);
+    @Override
+    public void install(AppComponent comp) {
+        if (win == null) {
+            win = (AppWindow) comp;
+            toolWindowManager = (MyDoggyToolWindowManager) win.parent().peer().toolkitComponent();
 
-        active.set(content.isSelected());
-        enabled.set(content.isEnabled());
-        content.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                switch (evt.getPropertyName()) {
-                    case "visible":
-                    case "selected": {
-                        active.set(content.isVisible() && content.isSelected());
-                        break;
-                    }
-                    case "enabled": {
-                        enabled.set((Boolean) evt.getNewValue());
-                        break;
+            ContentManager contentManager = toolWindowManager.getContentManager();
+            content = contentManager.addContent(win.tool().id(), win.tool().title().get().getValue(
+                    win.app()
+            ), getIcon(win.tool().smallIcon().get()),
+                    (Component) win.tool().component().get().peer().toolkitComponent()
+                    );
+
+            content.setEnabled(true);
+            content.getContentUI().setCloseable(false);
+            content.getContentUI().setMaximizable(false);
+            content.getContentUI().setMinimizable(false);
+            content.getContentUI().setMinimizable(false);
+
+            win.tool().active().set(content.isSelected());
+            win.tool().enabled().set(content.isEnabled());
+            content.addPropertyChangeListener(new PropertyChangeListener() {
+                @Override
+                public void propertyChange(PropertyChangeEvent evt) {
+                    switch (evt.getPropertyName()) {
+                        case "visible":
+                        case "selected": {
+                            win.tool().active().set(content.isVisible() && content.isSelected());
+                            break;
+                        }
+                        case "enabled": {
+                            win.tool().enabled().set((Boolean) evt.getNewValue());
+                            break;
+                        }
                     }
                 }
-            }
-        });
-        active.listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                content.setSelected((Boolean) event.getNewValue());
-            }
-        });
-        this.icon.listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                content.setIcon(resizeIcon((Icon) event.getNewValue()));
-            }
-        });
-        this.title.listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                content.setTitle((String) event.getNewValue());
-            }
-        });
-        this.component.listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                content.setComponent((JComponent) event.getNewValue());
-            }
-        });
-        this.closable.listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                content.getContentUI().setCloseable((Boolean) event.getNewValue());
-            }
-        });
-        toolWindowManager.contentWindows().put(id, this);
-    }
-
-    public static Icon resizeIcon(Icon icon) {
-        if (icon == null) {
-            return icon;
-        }
-        if (icon instanceof ImageIcon) {
-            return new ImageIcon(IconUtils.getFixedSizeImage(((ImageIcon) icon).getImage(), 8, 8));
-        } else {
-            return resizeIcon(
-                    new ImageIcon(
-                            IconUtils.iconToImage(icon)
-                    )
-            );
+            });
+            win.tool().active().listeners().add(new PropertyListener() {
+                @Override
+                public void propertyUpdated(PropertyEvent event) {
+                    content.setSelected((Boolean) event.getNewValue());
+                }
+            });
+            win.tool().smallIcon().listeners().add(new PropertyListener() {
+                @Override
+                public void propertyUpdated(PropertyEvent event) {
+                    content.setIcon(
+                            getIcon(event.getNewValue())
+                    );
+                }
+            });
+            win.tool().title().listeners().add(new PropertyListener() {
+                @Override
+                public void propertyUpdated(PropertyEvent event) {
+                    content.setTitle((String) event.getNewValue());
+                }
+            });
+            win.tool().component().listeners().add(new PropertyListener() {
+                @Override
+                public void propertyUpdated(PropertyEvent event) {
+                    content.setComponent((JComponent) event.getNewValue());
+                }
+            });
+            win.tool().closable().listeners().add(new PropertyListener() {
+                @Override
+                public void propertyUpdated(PropertyEvent event) {
+                    content.getContentUI().setCloseable((Boolean) event.getNewValue());
+                }
+            });
         }
     }
 
-    public WritableValue<Icon> icon() {
-        return icon;
+    private Icon getIcon(AppImage i) {
+        if(i !=null){
+            i = i.scaleTo(16,16);
+        }
+        Icon ii = i == null ? null : (Icon) i.peer().toolkitImage();
+        return ii;
     }
-
     @Override
-    public String id() {
-        return id;
+    public void centerOnDesktop() {
+
     }
 
-    @Override
-    public WritableValue<Boolean> closable() {
-        return closable;
-    }
 
-    @Override
-    public WritableValue<String> title() {
-        return title;
+    public Dockable toolkitComponent() {
+        return content;
     }
-
-    @Override
-    public WritableValue<JComponent> component() {
-        return component;
-    }
-
-    @Override
-    public WritableValue<Boolean> active() {
-        return active;
-    }
-
-    @Override
-    public WritableValue<AppWindowStateSet> state() {
-        return state;
-    }
-
 }
