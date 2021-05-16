@@ -31,9 +31,9 @@ public class SwingLabelPeer implements SwingPeer {
                 this.label = new JMenuItem();
                 JMenuItem mLabel = (JMenuItem) this.label;
                 etool.title().listeners().add(x -> mLabel.setText(
-                        etool.title().get() == null ? "" :
-                                etool.title().get().getValue(etool.app())
-                ));
+                        etool.title().getOr(tt-> tt== null ? "" :
+                                tt.getValue(etool.app().i18n())
+                )));
                 etool.smallIcon().listeners().add(x -> mLabel.setIcon(
                         SwingAppImage.iconOf(etool.smallIcon().get())
                 ));
@@ -44,7 +44,7 @@ public class SwingLabelPeer implements SwingPeer {
                 JLabel mLabel = (JLabel) this.label;
                 etool.text().listeners().add(x -> mLabel.setText(
                         etool.text().get() == null ? "" :
-                                etool.text().get().getValue(etool.app())
+                                etool.text().get().getValue(etool.app().i18n())
                 ));
 //                etool.title().listeners().add(x->mLabel.setText(etool.title().get()));
                 etool.smallIcon().listeners().add(x -> mLabel.setIcon(

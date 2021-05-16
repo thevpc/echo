@@ -9,13 +9,8 @@ import net.thevpc.common.props.Props;
 import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.Str;
-import net.thevpc.echo.api.WritableStr;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.tools.AppToolWindow;
-import net.thevpc.echo.impl.components.AppComponentBase;
-import net.thevpc.echo.props.AppProps;
-import net.thevpc.echo.props.WritableImage;
 
 /**
  *
@@ -36,6 +31,7 @@ public class ToolWindow extends AppToolBase implements AppToolWindow {
         this.app = app;
         this.component.set(component);
         this.anchor.set(anchor);
+        propagateEvents(this.component,this.anchor);
     }
 
     @Override

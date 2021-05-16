@@ -19,16 +19,15 @@ public class ToolFile extends AppToolBase implements AppToolFile {
 
     public ToolFile(Application app) {
         super(null, app);
-    }
-
-    protected void init() {
         currentDirectory = AppProps.of("currentDirectory", app()).stringOf(null);
         selection = AppProps.of("selection", app()).listOf(String.class);
         filters = AppProps.of("filters", app()).listOf(AppToolFileFilter.class);
         multipleValues = AppProps.of("multipleValues", app()).booleanOf(false);
         acceptFiles = AppProps.of("acceptFiles", app()).booleanOf(false);
         acceptDirectories = AppProps.of("acceptDirectories", app()).booleanOf(false);
+        propagateEvents(currentDirectory,selection,filters,multipleValues,acceptDirectories,acceptFiles,acceptDirectories);
     }
+
 
     public WritableString currentDirectory() {
         return currentDirectory;

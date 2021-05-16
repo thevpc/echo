@@ -2,6 +2,7 @@ package net.thevpc.echo.api.peers;
 
 public interface AppImagePeer {
     Object toolkitImage();
+
     double getHeight();
 
     double getWidth();

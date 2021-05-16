@@ -12,10 +12,11 @@ public class ToolColor extends AppToolBase implements AppToolColor {
 
     public ToolColor(String id, Application app) {
         super(id, app);
+        propagateEvents(value);
     }
 
     public ToolColor(Application app) {
-        super(app);
+        this(null,app);
     }
 
     @Override

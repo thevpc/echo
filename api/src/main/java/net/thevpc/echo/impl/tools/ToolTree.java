@@ -7,10 +7,11 @@ import net.thevpc.echo.api.tools.AppToolTree;
 public class ToolTree extends AppToolBase implements AppToolTree {
     public ToolTree(String id, Application app) {
         super(id, app);
+        propagateEvents();
     }
 
     public ToolTree(Application app) {
-        super(app);
+        this(null,app);
     }
 
 }

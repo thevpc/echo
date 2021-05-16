@@ -6,7 +6,7 @@
 //package net.thevpc.echo.impl.toolbuilders;
 //
 //import net.thevpc.echo.*;
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.Str;
 //import net.thevpc.echo.api.components.AppAction;
 //import net.thevpc.echo.api.components.AppComponent;
@@ -87,7 +87,7 @@
 //    }
 //
 //    public AppComponent buildFirst(AppComponentOptions options) {
-//        AppPath ipath = paths.get(0);
+//        Path ipath = paths.get(0);
 ////        AppToolAction c = null;
 //        String _id = id;
 //        if (_id == null) {

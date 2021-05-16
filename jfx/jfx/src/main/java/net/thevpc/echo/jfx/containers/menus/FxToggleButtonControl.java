@@ -3,7 +3,7 @@
 //import javafx.scene.control.ButtonBase;
 //import javafx.scene.control.MenuItem;
 //import net.thevpc.echo.*;
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppToggle;
 //import net.thevpc.echo.api.tools.AppTool;
@@ -13,12 +13,12 @@
 //
 //public class FxToggleButtonControl extends FxControlBase implements AppToggle {
 //
-//    public FxToggleButtonControl(AppTool tool, AppPath path, ButtonBase m, Application app, boolean text, AppComponentOptions options) {
+//    public FxToggleButtonControl(AppTool tool, Path path, ButtonBase m, Application app, boolean text, AppComponentOptions options) {
 //        super(tool, path, m, app, options);
 //        FxApplicationUtils.prepareAbstractButton(m, tool, app, text);
 //    }
 //
-//    public FxToggleButtonControl(AppTool tool, AppPath path, MenuItem m, Application app, boolean text, AppComponentOptions options) {
+//    public FxToggleButtonControl(AppTool tool, Path path, MenuItem m, Application app, boolean text, AppComponentOptions options) {
 //        super(tool, path, m, app, options);
 //        FxApplicationUtils.prepareAbstractButton(m, tool, app, text);
 //    }

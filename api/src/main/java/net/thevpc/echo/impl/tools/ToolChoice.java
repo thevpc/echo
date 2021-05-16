@@ -10,18 +10,13 @@ import net.thevpc.echo.api.tools.AppToolChoice;
 import net.thevpc.echo.props.AppProps;
 
 public class ToolChoice<T> extends AppToolBase implements AppToolChoice<T> {
-    private WritableValue<T> value;
     private WritableList<T> values;
     private WritableBoolean multipleValues=Props.of("multipleValues").booleanOf(false);
 
     public ToolChoice(Class<T> componentType,Application app) {
         super(null, app);
-        value= Props.of("value").valueOf(componentType);
         values= Props.of("values").listOf(componentType);
-    }
-
-    public WritableValue<T> value(){
-        return value;
+        propagateEvents(values,multipleValues);
     }
 
     @Override

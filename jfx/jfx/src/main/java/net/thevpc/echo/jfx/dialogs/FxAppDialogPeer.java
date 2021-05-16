@@ -21,7 +21,7 @@
 //import javafx.scene.layout.VBox;
 //import javafx.stage.Window;
 //import net.thevpc.common.props.ObservableValue;
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppAlert;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.tools.AppTool;

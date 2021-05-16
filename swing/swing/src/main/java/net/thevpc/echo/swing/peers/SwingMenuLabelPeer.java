@@ -15,7 +15,7 @@ public class SwingMenuLabelPeer implements SwingPeer{
         AppTool folder = comp.tool();
         folder.title().listeners().add(x->jcomponent.setText(
                 folder.title().get()==null?null:
-                folder.title().get().getValue(comp.app())
+                folder.title().get().getValue(comp.app().i18n())
         ));
         folder.smallIcon().listeners().add(x->jcomponent.setIcon(
                 SwingAppImage.iconOf(folder.smallIcon().get())

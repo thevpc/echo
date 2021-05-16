@@ -27,7 +27,7 @@ public class PValueViewProperty extends AbstractPropertiesNode implements AppPro
 
     @Override
     public String name() {
-        return value.name();
+        return value.propertyName();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class PValueViewProperty extends AbstractPropertiesNode implements AppPro
     @Override
     public Class getType() {
         try {
-            return Class.forName(value.type().getName());
+            return Class.forName(value.propertyType().getName());
         } catch (ClassNotFoundException e) {
             return Object.class;
         }
@@ -57,7 +57,7 @@ public class PValueViewProperty extends AbstractPropertiesNode implements AppPro
     @Override
     public void setValue(Object aValue) {
         if (value instanceof WritableValue) {
-            application.history().doAction(new PropUndoableAction(() -> aValue, () -> (WritableValue) value, "Update " + value.name()));
+            application.history().doAction(new PropUndoableAction(() -> aValue, () -> (WritableValue) value, "Update " + value.propertyName()));
             evaluated = value.get();
         }
     }

@@ -4,7 +4,7 @@
 //import net.thevpc.common.props.Props;
 //import net.thevpc.common.props.WritableList;
 //import net.thevpc.echo.*;
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.*;
 //import net.thevpc.echo.api.toolbuilders.AppToolActionBuilder;
 //import net.thevpc.echo.api.toolbuilders.AppToolCustomBuilder;
@@ -52,7 +52,7 @@
 //        return o == null ? new AppControl[0] : o.components.values().toArray(new AppControl[0]);
 //    }
 //
-//    public AppContainer addFolder(AppPath path) {
+//    public AppContainer addFolder(Path path) {
 //        AppComponent a = getComponent(path);
 //        if (a instanceof AppContainer) {
 //            return (AppContainer) a;
@@ -62,21 +62,21 @@
 //
 //    @Override
 //    public AppContainer addFolder(String path) {
-//        return addFolder(AppPath.of(path));
+//        return addFolder(Path.of(path));
 //    }
 //
-//    public AppSeparator addSeparator(AppPath path) {
+//    public AppSeparator addSeparator(Path path) {
 //        return (AppSeparator) addTool(
 //                new ToolSeparator(application), path, null);
 //    }
 //
 //    @Override
 //    public AppSeparator addSeparator(String path) {
-//        return addSeparator(AppPath.of(path));
+//        return addSeparator(Path.of(path));
 //    }
 //
 //    @Override
-//    public AppToolActionBuilder addAction(AppPath path) {
+//    public AppToolActionBuilder addAction(Path path) {
 //        return addAction().path(path.toString());
 //    }
 //
@@ -92,7 +92,7 @@
 //
 //    @Override
 //    public AppComponent addTool(AppTool tool, String path, AppComponentOptions options) {
-//        return addTool(tool, AppPath.of(path), options);
+//        return addTool(tool, Path.of(path), options);
 //    }
 //
 //    @Override
@@ -127,7 +127,7 @@
 //
 //        private String id;
 //        private AppTool tool;
-//        private Map<AppPath, AppControl> components;
+//        private Map<Path, AppControl> components;
 //    }
 //
 //}

@@ -1,14 +1,13 @@
 package net.thevpc.echo.impl;
 
 import net.thevpc.common.i18n.I18n;
-import net.thevpc.common.props.ObservableList;
-import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.common.props.PropertyListener;
+import net.thevpc.common.props.*;
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.AppPath;
-import net.thevpc.echo.api.Str;
+import net.thevpc.common.props.Path;
+import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppFrame;
+import net.thevpc.echo.api.components.AppToolBar;
 import net.thevpc.echo.api.components.AppWindow;
 import net.thevpc.echo.api.tools.AppTool;
 import net.thevpc.echo.iconset.IconSet;
@@ -27,14 +26,28 @@ public class Applications {
     private Applications() {
     }
 
+    public static String rawString(Str str, Application app) {
+        return rawString(str, app.i18n());
+    }
+
+    public static String rawString(Str str, I18n i18n) {
+        if (str == null) {
+            return "";
+        }
+        if (!str.is18n()) {
+            return str.getValue();
+        }
+        return i18n.getString(str.getValue());
+    }
+
     public static class Helper {
 
         public static void addQuitAction(Application application) {
             runAfterStart(application, () -> {
                 AppContainerChildren<AppComponent, AppTool> components = application.components();
-                ToolAction a = new ToolAction("Quit",application);
+                ToolAction a = new ToolAction("Quit", application);
                 a.action().set((e) -> e.app().shutdown());
-                components.add(a,AppPath.of("/mainFrame/menuBar/File/Quit"));
+                components.add(a, Path.of("/mainFrame/menuBar/File/Quit"));
             });
         }
 
@@ -45,28 +58,28 @@ public class Applications {
                     AppContainerChildren<AppComponent, AppTool> components = application.components();
                     ToolAction a;
 
-                    a = new ToolAction("TileWindowsAction",application);
+                    a = new ToolAction("TileWindowsAction", application);
                     a.action().set((e) -> ws.iconDesktop(false));
-                    components.add(a,AppPath.of("/mainFrame/menuBar/Windows/TileWindowsAction"));
+                    components.add(a, Path.of("/mainFrame/menuBar/Windows/TileWindowsAction"));
 
-                    a = new ToolAction("IconifyWindowsAction",application);
+                    a = new ToolAction("IconifyWindowsAction", application);
                     a.action().set((e) -> ws.iconDesktop(true));
-                    components.add(a,AppPath.of("/mainFrame/menuBar/Windows/IconifyWindowsAction"));
+                    components.add(a, Path.of("/mainFrame/menuBar/Windows/IconifyWindowsAction"));
 
-                    a = new ToolAction("DeiconifyWindowsAction",application);
+                    a = new ToolAction("DeiconifyWindowsAction", application);
                     a.action().set((e) -> ws.iconDesktop(false));
-                    components.add(a,AppPath.of("/mainFrame/menuBar/Windows/DeiconifyWindowsAction"));
+                    components.add(a, Path.of("/mainFrame/menuBar/Windows/DeiconifyWindowsAction"));
 
-                    a = new ToolAction("CloseWindowsAction",application);
+                    a = new ToolAction("CloseWindowsAction", application);
                     a.action().set((e) -> ws.closeAllDesktop());
-                    components.add(a,AppPath.of("/mainFrame/menuBar/Windows/CloseWindowsAction"));
+                    components.add(a, Path.of("/mainFrame/menuBar/Windows/CloseWindowsAction"));
                 }
             });
         }
 
         public static void addViewActions(Application app) {
             runAfterStart(app, () -> {
-                app.components().add(new ToolFolder(app), AppPath.of("/mainFrame/menuBar/View"));
+                app.components().add(new ToolFolder(app), Path.of("/mainFrame/menuBar/View"));
             });
             addViewToolActions(app);
             addViewPlafActions(app);
@@ -87,7 +100,7 @@ public class Applications {
                     path = "/mainFrame/menuBar/View/ToolWindows";
                 }
                 AppContainerChildren<AppComponent, AppTool> components = app.components();
-                components.add(new ToolFolder(app), AppPath.of(path)).tool().smallIcon().set(Str.i18n("tool-windows"));
+                components.add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("tool-windows"));
                 String finalPath = path;
                 runAfterStart(app, () -> {
                     AppWorkspace ws = app.mainFrame().get().workspace().get();
@@ -103,7 +116,7 @@ public class Applications {
                                 ToolToggle t = new ToolToggle(app);
                                 t.selected().bindTarget(value.tool().active());
                                 app.components()
-                                        .add(t,AppPath.of(finalPath).append(value.tool().id()));
+                                        .add(t, Path.of(finalPath).append(value.tool().id()));
                             }
                         }
                     }
@@ -162,28 +175,27 @@ public class Applications {
                 if (path == null) {
                     path = "/mainFrame/menuBar/View/Icons";
                 }
-                components.add(new ToolFolder(app), AppPath.of(path)).tool().smallIcon().set(Str.i18n("icons"));
-                components.add(new ToolFolder(app), AppPath.of(path + "/Packs"));
+                components.add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("icons"));
+                components.add(new ToolFolder(app), Path.of(path + "/Packs"));
                 for (IconSet iconset : app.iconSets().values()) {
-                    ToolToggle t = new ToolToggle("IconSet." + iconset.getId(), app);
-                    t.group().set(path + "/Packs");
+                    ToolToggle t = new ToolToggle("IconSet." + iconset.getId(), path + "/Packs",app);
                     t.selected().bindEquals(app.iconSets().id(), iconset.getId());
-                    components.add(t, AppPath.of(path).append("Packs").append(iconset.getId()));
+                    components.add(t, Path.of(path).append("Packs").append(iconset.getId()));
                 }
                 if (sizes == null || sizes.length == 0) {
                     sizes = new int[]{8, 16, 24, 32, 48};
                 }
-                components.add(new ToolFolder(app), AppPath.of(path + "/Sizes"));
-                ToolToggle[] toggles = null;
-                app.iconSets().config().listeners().add(new PropertyListener() {
-                    @Override
-                    public void propertyUpdated(PropertyEvent event) {
-                        for (int i = 0; i < toggles.length; i++) {
-                            Integer s = (Integer) toggles[i].properties().get("size");
-                            toggles[i].selected().set(s == event.getNewValue());
-                        }
-                    }
-                });
+                components.add(new ToolFolder(app), Path.of(path + "/Sizes"));
+//                ToolToggle[] toggles = null;
+//                app.iconSets().config().listeners().add(new PropertyListener() {
+//                    @Override
+//                    public void propertyUpdated(PropertyEvent event) {
+//                        for (int i = 0; i < toggles.length; i++) {
+//                            Integer s = (Integer) toggles[i].properties().get("size");
+//                            toggles[i].selected().set(s == event.getNewValue());
+//                        }
+//                    }
+//                });
                 for (int i = 0; i < sizes.length; i++) {
                     int size = sizes[i];
                     ToolToggle toggle = new ToolToggle(app);
@@ -198,7 +210,7 @@ public class Applications {
                                 }
                             }
                     );
-                    app.components().add(toggle, AppPath.of(path + "/Sizes/" + size));
+                    app.components().add(toggle, Path.of(path + "/Sizes/" + size));
                 }
             });
         }
@@ -214,7 +226,7 @@ public class Applications {
                     path = "/mainFrame/menuBar/View/Plaf";
                 }
                 AppContainerChildren<AppComponent, AppTool> components = app.components();
-                components.add(new ToolFolder(app), AppPath.of(path)).tool().smallIcon().set(Str.i18n("themes"));
+                components.add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("themes"));
                 for (AppUIPlaf item : app.toolkit().loadAvailablePlafs()) {
                     String q = "Other";
                     if (item.isSystem()) {
@@ -231,11 +243,11 @@ public class Applications {
                     if (item.isContrast()) {
                         q = "Contrast";
                     }
-                    ToolToggle toggle = new ToolToggle("Plaf." + id, app);
-                    toggle.group().set(path);
+                    ToolToggle toggle = new ToolToggle("Plaf." + id, path,app);
                     toggle.smallIcon().set((Str) null);
+                    toggle.selected().userObjects().put("path", path + "/" + q + "/" + pname);
                     toggle.selected().bindEquals(app.plaf(), id);
-                    app.components().add(toggle, AppPath.of(path + "/" + q + "/" + pname));
+                    app.components().add(toggle, Path.of(path + "/" + q + "/" + pname));
                 }
             });
         }
@@ -252,17 +264,15 @@ public class Applications {
                     path = "/mainFrame/menuBar/View/Lang";
                 }
 
-                app.components().add(new ToolFolder(app), AppPath.of(path)).tool().smallIcon().set(Str.i18n("locales"));
+                app.components().add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("locales"));
 
-                ToolToggle toggle = new ToolToggle("Locale.System", app);
-                toggle.group().set(path);
+                ToolToggle toggle = new ToolToggle("Locale.System", path,app);
                 toggle.selected().bindEquals(app.i18n().locale(), Locale.getDefault());
-                app.components().add(toggle, AppPath.of(path + "/system-locale"));
+                app.components().add(toggle, Path.of(path + "/system-locale"));
                 for (Locale locale : locales) {
-                    toggle = new ToolToggle("Locale." + locale.toString(), app);
-                    toggle.group().set(path);
+                    toggle = new ToolToggle("Locale." + locale.toString(), path,app);
                     toggle.selected().bindEquals(app.i18n().locale(), locale);
-                    app.components().add(toggle, AppPath.of(path + "/" + locale + "-locale"));
+                    app.components().add(toggle, Path.of(path + "/" + locale + "-locale"));
                 }
             });
         }
@@ -279,7 +289,7 @@ public class Applications {
                 if (path == null) {
                     path = "/mainFrame/menuBar/View/Appearance";
                 }
-                components.add(new ToolFolder(app), AppPath.of(path)).tool().smallIcon().set(Str.i18n("appearance"));
+                components.add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("appearance"));
                 String finalPath = path;
                 runAfterStart(app, () -> {
                     ToolAction a = new ToolAction("Switch", app);
@@ -301,29 +311,30 @@ public class Applications {
                         }
                     });
                     a.accelerator().set("alt shift F");
-                    components.add(a, AppPath.of(finalPath + "/Switch"));
+                    components.add(a, Path.of(finalPath + "/Switch"));
 
                             /*,
                         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.ALT_MASK + KeyEvent.SHIFT_MASK),
                         JComponent.WHEN_IN_FOCUSED_WINDOW*/
-                    app.components().add(new ToolSeparator(app), AppPath.of(finalPath + "/Separator1"));
+                    app.components().add(new ToolSeparator(app), Path.of(finalPath + "/Separator1"));
 
                     ToolToggle t = new ToolToggle("AppWindowDisplayMode.Normal", finalPath, app);
                     t.selected().bindEquals(app.mainFrame().get().tool().displayMode(), AppWindowDisplayMode.NORMAL);
-                    app.components().add(t, AppPath.of(finalPath + "/Normal"));
+                    app.components().add(t, Path.of(finalPath + "/Normal"));
 
                     t = new ToolToggle("AppWindowDisplayMode.FullScreen", finalPath, app);
                     t.selected().bindEquals(app.mainFrame().get().tool().displayMode(), AppWindowDisplayMode.FULLSCREEN);
-                    app.components().add(t, AppPath.of(finalPath + "/FullScreen"));
+                    app.components().add(t, Path.of(finalPath + "/FullScreen"));
 
-                    app.components().add(new ToolSeparator(app), AppPath.of(finalPath + "/Separator2"));
+                    app.components().add(new ToolSeparator(app), Path.of(finalPath + "/Separator2"));
 
-                    t = new ToolToggle("Toolbar.visible", app);
-                    t.selected().bind(app.mainFrame().get().toolBar().get().tool().visible());
-                    app.components().add(t, AppPath.of(finalPath + "/Toolbar"));
-                    t = new ToolToggle("StatusBar.visible", app);
-                    t.selected().bind(app.mainFrame().get().toolBar().get().tool().visible());
-                    app.components().add(t, AppPath.of(finalPath + "/StatusBar"));
+                    ToolToggle visibleToolBar = new ToolToggle("Toolbar.visible",null, app);
+                    visibleToolBar.visible().bind(app,Path.of("/mainFrame/toolBar/visible"));
+                    app.components().add(visibleToolBar, Path.of(finalPath + "/Toolbar"));
+
+                    ToolToggle visibleStatusBar = new ToolToggle("StatusBar.visible", null,app);
+                    visibleStatusBar.visible().bind(app,Path.of("/mainFrame/statusBar/visible"));
+                    app.components().add(visibleStatusBar, Path.of(finalPath + "/StatusBar"));
                 });
             });
         }
@@ -344,19 +355,5 @@ public class Applications {
             }
         }
 
-    }
-
-    public static String rawString(Str str, Application app){
-        return rawString(str,app.i18n());
-    }
-
-    public static String rawString(Str str, I18n i18n){
-        if(str==null){
-            return "";
-        }
-        if(!str.is18n()){
-            return str.getValue();
-        }
-        return i18n.getString(str.getValue());
     }
 }

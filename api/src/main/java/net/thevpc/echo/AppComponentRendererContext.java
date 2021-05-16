@@ -20,7 +20,7 @@
 
 package net.thevpc.echo;
 
-import net.thevpc.echo.api.AppPath;
+import net.thevpc.common.props.Path;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.tools.AppTool;
@@ -29,11 +29,11 @@ public class AppComponentRendererContext {
     private Application app;
     private AppComponent parent;
     private AppTool tool;
-    private AppPath path;
+    private Path path;
     private String name;
     private AppComponentOptions options;
 
-    public AppComponentRendererContext(AppComponent parent, AppTool tool, Application app, AppPath path, String name, AppComponentOptions options) {
+    public AppComponentRendererContext(AppComponent parent, AppTool tool, Application app, Path path, String name, AppComponentOptions options) {
         this.parent = parent;
         this.tool = tool;
         this.app = app;
@@ -54,7 +54,7 @@ public class AppComponentRendererContext {
         return options;
     }
 
-    public AppPath path() {
+    public Path path() {
         return path;
     }
 

@@ -1,7 +1,7 @@
 //package net.thevpc.echo;
 //
 //import net.thevpc.common.props.ObservableList;
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppContainer;
@@ -17,24 +17,24 @@
 //    ObservableList<AppTool> all();
 //
 //    default AppComponent getComponent(String path) {
-//        return getComponent(path == null ? null : AppPath.of(path));
+//        return getComponent(path == null ? null : Path.of(path));
 //    }
 //
-//    AppComponent getComponent(AppPath path);
+//    AppComponent getComponent(Path path);
 //
 //    AppTool getTool(String id);
 //
 //    AppComponent[] getComponents(String id);
 //
-//    AppContainer addFolder(AppPath path);
+//    AppContainer addFolder(Path path);
 //
 //    AppContainer addFolder(String path);
 //
-//    AppSeparator addSeparator(AppPath path);
+//    AppSeparator addSeparator(Path path);
 //
 //    AppSeparator addSeparator(String path);
 //
-//    AppToolActionBuilder addAction(AppPath path);
+//    AppToolActionBuilder addAction(Path path);
 //
 //    AppToolActionBuilder addAction(String path);
 //
@@ -44,9 +44,9 @@
 ////    AppToolAction addAction(Action al, String path, String... paths);
 //    AppComponent addTool(AppTool tool, String path, AppComponentOptions options);
 //
-//    AppComponent addTool(AppTool tool, AppPath path, AppComponentOptions options);
+//    AppComponent addTool(AppTool tool, Path path, AppComponentOptions options);
 //
-//    void removeTool(AppPath tool);
+//    void removeTool(Path tool);
 //
 //    ObservableList<AppComponent> components();
 //

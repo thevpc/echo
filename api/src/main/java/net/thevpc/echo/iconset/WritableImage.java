@@ -19,13 +19,13 @@
 
 
 
-package net.thevpc.echo.props;
+package net.thevpc.echo.iconset;
 
 import net.thevpc.common.props.PropertyType;
 import net.thevpc.common.props.impl.WritableValueImpl;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.Str;
+import net.thevpc.common.i18n.Str;
 
 /**
  *

@@ -179,7 +179,7 @@ public class SwingAppFileChooserPeer implements AppFileChooserPeer {
 
         @Override
         public String getDescription() {
-            return filter.getDescription().getValue(application);
+            return filter.getDescription().getValue(application.i18n());
         }
     }
 }

@@ -25,7 +25,7 @@ import net.thevpc.echo.AppDialogAction;
 import net.thevpc.echo.AppDialogInputPanel;
 import net.thevpc.echo.AppDialogResult;
 import net.thevpc.echo.AppDimension;
-import net.thevpc.echo.api.Str;
+import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.tools.AppToolAlert;
 
 /**

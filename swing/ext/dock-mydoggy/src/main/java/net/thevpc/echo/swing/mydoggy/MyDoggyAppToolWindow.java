@@ -5,29 +5,23 @@
  */
 package net.thevpc.echo.swing.mydoggy;
 
-import java.awt.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import javax.swing.Icon;
 import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.echo.AppWindowAnchor;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppImage;
+import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppWindow;
 import net.thevpc.echo.api.peers.AppWindowPeer;
-import net.thevpc.echo.props.AppProps;
-import net.thevpc.echo.props.WritableImage;
-import net.thevpc.echo.api.WritableStr;
+import net.thevpc.echo.swing.peers.SwingPeer;
 import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
 import org.noos.xing.mydoggy.ToolWindowType;
-import net.thevpc.common.props.WritableValue;
-import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.AppWindowStateSet;
-import net.thevpc.echo.swing.peers.SwingPeer;
-import net.thevpc.echo.swing.icons.SwingAppImage;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  *
@@ -77,14 +71,14 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
 
         this.toolWindow = toolWindowManager.registerToolWindow(
                 win.tool().id(), win.tool().title().get()
-                        .getValue(app), aim,
+                        .getValue(app.i18n()), aim,
                 (Component) win.tool().component().get().peer().toolkitComponent()
                 , toMyDoggyAnchor(win.tool().anchor().get()));
         for (ToolWindowType value : ToolWindowType.values()) {
             this.toolWindow.getTypeDescriptor(value).setIdVisibleOnTitleBar(false);
         }
         toolWindow.getRepresentativeAnchorDescriptor().setTitle(
-                win.tool().title().get().getValue(app)
+                win.tool().title().get().getValue(app.i18n())
         );
         toolWindow.getRepresentativeAnchorDescriptor().setIcon(aim);
         win.tool().active().set(toolWindow.isActive());

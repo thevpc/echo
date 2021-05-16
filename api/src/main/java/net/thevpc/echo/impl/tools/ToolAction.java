@@ -1,9 +1,7 @@
 package net.thevpc.echo.impl.tools;
 
-import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.Str;
+import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppAction;
 import net.thevpc.echo.api.tools.AppActionValue;
 import net.thevpc.echo.api.tools.AppToolAction;
@@ -39,6 +37,7 @@ public class ToolAction extends AppToolBase implements AppToolAction {
             title().set(Str.i18n(aid));
             smallIcon().set(Str.i18n(aid+".icon"));
         }
+        propagateEvents(action);
     }
     @Override
     public AppActionValue action() {

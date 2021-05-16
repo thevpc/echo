@@ -1,8 +1,8 @@
 package net.thevpc.echo.impl.components;
 
+import net.thevpc.common.props.Path;
 import net.thevpc.common.props.PropertyType;
 import net.thevpc.common.props.impl.WritableListImpl;
-import net.thevpc.echo.api.AppPath;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppContainer;
@@ -71,7 +71,7 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
         return c;
     }
 
-    public AppComponent get(AppPath relativePath) {
+    public AppComponent get(Path relativePath) {
         AppContainer parentContainer = base;
         if (relativePath.isEmpty()) {
             return base;
@@ -84,7 +84,7 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
             }
             return null;
         } else {
-            AppComponent n = get(AppPath.of(relativePath.first()));
+            AppComponent n = get(Path.of(relativePath.first()));
             if (n instanceof AppContainer) {
                 return ((AppContainer) n).children().get(relativePath.skipFirst());
             }
@@ -92,24 +92,24 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
         }
     }
 
-    public AppComponent add(AppComponent component, AppPath relativePath) {
+    public AppComponent add(AppComponent component, Path relativePath) {
         if (relativePath != null) {
             component.path().set(base.path().get().append(relativePath));
         }
         return add((AppTool) null, relativePath, null);
     }
 
-    public AppComponent add(AppTool tool, AppPath relativePath, AppComponentOptions options) {
+    public AppComponent add(AppTool tool, Path relativePath, AppComponentOptions options) {
         if(relativePath.last().equals("*")){
             relativePath=relativePath.parent().append(tool.id());
         }
         AppContainer parentContainer = base;
-        AppPath this_path = base.path().get();
+        Path this_path = base.path().get();
 
         AppContainer goodParent = null;
         if (relativePath.isEmpty()) {
             //will generate a random name
-            relativePath = AppPath.of(UUID.randomUUID().toString());
+            relativePath = Path.of(UUID.randomUUID().toString());
         } else {
             while (relativePath.size() > 1) {
                 String first = relativePath.first();
@@ -151,7 +151,7 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
     @Override
     public C add(T tool, String name, AppComponentOptions options) {
         if (name.indexOf('/') > 0) {
-            throw new IllegalArgumentException("use add(AppTool,AppPath) instead");
+            throw new IllegalArgumentException("use add(AppTool,Path) instead");
         }
         C component = (C) ((AppContainerBase)(base)).createPreferredComponent(tool,
                 name, base.path().get().append(name),
@@ -163,7 +163,7 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
 
     public C add(C component, String name) {
         if (name.indexOf('/') > 0) {
-            throw new IllegalArgumentException("use add(AppTool,AppPath) instead");
+            throw new IllegalArgumentException("use add(AppTool,Path) instead");
         }
         component.path().set(base.path().get().append(name));
         add(component);
@@ -173,7 +173,7 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
     @Override
     public C add(int index, T tool, String name, AppComponentOptions options) {
         if (name.indexOf('/') > 0) {
-            throw new IllegalArgumentException("use add(AppTool,AppPath) instead");
+            throw new IllegalArgumentException("use add(AppTool,Path) instead");
         }
         C component = (C) ((AppContainerBase)(base)).createPreferredComponent(tool,
                 name, base.path().get().append(name),
@@ -186,7 +186,7 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
     @Override
     public C add(int index, C component, String name) {
         if (name.indexOf('/') > 0) {
-            throw new IllegalArgumentException("use add(AppTool,AppPath) instead");
+            throw new IllegalArgumentException("use add(AppTool,Path) instead");
         }
         component.path().set(base.path().get().append(name));
         add(index, component);
@@ -195,18 +195,18 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
 
     public AppComponent remove(String name) {
         if (name.indexOf('/') > 0) {
-            throw new IllegalArgumentException("use remove(AppPath) instead");
+            throw new IllegalArgumentException("use remove(Path) instead");
         }
         for (int i = 0; i < size(); i++) {
             AppComponent child = get(i);
-            if (child.path().name().equals(name)) {
+            if (child.path().propertyName().equals(name)) {
                 return remove(i);
             }
         }
         return null;
     }
 
-    public AppComponent remove(AppPath relativePath) {
+    public AppComponent remove(Path relativePath) {
         if (relativePath.isEmpty()) {
             return null;
         }
@@ -221,21 +221,21 @@ public class AppContainerChildrenImpl<C extends AppComponent, T extends AppTool>
         return null;
     }
 
-    public AppComponent add(AppTool tool, AppPath relativePath) {
+    public AppComponent add(AppTool tool, Path relativePath) {
         return add(tool, relativePath, null);
     }
 
-    public List<AppComponent> addAll(AppTool tool, AppPath relativePath, AppPath... all) {
+    public List<AppComponent> addAll(AppTool tool, Path relativePath, Path... all) {
         List<AppComponent> a = new ArrayList<>();
         a.add(add(tool, relativePath, null));
-        for (AppPath appPath : all) {
-            a.add(add(tool, appPath, null));
+        for (Path path : all) {
+            a.add(add(tool, path, null));
         }
         return a;
     }
 
     @Override
-    public AppComponent addSeparator(AppPath relativePath) {
+    public AppComponent addSeparator(Path relativePath) {
         return add(new ToolSeparator(base.app()), relativePath);
     }
 

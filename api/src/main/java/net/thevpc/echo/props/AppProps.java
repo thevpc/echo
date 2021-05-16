@@ -8,8 +8,9 @@ package net.thevpc.echo.props;
 import net.thevpc.common.props.Props.PropsBuilder;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppImage;
-import net.thevpc.echo.api.Str;
-import net.thevpc.echo.api.WritableStr;
+import net.thevpc.common.i18n.Str;
+import net.thevpc.common.i18n.WritableStr;
+import net.thevpc.echo.iconset.WritableImage;
 
 /**
  *
@@ -44,7 +45,7 @@ public class AppProps {
             return p;
         }
 
-        public WritableImage iconIdOf(Str value) {
+        public WritableImage iconOf(Str value) {
             WritableImage p = new WritableImage(name, app);
             p.set(value);
             prepare(p);

@@ -3,7 +3,7 @@
 //import net.thevpc.common.props.PropertyEvent;
 //import net.thevpc.common.props.PropertyListener;
 //import net.thevpc.echo.*;
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.tools.AppTool;
@@ -32,21 +32,21 @@
 //    }
 //
 //    @Override
-//    public AppComponent getComponent(AppPath path0) {
+//    public AppComponent getComponent(Path path0) {
 //        return application.root().get(path0);
 //    }
 //
 //    private static class AddToolArgs{
-//        AppTool tool; AppPath path; AppComponentOptions options;
+//        AppTool tool; Path path; AppComponentOptions options;
 //
-//        public AddToolArgs(AppTool tool, AppPath path, AppComponentOptions options) {
+//        public AddToolArgs(AppTool tool, Path path, AppComponentOptions options) {
 //            this.tool = tool;
 //            this.path = path;
 //            this.options = options;
 //        }
 //    }
 //    @Override
-//    public AppComponent addTool(AppTool tool, AppPath path, AppComponentOptions options) {
+//    public AppComponent addTool(AppTool tool, Path path, AppComponentOptions options) {
 //        if (this.application.state().get() == AppState.NONE) {
 //            this.tools0.add(new AddToolArgs(tool,path, options));
 //            return null;
@@ -55,7 +55,7 @@
 //    }
 //
 //    @Override
-//    public void removeTool(AppPath tool) {
+//    public void removeTool(Path tool) {
 //        application.root().remove(tool);
 //    }
 //

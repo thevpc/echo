@@ -2,7 +2,7 @@ package net.thevpc.echo.swing;
 
 import net.thevpc.common.props.*;
 import net.thevpc.echo.api.AppImage;
-import net.thevpc.echo.api.Str;
+import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppAction;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.tools.*;

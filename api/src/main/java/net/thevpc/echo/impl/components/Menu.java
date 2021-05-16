@@ -1,8 +1,8 @@
 package net.thevpc.echo.impl.components;
 
+import net.thevpc.common.props.Path;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.DefaultAppComponentOptions;
-import net.thevpc.echo.api.AppPath;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppMenu;
@@ -28,7 +28,7 @@ public class Menu extends AppContainerBase<AppComponent, AppTool> implements App
 
     }
     @Override
-    public AppComponent createPreferredComponent(AppTool tool, String name, AppPath absolutePath, AppComponentOptions options) {
+    public AppComponent createPreferredComponent(AppTool tool, String name, Path absolutePath, AppComponentOptions options) {
         if(tool instanceof AppToolFolder){
             options= DefaultAppComponentOptions.copy(options).componentTypeIfNull(AppMenu.class);
         }

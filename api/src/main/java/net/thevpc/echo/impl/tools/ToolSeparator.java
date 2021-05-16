@@ -11,9 +11,10 @@ public class ToolSeparator extends AppToolBase implements AppToolSeparator {
     private final WritableDouble height = Props.of("height").doubleOf(0.0);
     public ToolSeparator(String id,Application app) {
         super(id, app,false);
+        propagateEvents(width,height);
     }
     public ToolSeparator(Application app) {
-        super(null, app,false);
+        this(null, app);
     }
 
     @Override

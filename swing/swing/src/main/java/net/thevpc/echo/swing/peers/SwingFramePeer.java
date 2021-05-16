@@ -4,7 +4,10 @@ import net.thevpc.common.msg.StringMessage;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.PropertyVeto;
-import net.thevpc.echo.*;
+import net.thevpc.echo.AppWindowDisplayMode;
+import net.thevpc.echo.AppWindowState;
+import net.thevpc.echo.AppWindowStateSet;
+import net.thevpc.echo.AppWorkspace;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppFrame;
 import net.thevpc.echo.api.components.AppMenuBar;
@@ -24,6 +27,7 @@ import java.util.logging.Level;
 public class SwingFramePeer implements SwingPeer, AppFramePeer {
 
     private JFrame frame;
+    private JPanel contentPanel;
     private AppFrame component;
     private boolean _in_windowClosing = false;
     private boolean _in_windowClosed = false;
@@ -32,7 +36,9 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
     public void install(AppComponent component0) {
         this.component = (AppFrame) component0;
         this.frame = new JFrame();
-        frame.setLayout(new BorderLayout());
+        frame.getContentPane().setLayout(new BorderLayout());
+        contentPanel = new JPanel(new BorderLayout());
+        frame.getContentPane().add(contentPanel, BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         UIManager.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
@@ -286,10 +292,51 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
         frame.setLocationRelativeTo(null);
     }
 
+    public void addChild(AppComponent other, int index) {
+        component.app().toolkit().runUIAndWait(() -> {
+            String pn = other.path().get().last();
+            Component a = (Component) other.peer().toolkitComponent();
+            switch (pn) {
+                case "workspace": {
+                    contentPanel.add(a, BorderLayout.CENTER);
+                    break;
+                }
+                case "toolBar": {
+                    contentPanel.add(a, BorderLayout.NORTH);
+                    break;
+                }
+                case "statusBar": {
+                    contentPanel.add(a, BorderLayout.SOUTH);
+                    break;
+                }
+                case "menuBar": {
+                    frame.getContentPane().add(a, BorderLayout.NORTH);
+                    break;
+                }
+            }
+        });
+    }
+
+    public void removeChild(AppComponent other, int index) {
+        component.app().toolkit().runUIAndWait(() -> {
+            frame.getContentPane().remove((Component) other.peer().toolkitComponent());
+        });
+    }
+
     @Override
     public Object toolkitComponent() {
         return frame;
     }
+
+//    @Override
+//    public void close() {
+//        AppWindowStateSetValue _state = component.tool().state();
+//        if (!_state.is(AppWindowState.CLOSING)
+//                && !_state.is(AppWindowState.CLOSED)) {
+//            frame.setVisible(false);
+//            frame.dispose();
+//        }
+//    }
 
     private void applyDisplayMode() {
         switch (component.tool().displayMode().get()) {
@@ -334,15 +381,4 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
                             + sheight / 2 - frame.getSize().height / 2);
         }
     }
-
-//    @Override
-//    public void close() {
-//        AppWindowStateSetValue _state = component.tool().state();
-//        if (!_state.is(AppWindowState.CLOSING)
-//                && !_state.is(AppWindowState.CLOSED)) {
-//            frame.setVisible(false);
-//            frame.dispose();
-//        }
-//    }
-
 }

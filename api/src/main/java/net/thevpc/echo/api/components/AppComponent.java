@@ -22,17 +22,19 @@
 package net.thevpc.echo.api.components;
 
 import net.thevpc.common.props.ObservableValue;
+import net.thevpc.common.props.Path;
+import net.thevpc.common.props.Property;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.AppPath;
 import net.thevpc.echo.api.tools.AppTool;
 import net.thevpc.echo.impl.components.AppComponentConstraints;
 import net.thevpc.echo.api.peers.AppComponentPeer;
 
 /**
+ * AppComponent inherits all AppTool Property implementation
  * @author vpc
  */
-public interface AppComponent {
+public interface AppComponent extends Property {
     AppComponentConstraints constraints();
 
     AppComponent setOptions(AppComponentOptions options);
@@ -40,7 +42,7 @@ public interface AppComponent {
 
     AppTool tool();
 
-    WritableValue<AppPath> path();
+    WritableValue<Path> path();
 
     ObservableValue<Integer> order();
 

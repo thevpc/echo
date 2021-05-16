@@ -1,8 +1,8 @@
 package net.thevpc.echo.impl.components;
 
+import net.thevpc.common.props.Path;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.DefaultAppComponentOptions;
-import net.thevpc.echo.api.AppPath;
 import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.api.tools.AppTool;
 import net.thevpc.echo.api.tools.AppToolFolder;
@@ -17,7 +17,7 @@ public class ToolBar extends AppContainerBase<AppComponent, AppTool> implements 
     }
 
     @Override
-    public AppComponent createPreferredComponent(AppTool tool, String name, AppPath absolutePath, AppComponentOptions options) {
+    public AppComponent createPreferredComponent(AppTool tool, String name, Path absolutePath, AppComponentOptions options) {
         if(tool instanceof AppToolFolder){
             options=DefaultAppComponentOptions.copy(options).componentTypeIfNull(AppMenu.class);
         }

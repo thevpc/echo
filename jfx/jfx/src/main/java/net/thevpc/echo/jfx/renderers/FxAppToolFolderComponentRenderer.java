@@ -7,7 +7,7 @@
 //import javafx.scene.control.ToolBar;
 //import net.thevpc.echo.*;
 //
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
@@ -33,7 +33,7 @@
 //
 //        AppToolFolder tool = (AppToolFolder) context.getTool();
 //        Application application = context.getApplication();
-//        AppPath path = context.getPath();
+//        Path path = context.getPath();
 //        boolean inMenu = false;
 //        if (parentGuiElement instanceof StatusBarGroup) {
 //            if (componentType == null) {

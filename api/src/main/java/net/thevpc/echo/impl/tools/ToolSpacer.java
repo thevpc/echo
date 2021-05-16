@@ -12,9 +12,10 @@ public class ToolSpacer extends AppToolBase implements AppToolSpacer {
     private final WritableDouble height = Props.of("height").doubleOf(0.0);
     public ToolSpacer(String id, Application app) {
         super(id, app,false);
+        propagateEvents(width,height);
     }
     public ToolSpacer(Application app) {
-        super(null, app,false);
+        this(null, app);
     }
 
     @Override

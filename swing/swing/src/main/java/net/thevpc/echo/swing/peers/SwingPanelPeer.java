@@ -42,13 +42,12 @@ public class SwingPanelPeer implements SwingPeer {
                 jcomponent.setLayout(new FlowLayout());
                 break;
             }
-            case LINEAR:{
-                ParentDirection dir = panel.constraints().get(ParentDirection.class);
-                if(dir==null || dir==ParentDirection.VERTICAL) {
-                    jcomponent.setLayout(new BoxLayout(jcomponent,BoxLayout.Y_AXIS));
-                }else{
-                    jcomponent.setLayout(new BoxLayout(jcomponent,BoxLayout.X_AXIS));
-                }
+            case VERTICAL:{
+                jcomponent.setLayout(new BoxLayout(jcomponent,BoxLayout.Y_AXIS));
+                break;
+            }
+            case HORIZONTAL:{
+                jcomponent.setLayout(new BoxLayout(jcomponent,BoxLayout.X_AXIS));
                 break;
             }
             case GRID:{
@@ -107,7 +106,9 @@ public class SwingPanelPeer implements SwingPeer {
                 break;
             }
             case FLOW:
-            case LINEAR:{
+            case VERTICAL:
+            case HORIZONTAL:
+            {
                 jcomponent.add(childComponent);
                 break;
             }

@@ -23,13 +23,8 @@ package net.thevpc.echo.api.tools;
 
 import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.common.props.WritableValue;
-import net.thevpc.echo.AppWindowAnchor;
 import net.thevpc.echo.AppWindowDisplayMode;
-import net.thevpc.echo.AppWindowStateSet;
 import net.thevpc.echo.AppWindowStateSetValue;
-import net.thevpc.echo.api.WritableStr;
-import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.props.WritableImage;
 
 /**
  * @author thevpc

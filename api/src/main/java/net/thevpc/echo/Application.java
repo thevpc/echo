@@ -2,7 +2,7 @@ package net.thevpc.echo;
 
 import net.thevpc.common.i18n.I18n;
 import net.thevpc.common.props.*;
-import net.thevpc.echo.api.WritableStr;
+import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppContainer;
 import net.thevpc.echo.api.components.AppFrame;
@@ -10,7 +10,7 @@ import net.thevpc.echo.api.tools.AppTool;
 import net.thevpc.echo.iconset.IconSets;
 import net.thevpc.echo.impl.components.AppContainerChildren;
 
-public interface Application extends PropertyContainer {
+public interface Application extends Property {
 
     WritableStr name();
 

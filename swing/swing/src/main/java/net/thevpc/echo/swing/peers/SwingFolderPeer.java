@@ -38,7 +38,7 @@ public class SwingFolderPeer implements SwingPeer {
                 JMenuItem mLabel = (JMenuItem) this.jcomponent;
                 etool.title().listeners().add(x -> mLabel.setText(
                         etool.title().get() == null ? "" :
-                                etool.title().get().getValue(etool.app())
+                                etool.title().get().getValue(etool.app().i18n())
                 ));
                 etool.smallIcon().listeners().add(x -> mLabel.setIcon(
                         SwingAppImage.iconOf(etool.smallIcon().get())

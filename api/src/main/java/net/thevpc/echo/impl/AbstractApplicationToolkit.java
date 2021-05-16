@@ -1,7 +1,7 @@
 package net.thevpc.echo.impl;
 
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.AppPath;
+import net.thevpc.common.props.Path;
 import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.api.peers.AppComponentPeer;
 import net.thevpc.echo.api.tools.*;
@@ -104,7 +104,7 @@ public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
         if (componentType == null) {
             throw new IllegalArgumentException("missing componentType");
         }
-        AppPath path = name==null?AppPath.of():AppPath.of(name);
+        Path path = name==null? Path.of(): Path.of(name);
         if (parent != null) {
             path = parent.path().get().child(path);
         }
@@ -126,7 +126,7 @@ public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
     }
 
     public AppComponent createComponent(AppTool tool, AppComponent parent, String name, AppComponentOptions options) {
-        AppPath path = name==null?AppPath.of():AppPath.of(name);
+        Path path = name==null? Path.of(): Path.of(name);
         if (parent != null) {
             path = parent.path().get().child(path);
         }
@@ -140,7 +140,9 @@ public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
         if(c!=null){
             Function<AppComponentRendererContext, AppComponent> a = componentsDefaultFactories.get(c);
             if(a!=null){
-                return a.apply(context);
+                AppComponent q = a.apply(context);
+                q.path().set(path);
+                return q;
             }
         }
         List<AppComponentFactory> sl = toolToComponent.get(tool.getClass());
@@ -161,7 +163,9 @@ public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
                 }
             }
             if (best != null) {
-                return best.get();
+                AppComponent q = best.get();
+                q.path().set(path);
+                return q;
             }
         }
         throw new IllegalArgumentException("unable to create component for tool of type " + tool.getClass().getName());

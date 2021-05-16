@@ -1,10 +1,8 @@
 package net.thevpc.echo.impl.components;
 
-import net.thevpc.common.props.ObservableValue;
-import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritableValue;
+import net.thevpc.common.props.*;
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.AppPath;
+import net.thevpc.common.props.Path;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.tools.AppTool;
@@ -13,7 +11,7 @@ import net.thevpc.echo.api.peers.AppComponentPeer;
 public class AppComponentBase implements AppComponent {
     private AppTool tool;
     protected  AppComponent parent;
-    protected WritableValue<AppPath> path= Props.of("path").valueOf(AppPath.class, AppPath.of());
+    protected WritableValue<Path> path= Props.of("path").valueOf(Path.class, Path.of());
     private WritableValue<Integer> order= Props.of("order").valueOf(Integer.class,null);
     private DefaultAppComponentConstraints constraints=new DefaultAppComponentConstraints("constraints");
     protected AppComponentPeer peer;
@@ -21,7 +19,27 @@ public class AppComponentBase implements AppComponent {
 
     public AppComponentBase(AppTool tool) {
         this.tool = tool;
-        this.path.set(AppPath.of(tool.id()));
+        this.path.set(Path.of(tool.id()));
+    }
+
+    @Override
+    public String propertyName() {
+        return tool==null?null:tool.propertyName();
+    }
+
+    @Override
+    public PropertyListeners listeners() {
+        return tool==null?null:tool.listeners();
+    }
+
+    @Override
+    public PropertyType propertyType() {
+        return tool==null?null:tool.propertyType();
+    }
+
+    @Override
+    public UserObjects userObjects() {
+        return tool==null?null:tool.userObjects();
     }
 
     @Override
@@ -53,7 +71,7 @@ public class AppComponentBase implements AppComponent {
         return peer(true);
     }
 
-    public WritableValue<AppPath> path() {
+    public WritableValue<Path> path() {
         return path;
     }
 

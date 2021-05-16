@@ -1,7 +1,7 @@
 package net.thevpc.echo.impl.controls;
 
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.Str;
+import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppLabel;
 import net.thevpc.echo.impl.components.Label;
 

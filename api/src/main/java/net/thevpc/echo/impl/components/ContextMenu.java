@@ -1,6 +1,6 @@
 package net.thevpc.echo.impl.components;
 
-import net.thevpc.echo.api.AppPath;
+import net.thevpc.common.props.Path;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppContextMenu;
@@ -25,7 +25,7 @@ public class ContextMenu extends AppContainerBase<AppComponent, AppTool> impleme
     }
 
     @Override
-    public AppComponent createPreferredComponent(AppTool tool, String name, AppPath absolutePath, AppComponentOptions options) {
+    public AppComponent createPreferredComponent(AppTool tool, String name, Path absolutePath, AppComponentOptions options) {
         if(options.componentType()==null && tool instanceof AppToolFolder){
             options.componentType(AppMenu.class);
         }

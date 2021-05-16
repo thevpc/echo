@@ -1,9 +1,7 @@
 package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.AppPath;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppPanel;
 import net.thevpc.echo.api.tools.AppTool;
 import net.thevpc.echo.api.tools.AppToolFolder;

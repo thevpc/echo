@@ -9,10 +9,11 @@ import net.thevpc.echo.api.tools.AppToolTable;
 public class ToolTable extends AppToolBase implements AppToolTable {
     public ToolTable(String id, Application app) {
         super(id, app);
+        propagateEvents();
     }
 
     public ToolTable(Application app) {
-        super(app);
+        this(null,app);
     }
 
 }

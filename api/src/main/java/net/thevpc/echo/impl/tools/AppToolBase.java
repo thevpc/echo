@@ -1,22 +1,17 @@
 package net.thevpc.echo.impl.tools;
 
 import net.thevpc.common.props.*;
-import net.thevpc.common.props.impl.WritableMapImpl;
+import net.thevpc.common.props.impl.SimpleProperty;
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.AppPath;
-import net.thevpc.echo.api.Str;
-import net.thevpc.echo.api.WritableStr;
-import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.components.AppComponentOptions;
+import net.thevpc.common.i18n.Str;
+import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.echo.api.tools.AppTool;
 import net.thevpc.echo.props.AppProps;
-import net.thevpc.echo.props.WritableImage;
+import net.thevpc.echo.iconset.WritableImage;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-public class AppToolBase implements AppTool {
+public class AppToolBase extends SimpleProperty implements AppTool {
 
     private final WritableBoolean enabled;
     private final WritableBoolean visible;
@@ -38,22 +33,24 @@ public class AppToolBase implements AppTool {
     }
 
     public AppToolBase(String id, Application app, boolean doConfig) {
-        this.id = id==null? UUID.randomUUID().toString():id;
+        super(id==null? UUID.randomUUID().toString():id);
+        this.id = propertyName();
         this.app = app;
         enabled = AppProps.of("enabled", app).booleanOf(true);
         visible = AppProps.of("visible", app).booleanOf(true);
         title = AppProps.of("title", app).strOf(Str.i18n(id));
         tooltip = AppProps.of("tooltip", app).strOf(
                 doConfig/*&&tools.config().configurableTooltip().get()*/ ? Str.i18n(id + ".tooltip") : null);
-        smallIcon = AppProps.of("smallIcon", app).iconIdOf(
+        smallIcon = AppProps.of("smallIcon", app).iconOf(
                 doConfig/*&&tools.config().configurableSmallIcon().get()*/?
                         Str.i18n(id + ".icon"):null);
-        largeIcon = AppProps.of("largeIcon", app).iconIdOf(
+        largeIcon = AppProps.of("largeIcon", app).iconOf(
                 doConfig/*&&tools.config().configurableLargeIcon().get()*/?
                         Str.i18n(id + ".largeIcon"):null
         );
         accelerator = AppProps.of("accelerator", app).stringOf(null);
         mnemonic = AppProps.of("mnemonic", app).intOf(0);
+        propagateEvents(enabled,visible,title,tooltip,smallIcon,largeIcon,accelerator,mnemonic);
     }
 
     public WritableInt mnemonic() {

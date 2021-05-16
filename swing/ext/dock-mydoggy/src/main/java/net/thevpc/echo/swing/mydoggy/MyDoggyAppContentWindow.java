@@ -41,7 +41,7 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
 
             ContentManager contentManager = toolWindowManager.getContentManager();
             content = contentManager.addContent(win.tool().id(), win.tool().title().get().getValue(
-                    win.app()
+                    win.app().i18n()
             ), getIcon(win.tool().smallIcon().get()),
                     (Component) win.tool().component().get().peer().toolkitComponent()
                     );

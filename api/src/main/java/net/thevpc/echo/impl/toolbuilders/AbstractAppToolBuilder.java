@@ -1,7 +1,7 @@
 //package net.thevpc.echo.impl.toolbuilders;
 //
 //import net.thevpc.echo.*;
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
@@ -16,7 +16,7 @@
 //        implements AppToolBuilder {
 //
 //    protected AbstractAppToolsBase tools;
-//    protected java.util.List<AppPath> paths = new ArrayList<AppPath>();
+//    protected java.util.List<Path> paths = new ArrayList<Path>();
 //    protected String id;
 //    protected O options;
 //    private java.util.List<C> components = null;
@@ -35,7 +35,7 @@
 //
 //    public R path(String... g) {
 //        for (String s : g) {
-//            this.paths.add(AppPath.of(s));
+//            this.paths.add(Path.of(s));
 //        }
 //        return (R) this;
 //    }

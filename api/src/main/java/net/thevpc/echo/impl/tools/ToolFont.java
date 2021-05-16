@@ -13,10 +13,11 @@ public class ToolFont extends AppToolBase implements AppToolFont {
 
     public ToolFont(String id, Application app) {
         super(id, app);
+        propagateEvents(value);
     }
 
     public ToolFont(Application app) {
-        super(app);
+        this(null,app);
     }
 
     @Override

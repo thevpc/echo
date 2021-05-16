@@ -8,8 +8,10 @@ import java.awt.*;
 
 public class SwingMenuPeer implements SwingPeer{
     private JMenu jcomponent;
+    private AppComponent component;
     @Override
     public void install(AppComponent comp) {
+        this.component=comp;
         jcomponent = new JMenu();
         SwingApplicationUtils.prepareAbstractButton(jcomponent,comp.tool(), comp.app(), true);
     }
@@ -20,13 +22,17 @@ public class SwingMenuPeer implements SwingPeer{
     }
 
     public void addChild(AppComponent other, int index) {
-        Object o = other.peer().toolkitComponent();
-        jcomponent.add((Component) o,index);
+        component.app().toolkit().runUIAndWait(()-> {
+            Object o = other.peer().toolkitComponent();
+            jcomponent.add((Component) o, index);
+        });
     }
 
     public void removeChild(AppComponent other, int index) {
-        Object o = other.peer().toolkitComponent();
-        jcomponent.remove(index);
+        component.app().toolkit().runUIAndWait(()-> {
+            Object o = other.peer().toolkitComponent();
+            jcomponent.remove(index);
+        });
     }
 
     @Override

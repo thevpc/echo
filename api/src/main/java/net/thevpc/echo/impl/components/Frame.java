@@ -3,7 +3,7 @@ package net.thevpc.echo.impl.components;
 import net.thevpc.common.props.Props;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.AppPath;
+import net.thevpc.common.props.Path;
 import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.api.tools.*;
 import net.thevpc.echo.api.peers.AppFramePeer;
@@ -28,7 +28,7 @@ public class Frame extends AppContainerBase<AppComponent, AppTool> implements Ap
     }
 
     @Override
-    public AppComponent createPreferredComponent(AppTool tool, String name, AppPath absolutePath, AppComponentOptions options) {
+    public AppComponent createPreferredComponent(AppTool tool, String name, Path absolutePath, AppComponentOptions options) {
         switch (name){
             case "menuBar":{
                 AppComponentOptions o =

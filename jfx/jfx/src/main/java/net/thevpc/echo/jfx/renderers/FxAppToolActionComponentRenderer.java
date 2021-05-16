@@ -9,7 +9,7 @@
 //import javafx.scene.control.ToolBar;
 //import net.thevpc.echo.*;
 //
-//import net.thevpc.echo.api.AppPath;
+//import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
@@ -26,7 +26,7 @@
 //    public AppComponent createComponent(AppComponentRendererContext context) {
 //        Object parentGuiElement = ((FxPeer) context.getParent()).fxComponent();
 //        AppTool tool = context.getTool();
-//        AppPath path = context.getPath();
+//        Path path = context.getPath();
 //        Application application = context.getApplication();
 //        AppComponentOptions options = context.getOptions();
 //        AppComponentType componentType = options == null ? null : options.componentType();

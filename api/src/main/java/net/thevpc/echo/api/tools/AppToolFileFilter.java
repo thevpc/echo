@@ -1,6 +1,6 @@
 package net.thevpc.echo.api.tools;
 
-import net.thevpc.echo.api.Str;
+import net.thevpc.common.i18n.Str;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;

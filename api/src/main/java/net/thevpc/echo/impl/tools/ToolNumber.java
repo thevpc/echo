@@ -12,10 +12,11 @@ public class ToolNumber extends AppToolBase implements AppToolNumber {
 
     public ToolNumber(String id, Application app) {
         super(id, app);
+        propagateEvents(value);
     }
 
     public ToolNumber(Application app) {
-        super(app);
+        this(null,app);
     }
 
     @Override

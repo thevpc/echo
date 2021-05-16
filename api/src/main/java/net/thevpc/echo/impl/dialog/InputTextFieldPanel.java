@@ -2,9 +2,8 @@ package net.thevpc.echo.impl.dialog;
 
 import net.thevpc.echo.AppDialogInputPanel;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.Str;
+import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.constraints.ParentDirection;
 import net.thevpc.echo.constraints.ParentLayout;
 import net.thevpc.echo.constraints.ParentMargin;
 import net.thevpc.echo.impl.components.Label;
@@ -20,7 +19,7 @@ public class InputTextFieldPanel extends Panel implements AppDialogInputPanel {
     public InputTextFieldPanel(Application app, Str headerId, Str initialValue) {
         super(app);
         this.app = app;
-        constraints().addAll(ParentLayout.LINEAR, ParentDirection.VERTICAL, new ParentMargin(5, 5, 5, 5));
+        constraints().addAll(ParentLayout.VERTICAL, new ParentMargin(5, 5, 5, 5));
         header = new Label(app);
         value = new TextField(app);
         header.tool().text().set(headerId);
@@ -35,7 +34,7 @@ public class InputTextFieldPanel extends Panel implements AppDialogInputPanel {
 
     @Override
     public Object getValue() {
-        return value.tool().text().get().getValue(app);
+        return value.tool().text().get().getValue(app.i18n());
     }
 
 }

@@ -7,9 +7,11 @@ import java.awt.*;
 
 public class SwingMenuBarPeer implements SwingPeer{
     private JMenuBar jcomponent;
+    private AppComponent component;
     @Override
-    public void install(AppComponent comp) {
+    public void install(AppComponent component) {
         jcomponent = new JMenuBar();
+        this.component=component;
     }
 
     @Override
@@ -18,8 +20,10 @@ public class SwingMenuBarPeer implements SwingPeer{
     }
 
     public void addChild(AppComponent other, int index) {
-        Object o = other.peer().toolkitComponent();
-        jcomponent.add((Component) o,index);
+        component.app().toolkit().runUIAndWait(()-> {
+            Object o = other.peer().toolkitComponent();
+            jcomponent.add((Component) o, index);
+        });
     }
 
     public void removeChild(AppComponent other, int index) {
