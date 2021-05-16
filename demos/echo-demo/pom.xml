@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.thevpc.echo.demos</groupId>
+    <artifactId>echo-demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>net.thevpc.echo.demos.echo-demo</name>
+    <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>net.thevpc.echo</groupId>
+            <artifactId>echo-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thevpc.echo</groupId>
+            <artifactId>echo-swing</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thevpc.echo</groupId>
+            <artifactId>echo-swing-mydoggy</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thevpc.echo</groupId>
+            <artifactId>echo-swing-mydoggy</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thevpc.echo</groupId>
+            <artifactId>echo-swing-swingx</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thevpc.echo</groupId>
+            <artifactId>echo-jfx</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+</project>
