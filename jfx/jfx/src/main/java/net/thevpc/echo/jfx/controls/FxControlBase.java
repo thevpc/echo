@@ -1,7 +1,7 @@
 //package net.thevpc.echo.jfx.controls;
 //
 //import net.thevpc.echo.api.components.AppComponentOptions;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //import net.thevpc.echo.Application;
 //import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.impl.components.AppComponentBase;
@@ -11,7 +11,7 @@
 //public class FxControlBase extends AppComponentBase implements FxPeer {
 //    protected Object jcomponent;
 //    protected Application app;
-//    public FxControlBase(AppTool tool, Path path, Object jcomponent, Application app, AppComponentOptions options) {
+//    public FxControlBase(AppComponentModel tool, Path path, Object jcomponent, Application app, AppComponentOptions options) {
 //        super(tool,path,options);
 //        FxApplicationUtils.bindAppComponent(jcomponent, this);
 //        this.app=app;

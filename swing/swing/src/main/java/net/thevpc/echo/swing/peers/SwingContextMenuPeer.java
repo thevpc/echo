@@ -1,11 +1,13 @@
 package net.thevpc.echo.swing.peers;
 
 import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.peers.AppComponentPeer;
+import net.thevpc.echo.api.peers.AppContextMenuPeer;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SwingContextMenuPeer implements SwingPeer{
+public class SwingContextMenuPeer implements SwingPeer, AppContextMenuPeer {
     private JPopupMenu jcomponent;
     @Override
     public void install(AppComponent comp) {
@@ -32,8 +34,13 @@ public class SwingContextMenuPeer implements SwingPeer{
         return jcomponent;
     }
 
+    @Override
+    public void show(AppComponentPeer owner) {
 
-//    public void show(Object source, int x, int y) {
+    }
+
+
+    //    public void show(Object source, int x, int y) {
 //        Object g = guiElement();
 //        if(g instanceof JPopupMenu) {
 //            JPopupMenu c = (JPopupMenu) g;
@@ -55,4 +62,5 @@ public class SwingContextMenuPeer implements SwingPeer{
 ////            c.setPopupMenuVisible(true);
 //        }
 //    }
+
 }

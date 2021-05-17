@@ -21,7 +21,7 @@ public class SwingQuitAction extends SwingAbstractAppAction {
 
     @Override
     public void actionPerformedImpl(ActionEvent e) {
-        getApplication().mainFrame().get().tool().state().add(AppWindowState.CLOSED);
+        getApplication().mainFrame().get().model().state().add(AppWindowState.CLOSED);
     }
 
 }

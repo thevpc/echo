@@ -11,7 +11,7 @@
 //import net.thevpc.echo.*;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppToggle;
-//import net.thevpc.echo.api.tools.AppToolToggle;
+//import net.thevpc.echo.api.tools.AppToggleModel;
 //import net.thevpc.echo.impl.AbstractAppToolsBase;
 //
 //import java.util.Objects;
@@ -22,7 +22,7 @@
 // */
 //public class DefaultAppToolToggleBuilder
 //        extends AbstractAppToolBuilder<
-//                AppToolToggle, AppToggle,
+//                AppToggleModel, AppToggle,
 //        AppComponentOptions,AppToolToggleBuilder>
 //        implements AppToolToggleBuilder {
 //
@@ -82,7 +82,7 @@
 //        if (_id == null) {
 //            _id = ipath.isEmpty() ? "Action.Unknown" : "Action." + ipath.name();
 //        }
-//        AppToolToggle tool = new AppToolToggleImpl(_id, group, tools.app(), tools);
+//        AppToggleModel tool = new AppToolToggleImpl(_id, group, tools.app(), tools);
 //        tool.title().setId(_id);
 //        tool.smallIcon().setId("$" + _id + ".icon"); //the dollar meens the the icon key is resolved from i18n
 //        AppToggle c = (AppToggle) tools.addTool(tool, ipath, options);

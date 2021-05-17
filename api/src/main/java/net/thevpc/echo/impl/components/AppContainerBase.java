@@ -4,53 +4,54 @@ import net.thevpc.common.props.Path;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppContainer;
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolFolder;
+import net.thevpc.echo.api.peers.AppComponentPeer;
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppContainerModel;
+import net.thevpc.echo.impl.tools.ContainerModel;
 
-public abstract class AppContainerBase<C extends AppComponent, T extends AppTool>
+/**
+ *
+ * @param <C> child component type
+ * @param <T> child tool type
+ */
+public abstract class AppContainerBase<T extends AppComponentModel, C extends AppComponent>
         extends AppComponentBase
-        implements AppContainer<C, T> {
+        implements AppContainer<T, C> {
 
-    protected AppContainerChildren<C, T> children;
+    protected AppContainerChildren<T, C> children;
+    protected Class<?> childComponentType;
+    protected Class<?> childModelType;
 //    private PropertyContainerSupport containerSupport;
 
     //    private BindingNode root;
-    public AppContainerBase(AppToolFolder folder, Class<? extends C> componentType, Class<? extends T> toolType) {
-        super(folder);
+    public AppContainerBase(AppContainerModel folder,
+                            Class<? extends AppComponentModel> modelType,
+                            Class<? extends AppComponent> componentType,
+                            Class<? extends AppComponentPeer> peerType,
+                            Class<? extends T> childModelType,
+                            Class<? extends C> childComponentType
+    ) {
+        super(folder,modelType,componentType,peerType);
+        this.childComponentType=childComponentType;
+        this.childModelType=childModelType;
+
         path().set(Path.of("/"));
-        children = new AppContainerChildrenImpl<C, T>("children", componentType, toolType, this);
+        children = new AppContainerChildrenImpl<T, C>("children", childModelType, childComponentType, this);
 //        containerSupport = new PropertyContainerSupport(path.toString(), this);
     }
 
-    public AppContainerChildren<C, T> children() {
+    public AppContainerChildren<T, C> children() {
         return children;
     }
 
     @Override
-    public AppToolFolder tool() {
-        return (AppToolFolder) super.tool();
+    public AppContainerModel model() {
+        return (AppContainerModel) super.model();
     }
 
-    //    @Override
-//    public AppControlRenderer renderer() {
-//        return null;
-//    }
-//    @Override
-//    public AppPropertyBinding[] getProperties() {
-//        return containerSupport.getProperties();
-//    }
-
-//    @Override
-//    public PropertyListeners listeners() {
-//        return containerSupport.listeners();
-//    }
-
-
-    public AppComponent createPreferredComponent(AppTool tool,
-                                                 String name, Path absolutePath,
-                                                 AppComponentOptions options
-    ) {
-        return app().toolkit().createComponent(tool, this, name, options);
+    public AppComponent createPreferredChild(String name, Path absolutePath) {
+        throw new IllegalArgumentException("unable to resolve default child component " +
+                "named "+name+" for " +
+                "parent of type "+getClass().getName());
     }
-
 }

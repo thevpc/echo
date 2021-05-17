@@ -21,17 +21,14 @@
 
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.tools.AppToolFile;
-
-import java.util.List;
+import net.thevpc.echo.api.tools.AppFileChooserModel;
 
 /**
  *
  * @author vpc
  */
 public interface AppFileChooser extends AppControl{
-    AppToolFile tool();
+    AppFileChooserModel model();
 
     boolean showOpenDialog(AppComponent owner);
 

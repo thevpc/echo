@@ -6,13 +6,13 @@
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
 //import net.thevpc.echo.api.toolbuilders.AppToolBuilder;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //import net.thevpc.echo.impl.AbstractAppToolsBase;
 //
 //import java.util.ArrayList;
 //import java.util.List;
 //
-//public abstract class AbstractAppToolBuilder<T extends AppTool, C extends AppComponent, O extends AppComponentOptions, R extends AppToolBuilder>
+//public abstract class AbstractAppToolBuilder<T extends AppComponentModel, C extends AppComponent, O extends AppComponentOptions, R extends AppToolBuilder>
 //        implements AppToolBuilder {
 //
 //    protected AbstractAppToolsBase tools;
@@ -64,7 +64,7 @@
 //        C c = buildFirst(options1);
 //        components = new ArrayList<>();
 //        components.add(c);
-//        AppTool tool = c.tool();
+//        AppComponentModel tool = c.tool();
 //        for (int i = 1; i < paths.size(); i++) {
 //            components.add((C) tool.createComponent(tools, paths.get(i), options1));
 //        }

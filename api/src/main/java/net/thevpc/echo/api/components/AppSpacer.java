@@ -1,8 +1,8 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolSpacer;
+import net.thevpc.echo.api.tools.AppSpacerModel;
 
 
 public interface AppSpacer extends AppControl {
-    AppToolSpacer tool();
+    AppSpacerModel model();
 }

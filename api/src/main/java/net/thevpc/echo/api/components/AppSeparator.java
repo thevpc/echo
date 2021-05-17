@@ -1,7 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolSeparator;
+import net.thevpc.echo.api.tools.AppSeparatorModel;
 
 public interface AppSeparator extends AppControl {
-    AppToolSeparator tool();
+    AppSeparatorModel model();
 }

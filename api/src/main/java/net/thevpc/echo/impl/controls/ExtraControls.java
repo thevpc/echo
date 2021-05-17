@@ -18,7 +18,7 @@ public class ExtraControls {
             @Override
             public void run() {
                 app.toolkit().runUI(
-                        () -> label.tool().text().set(
+                        () -> label.model().text().set(
                                 Str.of(LocalDateTime.now().toString())
                         )
                 );
@@ -34,7 +34,7 @@ public class ExtraControls {
             @Override
             public void run() {
                 app.toolkit().runUI(
-                        () -> label.tool().text().set(
+                        () -> label.model().text().set(
                                 Str.of(
                                         Runtime.getRuntime().freeMemory()
                                                 / 1024 / 1024

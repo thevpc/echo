@@ -1,23 +1,24 @@
 package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppPasswordField;
-import net.thevpc.echo.api.components.AppTextField;
-import net.thevpc.echo.api.tools.AppToolText;
-import net.thevpc.echo.impl.tools.ToolText;
+import net.thevpc.echo.api.peers.AppPasswordFieldPeer;
+import net.thevpc.echo.api.tools.AppTextModel;
+import net.thevpc.echo.impl.tools.TextModel;
 
 public class PasswordField extends TextBase implements AppPasswordField {
-    public PasswordField(AppToolText tool) {
-        super(tool);
+    public PasswordField(AppTextModel tool) {
+        super(tool,
+                AppTextModel.class,AppPasswordField.class, AppPasswordFieldPeer.class
+                );
     }
 
     public PasswordField(Application tool) {
-        super(new ToolText(tool));
+        this(new TextModel(tool));
     }
 
-    public AppToolText tool() {
-        return (AppToolText) super.tool();
+    public AppTextModel model() {
+        return (AppTextModel) super.model();
     }
 
 }

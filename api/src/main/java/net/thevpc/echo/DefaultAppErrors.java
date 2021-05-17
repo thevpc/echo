@@ -25,7 +25,7 @@ import net.thevpc.common.msg.ExceptionMessage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.thevpc.common.props.Props;
-import net.thevpc.common.props.impl.DelegateWritableProperty;
+import net.thevpc.common.props.impl.WritablePropertyDelegate;
 import net.thevpc.common.msg.Message;
 import net.thevpc.common.props.ObservableDispatcher;
 import net.thevpc.common.props.WritableBoolean;
@@ -35,7 +35,7 @@ import net.thevpc.common.props.WritableDispatcher;
  *
  * @author thevpc
  */
-public class DefaultAppErrors extends DelegateWritableProperty implements AppErrors {
+public class DefaultAppErrors extends WritablePropertyDelegate implements AppErrors {
 
     private final WritableBoolean enableErrorStackTrace = Props.of("enableErrorStackTrace").booleanOf(true);
     private final Application app;

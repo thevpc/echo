@@ -6,9 +6,9 @@ import net.thevpc.echo.api.components.AppComponent;
 
 public class NameBoundPropertyListener<C extends AppComponent> implements PropertyListener {
     private String name;
-    private AppContainerChildren<C, ?> children;
+    private AppContainerChildren<?, C> children;
 
-    public NameBoundPropertyListener(String name, AppContainerChildren<C, ?> children) {
+    public NameBoundPropertyListener(String name, AppContainerChildren<?, C> children) {
         this.name = name;
         this.children = children;
     }

@@ -22,8 +22,8 @@ public class InputTextAreaPanel extends Panel implements AppDialogInputPanel {
         constraints().addAll(ParentLayout.VERTICAL, new ParentMargin(5, 5, 5, 5));
         header = new Label(app);
         value = new TextArea(app);
-        header.tool().text().set(headerId);
-        value.tool().text().set(initialValue);
+        header.model().text().set(headerId);
+        value.model().text().set(initialValue);
         children().addAll(header, value);
     }
 
@@ -34,7 +34,7 @@ public class InputTextAreaPanel extends Panel implements AppDialogInputPanel {
 
     @Override
     public Object getValue() {
-        return value.tool().text().get().getValue(app.i18n());
+        return value.model().text().get().getValue(app.i18n());
     }
 
 }

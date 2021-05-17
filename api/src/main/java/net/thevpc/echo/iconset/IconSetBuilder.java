@@ -21,6 +21,8 @@
 
 package net.thevpc.echo.iconset;
 
+import net.thevpc.echo.api.AppColor;
+
 import java.awt.Color;
 
 /**
@@ -37,7 +39,7 @@ public interface IconSetBuilder {
 
     IconSetBuilder transform(IconTransform transform);
 
-    IconSetBuilder replaceColor(Color from, Color to);
+    IconSetBuilder replaceColor(AppColor from, AppColor to);
 
     IconSet build();
 }

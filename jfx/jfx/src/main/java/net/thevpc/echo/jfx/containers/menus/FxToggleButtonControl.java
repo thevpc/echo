@@ -6,19 +6,19 @@
 //import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppToggle;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //import net.thevpc.echo.jfx.FxApplicationUtils;
 //
 //import net.thevpc.echo.jfx.controls.FxControlBase;
 //
 //public class FxToggleButtonControl extends FxControlBase implements AppToggle {
 //
-//    public FxToggleButtonControl(AppTool tool, Path path, ButtonBase m, Application app, boolean text, AppComponentOptions options) {
+//    public FxToggleButtonControl(AppComponentModel tool, Path path, ButtonBase m, Application app, boolean text, AppComponentOptions options) {
 //        super(tool, path, m, app, options);
 //        FxApplicationUtils.prepareAbstractButton(m, tool, app, text);
 //    }
 //
-//    public FxToggleButtonControl(AppTool tool, Path path, MenuItem m, Application app, boolean text, AppComponentOptions options) {
+//    public FxToggleButtonControl(AppComponentModel tool, Path path, MenuItem m, Application app, boolean text, AppComponentOptions options) {
 //        super(tool, path, m, app, options);
 //        FxApplicationUtils.prepareAbstractButton(m, tool, app, text);
 //    }

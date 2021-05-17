@@ -2,20 +2,23 @@ package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.components.AppNumberField;
-import net.thevpc.echo.api.tools.AppToolNumber;
-import net.thevpc.echo.impl.tools.ToolNumber;
+import net.thevpc.echo.api.peers.AppNumberFieldPeer;
+import net.thevpc.echo.api.tools.AppNumberFieldModel;
+import net.thevpc.echo.impl.tools.NumberFieldModel;
 
-public class NumberField extends AppComponentBase implements AppNumberField {
-    public NumberField(AppToolNumber tool) {
-        super(tool);
+public class NumberField extends AppControlBase implements AppNumberField {
+    public NumberField(AppNumberFieldModel tool) {
+        super(tool
+                , AppNumberFieldModel.class, AppNumberField.class, AppNumberFieldPeer.class
+        );
     }
 
     public NumberField(Application app) {
-        super(new ToolNumber(app));
+        this(new NumberFieldModel(app));
     }
 
-    public AppToolNumber tool() {
-        return (AppToolNumber) super.tool();
+    public AppNumberFieldModel model() {
+        return (AppNumberFieldModel) super.model();
     }
 
 }

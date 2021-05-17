@@ -29,7 +29,7 @@
 //import net.thevpc.echo.api.components.AppComponentType;
 //import net.thevpc.echo.api.components.AppToggle;
 //import net.thevpc.echo.api.toolbuilders.AppToolBuilder;
-//import net.thevpc.echo.api.tools.AppToolToggle;
+//import net.thevpc.echo.api.tools.AppToggleModel;
 //
 ///**
 // *
@@ -52,7 +52,7 @@
 //    AppToolToggleBuilder path(String... path);
 //
 //    @Override
-//    public AppToolToggle tool();
+//    public AppToggleModel tool();
 //
 //    @Override
 //    public AppToggle component();

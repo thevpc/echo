@@ -8,8 +8,8 @@
 //import net.thevpc.echo.*;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.toolbuilders.AppToolCustomBuilder;
-//import net.thevpc.echo.api.tools.AppTool;
-//import net.thevpc.echo.api.tools.AppToolCustom;
+//import net.thevpc.echo.api.tools.AppComponentModel;
+//import net.thevpc.echo.api.tools.AppUserControlModel;
 //import net.thevpc.echo.impl.AbstractAppToolsBase;
 //import net.thevpc.echo.impl.tools.AppToolCustomImpl;
 //
@@ -21,7 +21,7 @@
 // */
 //public class DefaultAppToolCustomBuilder
 //        extends AbstractAppToolBuilder<
-//                AppTool, AppComponent,
+//                AppComponentModel, AppComponent,
 //                AppComponentOptions, AppToolCustomBuilder>
 //        implements AppToolCustomBuilder {
 //
@@ -47,7 +47,7 @@
 //        if (_id == null) {
 //            _id = ipath.isEmpty() ? "Action.Unknown" : "Action." + ipath.name();
 //        }
-//        AppToolCustom tool = new AppToolCustomImpl(_id, renderer, tools.app(), tools);
+//        AppUserControlModel tool = new AppToolCustomImpl(_id, renderer, tools.app(), tools);
 //        tool.title().setId(_id);
 //        tool.smallIcon().setId("$" + _id + ".icon"); //the dollar meens the the icon key is resolved from i18n
 //        return tools.addTool(tool, ipath, options);

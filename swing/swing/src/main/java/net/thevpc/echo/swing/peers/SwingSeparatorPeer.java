@@ -3,13 +3,14 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.tools.AppToolSeparator;
+import net.thevpc.echo.api.peers.AppSeparatorPeer;
+import net.thevpc.echo.api.tools.AppSeparatorModel;
 import net.thevpc.echo.impl.components.AppComponentBase;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SwingSeparatorPeer implements SwingPeer {
+public class SwingSeparatorPeer implements SwingPeer, AppSeparatorPeer {
     private Object separator;
     private AppComponent component;
 
@@ -21,7 +22,7 @@ public class SwingSeparatorPeer implements SwingPeer {
             return;
         }
         AppComponentBase ecomp = (AppComponentBase) component;
-        AppToolSeparator etool=(AppToolSeparator) ecomp.tool();
+        AppSeparatorModel etool=(AppSeparatorModel) ecomp.model();
         Object sParent = component.parent()==null?null:component.parent().peer().toolkitComponent();
         double height = ((Number) etool.height().get()).doubleValue();
         double width = ((Number) etool.width().get()).doubleValue();

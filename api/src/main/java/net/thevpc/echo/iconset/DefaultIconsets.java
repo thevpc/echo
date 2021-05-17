@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 
 import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.DefaultPropertyListeners;
+import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppImage;
 
 /**
@@ -198,7 +199,7 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
         }
 
         @Override
-        public IconSetBuilder replaceColor(Color from, Color to) {
+        public IconSetBuilder replaceColor(AppColor from, AppColor to) {
             b.replaceColor(from, to);
             return this;
         }

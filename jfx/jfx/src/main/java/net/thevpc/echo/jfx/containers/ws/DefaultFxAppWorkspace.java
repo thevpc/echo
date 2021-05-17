@@ -16,12 +16,12 @@
 //import net.thevpc.echo.*;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppFrame;
-//import net.thevpc.echo.api.components.WindowWorkspaceOptions;
+//import net.thevpc.echo.api.components.AppWorkspaceOptions;
 //import net.thevpc.echo.api.peers.AppWorkspacePeer;
-//import net.thevpc.echo.api.tools.AppToolFolder;
-//import net.thevpc.echo.api.tools.AppToolWindow;
+//import net.thevpc.echo.api.tools.AppContainerModel;
+//import net.thevpc.echo.api.tools.AppWindowModel;
 //import net.thevpc.echo.impl.components.Window;
-////import net.thevpc.echo.impl.tools.ToolWindow;
+////import net.thevpc.echo.impl.tools.WindowModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.icons.FxAppImage;
 //import net.thevpc.echo.jfx.raw.FxDockedPane;
@@ -37,7 +37,7 @@
 //    private AnchorPane desktopPane = new AnchorPane();
 //    private Map<String, Window> internalFrames = new HashMap<>();
 //
-//    public DefaultFxAppWorkspace(AppToolFolder tool, Application app, WindowWorkspaceOptions options, AppFrame win) {
+//    public DefaultFxAppWorkspace(AppContainerModel tool, Application app, AppWorkspaceOptions options, AppFrame win) {
 //        super(tool, new FxDockedPane(), options, win, true, true);
 //        if (desktopEnabled()) {
 //            addWindow("Desktop",
@@ -169,7 +169,7 @@
 //    }
 //
 //    @Override
-//    protected void removeWindowImpl(String id, AppToolWindow atw) {
+//    protected void removeWindowImpl(String id, AppWindowModel atw) {
 //        app().toolkit().runUI(() -> {
 //            FxDockedPane dd = (FxDockedPane) toolkitComponent();
 //            dd.remove(id);

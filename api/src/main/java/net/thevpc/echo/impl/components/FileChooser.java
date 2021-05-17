@@ -23,29 +23,30 @@ package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppFileChooser;
-import net.thevpc.echo.api.tools.AppToolFile;
-import net.thevpc.echo.impl.tools.ToolFile;
+import net.thevpc.echo.api.tools.AppFileChooserModel;
+import net.thevpc.echo.impl.tools.FileChooserModel;
 import net.thevpc.echo.api.peers.AppFileChooserPeer;
 
 /**
  *
  * @author vpc
  */
-public class FileChooser extends AppComponentBase implements AppFileChooser {
+public class FileChooser extends FileBase implements AppFileChooser {
 
-    public FileChooser(AppToolFile file) {
-        super(file);
+    public FileChooser(AppFileChooserModel file) {
+        super(file
+                , AppFileChooserModel.class, AppFileChooser.class, AppFileChooserPeer.class
+        );
     }
 
     public FileChooser(Application app) {
-        super(new ToolFile(app));
+        this(new FileChooserModel(app));
     }
 
     @Override
-    public AppToolFile tool() {
-        return (AppToolFile) super.tool();
+    public AppFileChooserModel model() {
+        return (AppFileChooserModel) super.model();
     }
 
     @Override

@@ -2,22 +2,25 @@ package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.components.AppTemporalField;
-import net.thevpc.echo.api.tools.AppToolTemporal;
-import net.thevpc.echo.impl.tools.ToolTemporal;
+import net.thevpc.echo.api.peers.AppTemporalFieldPeer;
+import net.thevpc.echo.api.tools.AppTemporalFieldModel;
+import net.thevpc.echo.impl.tools.TemporalFieldModel;
 
 import java.time.temporal.Temporal;
 
-public class TemporalField<T extends Temporal> extends AppComponentBase implements AppTemporalField {
-    public TemporalField(AppToolTemporal<T> tool) {
-        super(tool);
+public class TemporalField<T extends Temporal> extends AppControlBase implements AppTemporalField {
+    public TemporalField(AppTemporalFieldModel<T> tool) {
+        super(tool
+                , AppTemporalFieldModel.class, AppTemporalField.class, AppTemporalFieldPeer.class
+        );
     }
 
     public TemporalField(Class<T> type,Application app) {
-        super(new ToolTemporal<T>(type,app));
+        this(new TemporalFieldModel<T>(type,app));
     }
 
-    public AppToolTemporal<T> tool() {
-        return (AppToolTemporal<T>) super.tool();
+    public AppTemporalFieldModel<T> model() {
+        return (AppTemporalFieldModel<T>) super.model();
     }
 
 }

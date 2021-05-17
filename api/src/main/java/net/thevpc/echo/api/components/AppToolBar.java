@@ -1,7 +1,7 @@
 package net.thevpc.echo.api.components;
 
 
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.tools.AppComponentModel;
 
-public interface AppToolBar extends AppContainer<AppComponent, AppTool> {
+public interface AppToolBar extends AppContainer<AppComponentModel, AppComponent> {
 }

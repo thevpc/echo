@@ -7,8 +7,8 @@
 //
 //import net.thevpc.echo.*;
 //import net.thevpc.echo.api.components.AppFrame;
-//import net.thevpc.echo.api.components.WindowWorkspaceOptions;
-//import net.thevpc.echo.api.tools.AppToolFolder;
+//import net.thevpc.echo.api.components.AppWorkspaceOptions;
+//import net.thevpc.echo.api.tools.AppContainerModel;
 //import net.thevpc.echo.jfx.containers.ws.DefaultFxAppWorkspace;
 //
 ///**
@@ -21,7 +21,7 @@
 //    }
 //
 //    @Override
-//    public SupportSupplier<AppWorkspace> createWorkspace(AppToolFolder tool, AppFrame frame, WindowWorkspaceOptions options) {
+//    public SupportSupplier<AppWorkspace> createWorkspace(AppContainerModel tool, AppFrame frame, AppWorkspaceOptions options) {
 //        if (!(frame.getApplication().toolkit() instanceof FxApplicationToolkit)) {
 //            return null;
 //        }

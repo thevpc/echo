@@ -6,17 +6,18 @@
 package net.thevpc.echo.swing;
 
 import net.thevpc.echo.AppUIPlaf;
-import net.thevpc.echo.AppWorkspace;
 import net.thevpc.echo.UncheckedException;
+import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.components.*;
+import net.thevpc.echo.api.peers.*;
 import net.thevpc.echo.iconset.IconTransform;
 import net.thevpc.echo.impl.AbstractApplicationToolkit;
-import net.thevpc.echo.impl.components.CustomComponent;
-import net.thevpc.echo.api.peers.AppColorPeer;
-import net.thevpc.echo.api.peers.AppImagePeer;
-import net.thevpc.echo.swing.containers.ws.SwingWorkspacePeer;
-import net.thevpc.echo.swing.dialog.SwingAppAlertPeer;
-import net.thevpc.echo.swing.dialog.SwingAppFileChooserPeer;
+import net.thevpc.echo.impl.components.UserControl;
+import net.thevpc.echo.swing.peers.SwingDesktopPeer;
+import net.thevpc.echo.swing.peers.SwingDockPeer;
+import net.thevpc.echo.swing.peers.SwingWindowPeer;
+import net.thevpc.echo.swing.peers.SwingAppAlertPeer;
+import net.thevpc.echo.swing.peers.SwingAppFileChooserPeer;
 import net.thevpc.echo.swing.icons.SwingAppImage;
 import net.thevpc.echo.swing.icons.SwingColorIconTransform;
 import net.thevpc.echo.swing.peers.*;
@@ -40,26 +41,30 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
 
     public SwingApplicationToolkit(SwingApplication application) {
         super(application);
-//        setToolRenderer(AppToolAction.class, new SwingAppToolActionComponentRenderer());
-        addPeerFactory(AppLabel.class, SwingLabelPeer.class);
-        addPeerFactory(AppAlert.class, SwingAppAlertPeer.class);
-        addPeerFactory(AppFileChooser.class, SwingAppFileChooserPeer.class);
-        addPeerFactory(AppFrame.class, SwingFramePeer.class);
-        addPeerFactory(AppButton.class, SwingButtonPeer.class);
-        addPeerFactory(AppContextMenu.class, SwingContextMenuPeer.class);
-        addPeerFactory(AppUserControl.class, SwingCustomPeer.class);
-        addPeerFactory(AppMenuBar.class, SwingMenuBarPeer.class);
-//        setPeerFactory(AppMenuButton.class, SwingMenuButtonPeer.class);
-//        setPeerFactory(AppMenuLabel.class, SwingMenuLabelPeer.class);
-        addPeerFactory(AppMenu.class, SwingMenuPeer.class);
-        addPeerFactory(AppSeparator.class, SwingSeparatorPeer.class);
-        addPeerFactory(AppSpacer.class, SwingSpacerPeer.class);
-        addPeerFactory(AppToggle.class, SwingTogglePeer.class);
-        addPeerFactory(AppToolBar.class, SwingToolBarPeer.class);
-        addPeerFactory(AppToolBarGroup.class, SwingToolBarGroupPeer.class);
-        addPeerFactory(AppContainer.class, SwingFolderPeer.class);
-        addPeerFactory(AppWorkspace.class, SwingWorkspacePeer.class);
-        addPeerFactory(AppPanel.class, SwingPanelPeer.class);
+        addPeerFactory(AppLabelPeer.class, SwingLabelPeer.class);
+        addPeerFactory(AppAlertPeer.class, SwingAppAlertPeer.class);
+        addPeerFactory(AppFileChooserPeer.class, SwingAppFileChooserPeer.class);
+        addPeerFactory(AppFramePeer.class, SwingFramePeer.class);
+        addPeerFactory(AppButtonPeer.class, SwingButtonPeer.class);
+        addPeerFactory(AppContextMenuPeer.class, SwingContextMenuPeer.class);
+        addPeerFactory(AppUserControlPeer.class, SwingUserControlPeer.class);
+        addPeerFactory(AppMenuBarPeer.class, SwingMenuBarPeer.class);
+        addPeerFactory(AppMenuPeer.class, SwingMenuPeer.class);
+        addPeerFactory(AppSeparatorPeer.class, SwingSeparatorPeer.class);
+        addPeerFactory(AppSpacerPeer.class, SwingSpacerPeer.class);
+        addPeerFactory(AppTogglePeer.class, SwingTogglePeer.class);
+        addPeerFactory(AppCheckBoxPeer.class, SwingTogglePeer.class);
+        addPeerFactory(AppRadioButtonPeer.class, SwingTogglePeer.class);
+        addPeerFactory(AppToolBarPeer.class, SwingToolBarPeer.class);
+        addPeerFactory(AppToolBarGroupPeer.class, SwingToolBarGroupPeer.class);
+        addPeerFactory(AppPanelPeer.class, SwingPanelPeer.class);
+        addPeerFactory(AppWindowPeer.class, SwingWindowPeer.class);
+        addPeerFactory(AppDockPeer.class, SwingDockPeer.class);
+        addPeerFactory(AppDesktopPeer.class, SwingDesktopPeer.class);
+        addPeerFactory(AppTabsPeer.class, SwingTabsPeer.class);
+        addPeerFactory(AppTextFieldPeer.class, SwingTextFieldPeer.class);
+        addPeerFactory(AppTextAreaPeer.class, SwingTextAreaPeer.class);
+        addPeerFactory(AppPasswordFieldPeer.class, SwingPasswordFieldPeer.class);
     }
 
     public ButtonGroup getButtonGroup(String name) {
@@ -77,7 +82,9 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
             return (AppComponent) component;
         }
         if (component instanceof Component) {
-            return new CustomComponent(app,new SwingCustomPeer((Component) component));
+            UserControl userControl = new UserControl(app);
+            userControl.setPeer(new SwingUserControlPeer((Component) component));
+            return userControl;
         }
         throw new IllegalArgumentException("unsupported");
     }
@@ -95,8 +102,11 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
         }
     }
 
-    public IconTransform createReplaceColorTransform(Color from, Color to) {
-        return new SwingColorIconTransform(from, to, app);
+    public IconTransform createReplaceColorTransform(AppColor from, AppColor to) {
+        return new SwingColorIconTransform(
+                (Color) from.peer().toolkitColor(),
+                (Color) to.peer().toolkitColor()
+                , app);
     }
 
     public void runUI(Runnable run) {

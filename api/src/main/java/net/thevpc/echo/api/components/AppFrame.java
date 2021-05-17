@@ -3,10 +3,10 @@ package net.thevpc.echo.api.components;
 
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolFrame;
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppFrameModel;
 
-public interface AppFrame extends AppContainer<AppComponent, AppTool> {
+public interface AppFrame extends AppContainer<AppComponentModel, AppComponent> {
 
 
     WritableValue<AppMenuBar> menuBar();
@@ -15,9 +15,9 @@ public interface AppFrame extends AppContainer<AppComponent, AppTool> {
 
     WritableValue<AppToolBarGroup> toolBar();
 
-    WritableValue<AppWorkspace> workspace();
+    WritableValue<AppComponent> workspace();
 
-    AppToolFrame tool();
+    AppFrameModel model();
 
     void centerOnDefaultMonitor();
     

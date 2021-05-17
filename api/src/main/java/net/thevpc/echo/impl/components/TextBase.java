@@ -1,22 +1,21 @@
 package net.thevpc.echo.impl.components;
 
-import net.thevpc.echo.Application;
-import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppText;
-import net.thevpc.echo.api.components.AppTextField;
-import net.thevpc.echo.api.tools.AppToolText;
-import net.thevpc.echo.impl.tools.ToolText;
+import net.thevpc.echo.api.peers.AppComponentPeer;
+import net.thevpc.echo.api.tools.AppTextModel;
 
-public class TextBase extends AppComponentBase implements AppText {
-    public TextBase(AppToolText tool) {
-        super(tool);
-    }
-    public TextBase(Application app) {
-        super(new ToolText(app));
+public class TextBase extends AppControlBase implements AppText {
+    public TextBase(AppTextModel tool,
+                    Class<? extends AppTextModel> modelType,
+                    Class<? extends AppText> componentType,
+                    Class<? extends AppComponentPeer> peerType) {
+        super(tool
+                , modelType, componentType, peerType
+        );
     }
 
-    public AppToolText tool() {
-        return (AppToolText) super.tool();
+    public AppTextModel model() {
+        return (AppTextModel) super.model();
     }
 
 }

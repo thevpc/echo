@@ -22,6 +22,7 @@
 package net.thevpc.echo.impl;
 
 import net.thevpc.echo.Application;
+import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.iconset.DefaultIconSet;
 import net.thevpc.echo.iconset.IconSet;
 import net.thevpc.echo.iconset.IconSetBuilder;
@@ -76,7 +77,7 @@ public class DefaultIconSetSupplier implements IconSetBuilder {
                 transform, app);
     }
 
-    public IconSetBuilder replaceColor(Color from, Color to) {
+    public IconSetBuilder replaceColor(AppColor from, AppColor to) {
         transform(
                 app.toolkit().createReplaceColorTransform(from, to)
         );

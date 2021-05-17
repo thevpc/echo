@@ -8,12 +8,12 @@
 //import net.thevpc.echo.api.components.*;
 //import net.thevpc.echo.api.toolbuilders.AppToolActionBuilder;
 //import net.thevpc.echo.api.toolbuilders.AppToolCustomBuilder;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //import net.thevpc.echo.impl.toolbuilders.DefaultAppToolActionBuilder;
 //import net.thevpc.echo.impl.toolbuilders.DefaultAppToolCustomBuilder;
 //import net.thevpc.echo.impl.toolbuilders.DefaultAppToolToggleBuilder;
-//import net.thevpc.echo.impl.tools.ToolFolder;
-//import net.thevpc.echo.impl.tools.ToolSeparator;
+//import net.thevpc.echo.impl.tools.ContainerModel;
+//import net.thevpc.echo.impl.tools.SeparatorModel;
 //
 //import java.util.HashMap;
 //import java.util.Map;
@@ -24,7 +24,7 @@
 //    protected Map<String, ToolInfo> toolsMap = new HashMap<>();
 //    protected Application application;
 //    //    protected ToolMapResolverPropertyListener toolMapResolverAppPropertyListener = new ToolMapResolverPropertyListener();
-//    private WritableList<AppTool> toolsList = Props.of("tools").listOf(AppTool.class);
+//    private WritableList<AppComponentModel> toolsList = Props.of("tools").listOf(AppComponentModel.class);
 //    private AppToolsConfig config = new AppToolsConfig();
 //
 //    public AbstractAppToolsBase(Application application) {
@@ -36,12 +36,12 @@
 //    }
 //
 //    @Override
-//    public ObservableList<AppTool> all() {
+//    public ObservableList<AppComponentModel> all() {
 //        return toolsList.readOnly();
 //    }
 //
 //    @Override
-//    public AppTool getTool(String id) {
+//    public AppComponentModel getTool(String id) {
 //        ToolInfo o = toolsMap.get(id);
 //        return o == null ? null : o.tool;
 //    }
@@ -57,7 +57,7 @@
 //        if (a instanceof AppContainer) {
 //            return (AppContainer) a;
 //        }
-//        return (AppContainer) addTool(new ToolFolder(application), path, null);
+//        return (AppContainer) addTool(new ContainerModel(application), path, null);
 //    }
 //
 //    @Override
@@ -67,7 +67,7 @@
 //
 //    public AppSeparator addSeparator(Path path) {
 //        return (AppSeparator) addTool(
-//                new ToolSeparator(application), path, null);
+//                new SeparatorModel(application), path, null);
 //    }
 //
 //    @Override
@@ -91,7 +91,7 @@
 //    }
 //
 //    @Override
-//    public AppComponent addTool(AppTool tool, String path, AppComponentOptions options) {
+//    public AppComponent addTool(AppComponentModel tool, String path, AppComponentOptions options) {
 //        return addTool(tool, Path.of(path), options);
 //    }
 //
@@ -120,13 +120,13 @@
 //        return application;
 //    }
 //
-//    //    public AppToolAction addAction(Action al, String path, String... paths) {
+//    //    public AppToolButtonModel addAction(Action al, String path, String... paths) {
 ////        return addAction().bind(al).path(path).path(paths).tool();
 ////    }
 //    public static class ToolInfo {
 //
 //        private String id;
-//        private AppTool tool;
+//        private AppComponentModel tool;
 //        private Map<Path, AppControl> components;
 //    }
 //

@@ -29,9 +29,9 @@ public class EchoAppDemo002 {
                             p.constraints().addAll(ParentLayout.VERTICAL);
                                 p.children().addAll(
                                         new Button(app)
-                                                .with( (Button v) -> v.tool().title().set(Str.of("Hello"))),
+                                                .with( (Button v) -> v.model().title().set(Str.of("Hello"))),
                                         new Button(app)
-                                                .with((Button v) -> v.tool().title().set(Str.of("Bye")))
+                                                .with((Button v) -> v.model().title().set(Str.of("Bye")))
                                 );
                             }
                         )

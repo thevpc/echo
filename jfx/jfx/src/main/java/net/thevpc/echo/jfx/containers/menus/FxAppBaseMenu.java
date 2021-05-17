@@ -11,12 +11,12 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppMenu;
-//import net.thevpc.echo.api.tools.AppToolFolder;
+//import net.thevpc.echo.api.tools.AppContainerModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //
 //public class FxAppBaseMenu extends FxAppToolContainerImpl implements AppMenu {
 //
-//    public FxAppBaseMenu(AppToolFolder folder, Window comp, Application application, AppComponentOptions options) {
+//    public FxAppBaseMenu(AppContainerModel folder, Window comp, Application application, AppComponentOptions options) {
 //        super(folder, comp, application, options);
 //        tool().visible().listeners().add(new PropertyListener() {
 //            @Override
@@ -33,7 +33,7 @@
 //
 //    }
 //
-//    public FxAppBaseMenu(AppToolFolder folder, Node comp, Application application, AppComponentOptions options) {
+//    public FxAppBaseMenu(AppContainerModel folder, Node comp, Application application, AppComponentOptions options) {
 //        super(folder, comp, application, options);
 //        tool().visible().listeners().add(new PropertyListener() {
 //            @Override
@@ -45,7 +45,7 @@
 //        });
 //    }
 //
-//    public FxAppBaseMenu(AppToolFolder folder, MenuItem comp, Application application, AppComponentOptions options) {
+//    public FxAppBaseMenu(AppContainerModel folder, MenuItem comp, Application application, AppComponentOptions options) {
 //        super(folder, comp, application, options);
 //        tool().visible().listeners().add(new PropertyListener() {
 //            @Override

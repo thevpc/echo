@@ -10,7 +10,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="echo-swing-mydoggy" />
+    <orderEntry type="module" module-name="swing-explorer" />
+    <orderEntry type="library" name="Maven: org.jboss:javassist:3.7.1.GA" level="project" />
+    <orderEntry type="library" name="Maven: org.swinglabs:swing-layout:1.0.3" level="project" />
     <orderEntry type="module" module-name="echo-api" />
     <orderEntry type="module" module-name="thevpc-common-i18n" />
     <orderEntry type="module" module-name="thevpc-common-props" />

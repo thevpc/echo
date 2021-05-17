@@ -14,14 +14,14 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppToolBar;
-//import net.thevpc.echo.api.tools.AppToolFolder;
+//import net.thevpc.echo.api.tools.AppContainerModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.raw.StatusBarGroup;
 //import net.thevpc.echo.jfx.ToolBarGroup;
 //
 //public class FxAppBarBase extends FxAppToolContainerImpl implements AppToolBar {
 //
-//    public FxAppBarBase(AppToolFolder folder, Node comp, Application application, AppComponentOptions options) {
+//    public FxAppBarBase(AppContainerModel folder, Node comp, Application application, AppComponentOptions options) {
 //        super(folder, comp, application, options);
 //        tool().visible().listeners().add(new PropertyListener() {
 //            @Override

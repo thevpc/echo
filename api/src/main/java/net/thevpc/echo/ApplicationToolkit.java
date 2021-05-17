@@ -19,8 +19,9 @@
 
 package net.thevpc.echo;
 
+import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.components.*;
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.tools.AppComponentModel;
 import net.thevpc.echo.iconset.IconTransform;
 import net.thevpc.echo.api.peers.*;
 
@@ -42,9 +43,9 @@ public interface ApplicationToolkit {
 
     void applyPlaf(String plaf);
 
-    IconTransform createReplaceColorTransform(Color from, Color to);
+    IconTransform createReplaceColorTransform(AppColor from, AppColor to);
 
-    AppComponent createComponent(AppTool tool, AppComponent parent, String name, AppComponentOptions options);
+//    AppComponent createComponent(AppComponentModel tool, AppComponent parent, String name, AppComponentOptions options);
 
     void runUI(Runnable run);
 

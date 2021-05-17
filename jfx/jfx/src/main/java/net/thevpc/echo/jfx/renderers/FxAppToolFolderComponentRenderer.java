@@ -11,7 +11,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
-//import net.thevpc.echo.api.tools.AppToolFolder;
+//import net.thevpc.echo.api.tools.AppContainerModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.ToolBarGroup;
 //import net.thevpc.echo.jfx.containers.bars.FxAppToolBar;
@@ -31,7 +31,7 @@
 //        AppComponentOptions options = context.getOptions();
 //        AppComponentType componentType = options == null ? null : options.componentType();
 //
-//        AppToolFolder tool = (AppToolFolder) context.getTool();
+//        AppContainerModel tool = (AppContainerModel) context.getTool();
 //        Application application = context.getApplication();
 //        Path path = context.getPath();
 //        boolean inMenu = false;

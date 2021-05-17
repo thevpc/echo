@@ -2,7 +2,7 @@ package net.thevpc.echo.swing.peers;
 
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.tools.AppComponentModel;
 import net.thevpc.echo.swing.icons.SwingAppImage;
 
 import java.awt.*;
@@ -12,7 +12,7 @@ public class SwingMenuLabelPeer implements SwingPeer{
     @Override
     public void install(AppComponent comp) {
         jcomponent = new JDropDownLabel();
-        AppTool folder = comp.tool();
+        AppComponentModel folder = comp.model();
         folder.title().listeners().add(x->jcomponent.setText(
                 folder.title().get()==null?null:
                 folder.title().get().getValue(comp.app().i18n())

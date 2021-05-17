@@ -46,7 +46,7 @@ public class AppSwingxConfigurator {
             public void vetoableChange(AppEvent event) {
                 int a = JOptionPane.showConfirmDialog(
                         (Component) app.mainFrame().get().peer().toolkitComponent(), "Are you sure you want to exit "
-                        + app.mainFrame().get().tool().title().get()
+                        + app.mainFrame().get().model().title().get()
                         + "?", "Exit?", JOptionPane.OK_CANCEL_OPTION);
                 if (a == JOptionPane.OK_OPTION) {
                     Supplier<Boolean> e = confirmExit().get();

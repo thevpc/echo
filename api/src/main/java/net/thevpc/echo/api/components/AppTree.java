@@ -1,7 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolTree;
+import net.thevpc.echo.api.tools.AppTreeModel;
 
 public interface AppTree extends AppControl {
-    AppToolTree tool();
+    AppTreeModel model();
 }

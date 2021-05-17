@@ -2,19 +2,23 @@ package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.components.AppFontChooser;
-import net.thevpc.echo.api.tools.AppToolFont;
-import net.thevpc.echo.impl.tools.ToolFont;
+import net.thevpc.echo.api.peers.AppFontChooserPeer;
+import net.thevpc.echo.api.tools.AppFontChooserModel;
+import net.thevpc.echo.impl.tools.FontChooserModel;
 
-public class FontChooser extends AppComponentBase implements AppFontChooser {
-    public FontChooser(AppToolFont tool) {
-        super(tool);
+public class FontChooser extends FontBase implements AppFontChooser {
+    public FontChooser(AppFontChooserModel tool) {
+        super(tool
+                , AppFontChooserModel.class, AppFontChooser.class, AppFontChooserPeer.class
+
+        );
     }
     public FontChooser(Application app) {
-        super(new ToolFont(app));
+        this(new FontChooserModel(app));
     }
 
-    public AppToolFont tool() {
-        return (AppToolFont) super.tool();
+    public AppFontChooserModel model() {
+        return (AppFontChooserModel) super.model();
     }
 
 }

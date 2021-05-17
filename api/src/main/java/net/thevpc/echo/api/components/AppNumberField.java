@@ -1,7 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolNumber;
+import net.thevpc.echo.api.tools.AppNumberFieldModel;
 
 public interface AppNumberField extends AppControl {
-    AppToolNumber tool();
+    AppNumberFieldModel model();
 }

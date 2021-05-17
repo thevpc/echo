@@ -26,12 +26,13 @@ import net.thevpc.echo.AppDialogInputPanel;
 import net.thevpc.echo.AppDialogResult;
 import net.thevpc.echo.AppDimension;
 import net.thevpc.common.i18n.Str;
-import net.thevpc.echo.api.tools.AppToolAlert;
+import net.thevpc.echo.api.peers.AppAlertPeer;
+import net.thevpc.echo.api.tools.AppAlertModel;
 
 /**
  * @author vpc
  */
-public interface AppAlert extends AppComponent{
+public interface AppAlert extends AppControl{
 
     AppDimension getPreferredSize();
 
@@ -81,7 +82,9 @@ public interface AppAlert extends AppComponent{
 
     AppDialogResult showInputDialog();
     void closeDialog();
-    AppToolAlert tool();
+    AppAlertModel model();
+    AppAlertPeer peer();
+    AppAlertPeer peer(boolean b);
 
 
 }

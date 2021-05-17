@@ -5,6 +5,9 @@
  */
 package net.thevpc.echo.jfx;
 
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppToggleModel;
+import net.thevpc.echo.impl.DefaultActionEvent;
 import net.thevpc.echo.jfx.icons.FxAppImage;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -18,12 +21,9 @@ import javafx.stage.Window;
 import net.thevpc.common.props.ObservableValue;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
-import net.thevpc.echo.api.components.AppAction;
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolAction;
-import net.thevpc.echo.api.tools.AppToolToggle;
+import net.thevpc.echo.api.components.Action;
+import net.thevpc.echo.api.tools.AppToolButtonModel;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.impl.DefaultAppActionEvent;
 
 /**
  *
@@ -71,7 +71,7 @@ public class FxApplicationUtils {
         }
     }
     
-    public static void prepareAbstractButton(MenuItem button, AppTool tool, Application app, boolean text) {
+    public static void prepareAbstractButton(MenuItem button, AppComponentModel tool, Application app, boolean text) {
         if (text) {
             tool.title().listeners().add((PropertyEvent event) -> {
                 button.setText((String) event.getNewValue());
@@ -119,14 +119,14 @@ public class FxApplicationUtils {
 //            );
         }
 
-        if (tool instanceof AppToolAction) {
-            AppToolAction action = (AppToolAction) tool;
+        if (tool instanceof AppToolButtonModel) {
+            AppToolButtonModel action = (AppToolButtonModel) tool;
             button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
-                    AppAction a = action.action().get();
+                    Action a = action.action().get();
                     if (a != null) {
-                        a.run(new DefaultAppActionEvent(app, tool, t.getSource(), t));
+                        a.run(new DefaultActionEvent(app, tool, t.getSource(), t));
                     }
                 }
             });
@@ -139,7 +139,7 @@ public class FxApplicationUtils {
 
     }
 
-    public static void prepareAbstractButton(ButtonBase button, AppTool tool, Application app, boolean text) {
+    public static void prepareAbstractButton(ButtonBase button, AppComponentModel tool, Application app, boolean text) {
         if (text) {
             tool.title().listeners().add((PropertyEvent event) -> {
                 button.setText((String) event.getNewValue());
@@ -174,14 +174,14 @@ public class FxApplicationUtils {
         });
 //        button.setMnemonic(tool.mnemonic().get());
 
-        if (tool instanceof AppToolAction) {
-            AppToolAction action = (AppToolAction) tool;
+        if (tool instanceof AppToolButtonModel) {
+            AppToolButtonModel action = (AppToolButtonModel) tool;
             button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
-                    AppAction a = action.action().get();
+                    Action a = action.action().get();
                     if (a != null) {
-                        a.run(new DefaultAppActionEvent(app, tool, t.getSource(), t));
+                        a.run(new DefaultActionEvent(app, tool, t.getSource(), t));
                     }
                 }
             });
@@ -193,9 +193,9 @@ public class FxApplicationUtils {
         }
     }
 
-    public static void _prepareToggle(Toggle tg, AppTool tool, Application application) {
+    public static void _prepareToggle(Toggle tg, AppComponentModel tool, Application application) {
         ObservableValue<String> group = null;
-        AppToolToggle cc = (AppToolToggle) tool;
+        AppToggleModel cc = (AppToggleModel) tool;
         group = cc.group();
         if (group != null) {
             String s = group.get();
@@ -214,7 +214,7 @@ public class FxApplicationUtils {
         tg.toggleGroupProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable o) {
-                ((AppToolToggle) tool).selected().set(tg.isSelected());
+                ((AppToggleModel) tool).selected().set(tg.isSelected());
             }
         });
         tg.setSelected(cc.selected().get());

@@ -5,21 +5,16 @@ import net.thevpc.common.props.*;
 import net.thevpc.echo.*;
 import net.thevpc.common.props.Path;
 import net.thevpc.common.i18n.Str;
-import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.components.AppFrame;
-import net.thevpc.echo.api.components.AppToolBar;
-import net.thevpc.echo.api.components.AppWindow;
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.components.*;
+import net.thevpc.echo.api.tools.AppComponentModel;
 import net.thevpc.echo.iconset.IconSet;
-import net.thevpc.echo.impl.components.AppContainerChildren;
-import net.thevpc.echo.impl.tools.ToolAction;
-import net.thevpc.echo.impl.tools.ToolFolder;
-import net.thevpc.echo.impl.tools.ToolSeparator;
-import net.thevpc.echo.impl.tools.ToolToggle;
+import net.thevpc.echo.impl.components.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class Applications {
 
@@ -44,34 +39,47 @@ public class Applications {
 
         public static void addQuitAction(Application application) {
             runAfterStart(application, () -> {
-                AppContainerChildren<AppComponent, AppTool> components = application.components();
-                ToolAction a = new ToolAction("Quit", application);
-                a.action().set((e) -> e.app().shutdown());
+                AppContainerChildren<AppComponentModel, AppComponent> components = application.components();
+                Button a = new Button("Quit", application);
+                a.model().action().set((e) -> e.app().shutdown());
                 components.add(a, Path.of("/mainFrame/menuBar/File/Quit"));
             });
         }
 
         public static void addWindowsActions(Application application) {
             runAfterStart(application, () -> {
-                AppWorkspace ws = application.mainFrame().get().workspace().get();
-                if (ws.desktopEnabled()) {
-                    AppContainerChildren<AppComponent, AppTool> components = application.components();
-                    ToolAction a;
+                AppComponent ws = application.mainFrame().get().workspace().get();
+                AppDesktop desktop=null;
+                if(ws instanceof AppDesktop){
+                    desktop=(AppDesktop) ws;
+                }else if(ws instanceof AppDock){
+                    List<AppWindow> content = ((AppDock) ws).children().stream().filter(x -> x.model().anchor().get() == AppWindowAnchor.CENTER).collect(Collectors.toList());
+                    if(content.size()==1){
+                        AppComponent mainComp = content.get(0).model().component().get();
+                        if(mainComp instanceof AppDesktop){
+                            desktop=(AppDesktop) mainComp;
+                        }
+                    }
+                }
+                if (desktop!=null) {
+                    AppContainerChildren<AppComponentModel, AppComponent> components = application.components();
+                    Button a;
 
-                    a = new ToolAction("TileWindowsAction", application);
-                    a.action().set((e) -> ws.iconDesktop(false));
+                    a = new Button("TileWindowsAction", application);
+                    AppDesktop finalDesktop = desktop;
+                    a.action().set((e) -> finalDesktop.iconDesktop(false));
                     components.add(a, Path.of("/mainFrame/menuBar/Windows/TileWindowsAction"));
 
-                    a = new ToolAction("IconifyWindowsAction", application);
-                    a.action().set((e) -> ws.iconDesktop(true));
+                    a = new Button("IconifyWindowsAction", application);
+                    a.action().set((e) -> finalDesktop.iconDesktop(true));
                     components.add(a, Path.of("/mainFrame/menuBar/Windows/IconifyWindowsAction"));
 
-                    a = new ToolAction("DeiconifyWindowsAction", application);
-                    a.action().set((e) -> ws.iconDesktop(false));
+                    a = new Button("DeiconifyWindowsAction", application);
+                    a.action().set((e) -> finalDesktop.iconDesktop(false));
                     components.add(a, Path.of("/mainFrame/menuBar/Windows/DeiconifyWindowsAction"));
 
-                    a = new ToolAction("CloseWindowsAction", application);
-                    a.action().set((e) -> ws.closeAllDesktop());
+                    a = new Button("CloseWindowsAction", application);
+                    a.action().set((e) -> finalDesktop.closeAllDesktop());
                     components.add(a, Path.of("/mainFrame/menuBar/Windows/CloseWindowsAction"));
                 }
             });
@@ -79,7 +87,7 @@ public class Applications {
 
         public static void addViewActions(Application app) {
             runAfterStart(app, () -> {
-                app.components().add(new ToolFolder(app), Path.of("/mainFrame/menuBar/View"));
+                app.components().addFolder(Path.of("/mainFrame/menuBar/View"));
             });
             addViewToolActions(app);
             addViewPlafActions(app);
@@ -88,39 +96,38 @@ public class Applications {
             addViewAppearanceActions(app);
         }
 
-        public static void addViewToolActions(Application application) {
-            addToolActions(application, null);
+        public static void addViewToolActions(Application app) {
+            addToolActions(app, null);
         }
 
-        public static void addToolActions(Application app, String path0) {
+        public static void addToolActions(Application app,String path0) {
             runAfterStart(app, () -> {
                 String path = path0;
 
                 if (path == null) {
                     path = "/mainFrame/menuBar/View/ToolWindows";
                 }
-                AppContainerChildren<AppComponent, AppTool> components = app.components();
-                components.add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("tool-windows"));
+                AppContainerChildren<AppComponentModel, AppComponent> components = app.components();
+                components.addFolder(Path.of(path)).model().smallIcon().set(Str.i18n("tool-windows"));
                 String finalPath = path;
-                runAfterStart(app, () -> {
-                    AppWorkspace ws = app.mainFrame().get().workspace().get();
-                    if (ws != null && ws.dockingEnabled()) {
-                        ObservableList<AppWindow> values = ws.windows().values();
-                        java.util.List<AppWindow> list = new ArrayList<>();
-                        for (AppWindow value : values) {
-                            list.add(value);
-                        }
-                        if (!list.isEmpty()) {
-                            list.sort(Comparator.comparing(a -> a.tool().id()));
-                            for (AppWindow value : list) {
-                                ToolToggle t = new ToolToggle(app);
-                                t.selected().bindTarget(value.tool().active());
-                                app.components()
-                                        .add(t, Path.of(finalPath).append(value.tool().id()));
-                            }
+                AppComponent ws = app.mainFrame().get().workspace().get();
+                if (ws instanceof AppDock) {
+                    ObservableList<AppWindow> values = ((AppDock)ws).children();
+                    java.util.List<AppWindow> list = new ArrayList<>();
+                    for (AppWindow value : values) {
+                        list.add(value);
+                    }
+                    if (!list.isEmpty()) {
+                        list.sort(Comparator.comparing(a -> a.model().id()));
+                        for (AppWindow value : list) {
+                            CheckBox t = new CheckBox(app);
+                            t.title().bind(value.model().title());
+                            t.selected().bindTarget(value.model().active());
+                            app.components()
+                                    .add(t, Path.of(finalPath).append(value.model().id()));
                         }
                     }
-                });
+                }
             });
         }
 
@@ -171,22 +178,23 @@ public class Applications {
             runAfterStart(app, () -> {
                 String path = path0;
                 int[] sizes = sizes0;
-                AppContainerChildren<AppComponent, AppTool> components = app.components();
+                AppContainerChildren<AppComponentModel, AppComponent> components = app.components();
                 if (path == null) {
                     path = "/mainFrame/menuBar/View/Icons";
                 }
-                components.add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("icons"));
-                components.add(new ToolFolder(app), Path.of(path + "/Packs"));
+                components.addFolder( Path.of(path)).model().smallIcon().set(Str.i18n("icons"));
+                components.addFolder(Path.of(path + "/Packs"));
                 for (IconSet iconset : app.iconSets().values()) {
-                    ToolToggle t = new ToolToggle("IconSet." + iconset.getId(), path + "/Packs",app);
+                    RadioButton t = new RadioButton("IconSet." + iconset.getId(), path + "/Packs",app);
+                    t.title().set(Str.i18n(t.id()));
                     t.selected().bindEquals(app.iconSets().id(), iconset.getId());
                     components.add(t, Path.of(path).append("Packs").append(iconset.getId()));
                 }
                 if (sizes == null || sizes.length == 0) {
                     sizes = new int[]{8, 16, 24, 32, 48};
                 }
-                components.add(new ToolFolder(app), Path.of(path + "/Sizes"));
-//                ToolToggle[] toggles = null;
+                components.addFolder(Path.of(path + "/Sizes"));
+//                ToggleModel[] toggles = null;
 //                app.iconSets().config().listeners().add(new PropertyListener() {
 //                    @Override
 //                    public void propertyUpdated(PropertyEvent event) {
@@ -198,8 +206,8 @@ public class Applications {
 //                });
                 for (int i = 0; i < sizes.length; i++) {
                     int size = sizes[i];
-                    ToolToggle toggle = new ToolToggle(app);
-                    toggle.group().set(path + "/Sizes");
+                    RadioButton toggle = new RadioButton("IconSet.Size." +size,path + "/Sizes",app);
+                    toggle.title().set(Str.i18n(toggle.id()));
                     toggle.selected().bind(
                             app.iconSets().config().mapBooleanValue(x -> x.getWidth() == size),
                             b -> {
@@ -225,8 +233,8 @@ public class Applications {
                 if (path == null) {
                     path = "/mainFrame/menuBar/View/Plaf";
                 }
-                AppContainerChildren<AppComponent, AppTool> components = app.components();
-                components.add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("themes"));
+                AppContainerChildren<AppComponentModel, AppComponent> components = app.components();
+                components.addFolder(Path.of(path)).model().smallIcon().set(Str.i18n("themes"));
                 for (AppUIPlaf item : app.toolkit().loadAvailablePlafs()) {
                     String q = "Other";
                     if (item.isSystem()) {
@@ -243,7 +251,8 @@ public class Applications {
                     if (item.isContrast()) {
                         q = "Contrast";
                     }
-                    ToolToggle toggle = new ToolToggle("Plaf." + id, path,app);
+                    RadioButton toggle = new RadioButton("Plaf." + id, path,app);
+                    toggle.title().set(Str.i18n("Plaf." + id));
                     toggle.smallIcon().set((Str) null);
                     toggle.selected().userObjects().put("path", path + "/" + q + "/" + pname);
                     toggle.selected().bindEquals(app.plaf(), id);
@@ -264,13 +273,13 @@ public class Applications {
                     path = "/mainFrame/menuBar/View/Lang";
                 }
 
-                app.components().add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("locales"));
+                app.components().addFolder(Path.of(path)).model().smallIcon().set(Str.i18n("locales"));
 
-                ToolToggle toggle = new ToolToggle("Locale.System", path,app);
+                RadioButton toggle = new RadioButton("Locale.System", path,app);
                 toggle.selected().bindEquals(app.i18n().locale(), Locale.getDefault());
                 app.components().add(toggle, Path.of(path + "/system-locale"));
                 for (Locale locale : locales) {
-                    toggle = new ToolToggle("Locale." + locale.toString(), path,app);
+                    toggle = new RadioButton("Locale." + locale.toString(), path,app);
                     toggle.selected().bindEquals(app.i18n().locale(), locale);
                     app.components().add(toggle, Path.of(path + "/" + locale + "-locale"));
                 }
@@ -285,27 +294,27 @@ public class Applications {
             runAfterStart(app, () -> {
                 String path = path0;
 
-                AppContainerChildren<AppComponent, AppTool> components = app.components();
+                AppContainerChildren<AppComponentModel, AppComponent> components = app.components();
                 if (path == null) {
                     path = "/mainFrame/menuBar/View/Appearance";
                 }
-                components.add(new ToolFolder(app), Path.of(path)).tool().smallIcon().set(Str.i18n("appearance"));
+                components.addFolder(Path.of(path)).model().smallIcon().set(Str.i18n("appearance"));
                 String finalPath = path;
                 runAfterStart(app, () -> {
-                    ToolAction a = new ToolAction("Switch", app);
+                    Button a = new Button("Switch", app);
                     a.action().set(() -> {
                         AppFrame w = app.mainFrame().get();
-                        AppWindowDisplayMode dm = w.tool().displayMode().get();
+                        AppWindowDisplayMode dm = w.model().displayMode().get();
                         if (dm == null) {
                             dm = AppWindowDisplayMode.NORMAL;
                         }
                         switch (dm) {
                             case NORMAL: {
-                                w.tool().displayMode().set(AppWindowDisplayMode.FULLSCREEN);
+                                w.model().displayMode().set(AppWindowDisplayMode.FULLSCREEN);
                                 break;
                             }
                             default: {
-                                w.tool().displayMode().set(AppWindowDisplayMode.NORMAL);
+                                w.model().displayMode().set(AppWindowDisplayMode.NORMAL);
                                 break;
                             }
                         }
@@ -316,23 +325,25 @@ public class Applications {
                             /*,
                         KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.ALT_MASK + KeyEvent.SHIFT_MASK),
                         JComponent.WHEN_IN_FOCUSED_WINDOW*/
-                    app.components().add(new ToolSeparator(app), Path.of(finalPath + "/Separator1"));
+                    app.components().add(new Separator(app), Path.of(finalPath + "/Separator1"));
 
-                    ToolToggle t = new ToolToggle("AppWindowDisplayMode.Normal", finalPath, app);
-                    t.selected().bindEquals(app.mainFrame().get().tool().displayMode(), AppWindowDisplayMode.NORMAL);
+                    RadioButton t = new RadioButton("AppWindowDisplayMode.Normal", finalPath, app);
+                    t.title().set(Str.i18n(t.id()));
+                    t.selected().bindEquals(app.mainFrame().get().model().displayMode(), AppWindowDisplayMode.NORMAL);
                     app.components().add(t, Path.of(finalPath + "/Normal"));
 
-                    t = new ToolToggle("AppWindowDisplayMode.FullScreen", finalPath, app);
-                    t.selected().bindEquals(app.mainFrame().get().tool().displayMode(), AppWindowDisplayMode.FULLSCREEN);
+                    t = new RadioButton("AppWindowDisplayMode.FullScreen", finalPath, app);
+                    t.title().set(Str.i18n(t.id()));
+                    t.selected().bindEquals(app.mainFrame().get().model().displayMode(), AppWindowDisplayMode.FULLSCREEN);
                     app.components().add(t, Path.of(finalPath + "/FullScreen"));
 
-                    app.components().add(new ToolSeparator(app), Path.of(finalPath + "/Separator2"));
+                    app.components().addSeparator(Path.of(finalPath + "/Separator2"));
 
-                    ToolToggle visibleToolBar = new ToolToggle("Toolbar.visible",null, app);
+                    CheckBox visibleToolBar = new CheckBox("Toolbar.visible",app);
                     visibleToolBar.visible().bind(app,Path.of("/mainFrame/toolBar/visible"));
                     app.components().add(visibleToolBar, Path.of(finalPath + "/Toolbar"));
 
-                    ToolToggle visibleStatusBar = new ToolToggle("StatusBar.visible", null,app);
+                    CheckBox visibleStatusBar = new CheckBox("StatusBar.visible", app);
                     visibleStatusBar.visible().bind(app,Path.of("/mainFrame/statusBar/visible"));
                     app.components().add(visibleStatusBar, Path.of(finalPath + "/StatusBar"));
                 });

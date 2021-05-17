@@ -12,7 +12,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppFileChooser;
 //import net.thevpc.echo.Application;
-//import net.thevpc.echo.api.tools.AppToolFileFilter;
+//import net.thevpc.echo.api.tools.AppFileFilter;
 //import net.thevpc.echo.impl.components.FileChooser;
 //import net.thevpc.echo.api.peers.AppFileChooserPeer;
 //import net.thevpc.echo.jfx.FxPeer;

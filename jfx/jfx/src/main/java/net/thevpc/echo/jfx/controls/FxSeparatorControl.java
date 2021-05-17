@@ -7,20 +7,20 @@
 //import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppSeparator;
-//import net.thevpc.echo.api.tools.AppToolSeparator;
+//import net.thevpc.echo.api.tools.AppSeparatorModel;
 //
 //public class FxSeparatorControl extends FxControlBase implements AppSeparator {
 //
-//    public FxSeparatorControl(AppToolSeparator tool, Path path, MenuItem m, Application app, AppComponentOptions options) {
+//    public FxSeparatorControl(AppSeparatorModel tool, Path path, MenuItem m, Application app, AppComponentOptions options) {
 //        super(tool, path, m, app, options);
 //    }
 //
-//    public FxSeparatorControl(AppToolSeparator tool, Path path, Node m, Application app, AppComponentOptions options) {
+//    public FxSeparatorControl(AppSeparatorModel tool, Path path, Node m, Application app, AppComponentOptions options) {
 //        super(tool, path, m, app, options);
 //    }
 //
 //    @Override
-//    public AppToolSeparator tool() {
-//        return (AppToolSeparator) super.tool();
+//    public AppSeparatorModel tool() {
+//        return (AppSeparatorModel) super.tool();
 //    }
 //}

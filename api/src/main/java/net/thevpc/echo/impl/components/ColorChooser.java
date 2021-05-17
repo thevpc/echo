@@ -1,21 +1,25 @@
 package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.Application;
+import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.components.AppColorChooser;
-import net.thevpc.echo.api.tools.AppToolColor;
-import net.thevpc.echo.impl.tools.ToolColor;
+import net.thevpc.echo.api.peers.AppColorChooserPeer;
+import net.thevpc.echo.api.tools.AppColorChooserModel;
+import net.thevpc.echo.impl.tools.ColorChooserModel;
 
-public class ColorChooser extends AppComponentBase implements AppColorChooser {
-    public ColorChooser(AppToolColor tool) {
-        super(tool);
+public class ColorChooser extends ColorBase implements AppColorChooser {
+    public ColorChooser(AppColorChooserModel model) {
+        super(model
+                , AppColorChooserModel.class, AppColorChooser.class, AppColorChooserPeer.class
+        );
     }
 
     public ColorChooser(Application app) {
-        super(new ToolColor(app));
+        this(new ColorChooserModel(app));
     }
 
-    public AppToolColor tool() {
-        return (AppToolColor) super.tool();
+    public AppColorChooserModel model() {
+        return (AppColorChooserModel) super.model();
     }
 
 }

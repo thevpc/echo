@@ -1,8 +1,8 @@
 package net.thevpc.echo;
 
 public class AppDimension {
-    public double width;
-    public double height;
+    private double width;
+    private double height;
 
     public AppDimension(double width, double height) {
         this.width = width;

@@ -1,14 +1,16 @@
 package net.thevpc.echo.api.components;
 
 
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolWindow;
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppWindowModel;
 
-public interface AppWindow extends AppContainer<AppComponent, AppTool> {
+public interface AppWindow extends AppContainer<AppComponentModel, AppComponent> {
 
     void centerOnDesktop();
 
     void close();
 
-    AppToolWindow tool();
+    AppWindowModel model();
+
+    void resize(double x,double y,double w,double h);
 }

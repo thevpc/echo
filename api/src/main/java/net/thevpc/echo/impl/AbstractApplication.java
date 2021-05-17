@@ -31,17 +31,19 @@ import net.thevpc.common.i18n.Str;
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppContainer;
+import net.thevpc.echo.api.components.AppDock;
 import net.thevpc.echo.api.components.AppFrame;
 import net.thevpc.echo.api.peers.AppComponentPeer;
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppContainerModel;
 import net.thevpc.echo.iconset.DefaultIconsets;
 import net.thevpc.echo.iconset.IconSets;
 import net.thevpc.echo.iconset.NoIconSet;
 import net.thevpc.echo.impl.components.AppContainerBase;
 import net.thevpc.echo.impl.components.AppContainerChildren;
 import net.thevpc.echo.impl.components.Frame;
-import net.thevpc.echo.impl.components.Workspace;
-import net.thevpc.echo.impl.tools.ToolFolder;
+//import net.thevpc.echo.impl.components.Workspace;
+import net.thevpc.echo.impl.tools.ContainerModel;
 import net.thevpc.echo.props.AppProps;
 
 import java.util.*;
@@ -83,18 +85,18 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
         iconSets().add(new NoIconSet("no-icon"));
         i18n().bundles().add("net.thevpc.echo.app");
         i18n().bundles().add("net.thevpc.echo.app-locale-independent");
-        rootContainer = new AppRootContainerImpl(new ToolFolder(this));
+        rootContainer = new AppRootContainerImpl(new ContainerModel(this));
         mainFrame.listeners().add(new PropertyListener() {
             @Override
             public void propertyUpdated(PropertyEvent event) {
                 AppFrame o = event.getOldValue();
                 if (o != null) {
-                    o.tool().state().vetos().removeIf(x -> x instanceof WinPropertyVetoImpl);
+                    o.model().state().vetos().removeIf(x -> x instanceof WinPropertyVetoImpl);
                     rootContainer.children().remove(o.path().get());
                 }
                 AppFrame n = event.getNewValue();
                 if (n != null) {
-                    n.tool().state().vetos().add(new WinPropertyVetoImpl(AbstractApplication.this, n));
+                    n.model().state().vetos().add(new WinPropertyVetoImpl(AbstractApplication.this, n));
                     rootContainer.children().add(n);
                 }
             }
@@ -126,8 +128,8 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
                 }
                 if (event.getNewValue() == AppState.CLOSING) {
                     AppFrame mw = mainFrame.get();
-                    if (!mw.tool().state().is(AppWindowState.CLOSING)
-                            && !mw.tool().state().is(AppWindowState.CLOSED)) {
+                    if (!mw.model().state().is(AppWindowState.CLOSING)
+                            && !mw.model().state().is(AppWindowState.CLOSED)) {
                         mw.close();
                     }
                     state.set(AppState.CLOSED);
@@ -167,11 +169,11 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
 
     protected void prepareFactories() {
 
-        AppWorkspace ws = mainFrame().get().workspace().get();
-        if(ws==null){
-            ws=new Workspace(AbstractApplication.this);
-            mainFrame().get().workspace().set(ws);
-        }
+//        AppWorkspace ws = mainFrame().get().workspace().get();
+//        if(ws==null){
+//            ws=new Workspace(AbstractApplication.this);
+//            mainFrame().get().workspace().set(ws);
+//        }
 //    private InternalWindowsHelper internalFramesHelper = null;
 
         if (startupConfig()
@@ -179,9 +181,7 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
             Applications.Helper.addQuitAction(this);
         }
 
-        if (ws.dockingEnabled()) {
-            Applications.Helper.addViewToolActions(this);
-        }
+        Applications.Helper.addViewToolActions(this);
 
         if (startupConfig()
                 .enablePlaf().get()) {
@@ -202,9 +202,7 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
                 > 0) {
             Applications.Helper.addViewLocaleActions(this, Arrays.stream(el).map(x -> new Locale(x)).toArray(Locale[]::new));
         }
-        if (ws.desktopEnabled()) {
-            Applications.Helper.addWindowsActions(this);
-        }
+        Applications.Helper.addWindowsActions(this);
     }
 
 //    private class AppRootNode implements AppNode {
@@ -279,12 +277,12 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
     }
 
     @Override
-    public AppContainer<AppComponent, AppTool> container() {
+    public AppContainer<AppComponentModel, AppComponent> container() {
         return rootContainer;
     }
 
     @Override
-    public AppContainerChildren<AppComponent, AppTool> components() {
+    public AppContainerChildren<AppComponentModel, AppComponent> components() {
         return container().children();
     }
 
@@ -411,9 +409,9 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
 //        addRootContainer(this.toolBar);
 //    }
     protected void initImpl() {
-        AppFrame frame =new Frame(this);
+        AppFrame frame =new Frame(this);frame.model().title().set(Str.of("Application"));
         mainFrame().set(frame);
-        frame.tool().state().listeners().add(event -> {
+        frame.model().state().listeners().add(event -> {
             AppWindowStateSet s = event.getNewValue();
             if (s.is(AppWindowState.CLOSING)) {
                 if (state.get().ordinal() < AppState.CLOSING.ordinal()) {
@@ -471,7 +469,7 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
 //        }
 //    }
     protected void startImpl() {
-        mainFrame().get().tool().state().add(AppWindowState.OPENED);
+        mainFrame().get().model().state().add(AppWindowState.OPENED);
     }
 
     @Override
@@ -545,9 +543,11 @@ public abstract class AbstractApplication extends SimpleProperty implements Appl
             return null;
         }
     }
-    private static class AppRootContainerImpl extends AppContainerBase<AppComponent,AppTool> {
-        public AppRootContainerImpl(ToolFolder rootFolder) {
-            super(rootFolder,AppComponent.class,AppTool.class);
+    private static class AppRootContainerImpl extends AppContainerBase<AppComponentModel,AppComponent> {
+        public AppRootContainerImpl(ContainerModel rootFolder) {
+            super(rootFolder, AppComponentModel.class, AppComponent.class,AppRootContainerPeer.class,
+                    AppContainerModel.class, AppComponent.class
+                    );
             peer=new AppRootContainerPeer();
         }
     }

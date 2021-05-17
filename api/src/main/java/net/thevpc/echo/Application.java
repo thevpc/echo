@@ -6,7 +6,7 @@ import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppContainer;
 import net.thevpc.echo.api.components.AppFrame;
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.tools.AppComponentModel;
 import net.thevpc.echo.iconset.IconSets;
 import net.thevpc.echo.impl.components.AppContainerChildren;
 
@@ -55,8 +55,8 @@ public interface Application extends Property {
 
     WritableString plaf();
 
-    AppContainer<AppComponent, AppTool> container();
+    AppContainer<AppComponentModel, AppComponent> container();
 
-    AppContainerChildren<AppComponent, AppTool> components();
+    AppContainerChildren<AppComponentModel, AppComponent> components();
 
 }

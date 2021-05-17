@@ -1,11 +1,12 @@
 package net.thevpc.echo.swing.peers;
 
 import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.peers.AppToolBarPeer;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SwingToolBarPeer implements SwingPeer{
+public class SwingToolBarPeer implements SwingPeer, AppToolBarPeer {
     private JToolBar jcomponent;
     @Override
     public void install(AppComponent comp) {

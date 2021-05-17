@@ -1,7 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolTable;
+import net.thevpc.echo.api.tools.AppTableModel;
 
 public interface AppTable extends AppControl {
-    AppToolTable tool();
+    AppTableModel model();
 }

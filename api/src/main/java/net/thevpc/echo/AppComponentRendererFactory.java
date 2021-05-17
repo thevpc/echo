@@ -1,7 +1,7 @@
 //package net.thevpc.echo;
 //
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //
 //public interface AppComponentRendererFactory {
-//    AppComponentRenderer getRenderer(AppTool a);
+//    AppComponentRenderer getRenderer(AppComponentModel a);
 //}

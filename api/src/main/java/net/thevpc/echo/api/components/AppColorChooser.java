@@ -1,7 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolColor;
+import net.thevpc.echo.api.tools.AppColorChooserModel;
 
 public interface AppColorChooser extends AppControl {
-    AppToolColor tool();
+    AppColorChooserModel model();
 }

@@ -1,17 +1,17 @@
 //package net.thevpc.echo;
 //
 //
-//public interface AppToolComponent<T extends AppTool> extends AppControl {
+//public interface AppToolComponent<T extends AppComponentModel> extends AppControl {
 //
-//    static <T extends AppTool> AppToolComponent<T> of(T tool, String path) {
+//    static <T extends AppComponentModel> AppToolComponent<T> of(T tool, String path) {
 //        return new DefaultAppToolComponent<T>(tool, path, 0, null);
 //    }
 //
-//    static <T extends AppTool> AppToolComponent<T> of(T tool, String path, int order) {
+//    static <T extends AppComponentModel> AppToolComponent<T> of(T tool, String path, int order) {
 //        return new DefaultAppToolComponent<T>(tool, path, order, null);
 //    }
 //
-//    static <T extends AppTool> AppToolComponent<T> of(T tool, String path, int order, AppControlRenderer renderer) {
+//    static <T extends AppComponentModel> AppToolComponent<T> of(T tool, String path, int order, AppControlRenderer renderer) {
 //        return new DefaultAppToolComponent<T>(tool, path, order, renderer);
 //    }
 //

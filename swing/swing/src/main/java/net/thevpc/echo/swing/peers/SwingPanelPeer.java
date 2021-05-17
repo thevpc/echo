@@ -4,12 +4,13 @@ import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppPanel;
+import net.thevpc.echo.api.peers.AppPanelPeer;
 import net.thevpc.echo.constraints.*;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class SwingPanelPeer implements SwingPeer {
+public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
     private JPanel jcomponent;
     private AppPanel panel;
 
@@ -22,6 +23,7 @@ public class SwingPanelPeer implements SwingPeer {
         }
         this.panel = (AppPanel) component;
         this.jcomponent = new JPanel();
+        this.jcomponent.setName("SwingPanelPeer.Panel");
         this.panel.constraints().listeners().add(new PropertyListener() {
             @Override
             public void propertyUpdated(PropertyEvent event) {
@@ -33,6 +35,7 @@ public class SwingPanelPeer implements SwingPeer {
 
     protected void relayout(){
         ParentLayout parentLayout = resolveLayout();
+        System.out.println("relayout "+parentLayout);
         switch (parentLayout){
             case BORDER:{
                 jcomponent.setLayout(new BorderLayout());

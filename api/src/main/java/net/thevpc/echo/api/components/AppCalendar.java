@@ -1,7 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolCalendar;
+import net.thevpc.echo.api.tools.AppCalendarModel;
 
 public interface AppCalendar extends AppControl {
-    AppToolCalendar tool();
+    AppCalendarModel model();
 }

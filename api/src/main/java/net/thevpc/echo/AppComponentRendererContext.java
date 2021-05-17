@@ -23,23 +23,25 @@ package net.thevpc.echo;
 import net.thevpc.common.props.Path;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppComponentOptions;
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.tools.AppComponentModel;
 
 public class AppComponentRendererContext {
     private Application app;
     private AppComponent parent;
-    private AppTool tool;
+    private AppComponentModel tool;
     private Path path;
     private String name;
     private AppComponentOptions options;
+    private Class<? extends AppComponent> componentType;
 
-    public AppComponentRendererContext(AppComponent parent, AppTool tool, Application app, Path path, String name, AppComponentOptions options) {
+    public AppComponentRendererContext(Class<? extends AppComponent> componentType, AppComponent parent, AppComponentModel tool, Application app, Path path, String name, AppComponentOptions options) {
         this.parent = parent;
         this.tool = tool;
         this.app = app;
         this.path = path;
         this.name = name;
         this.options = options;
+        this.componentType = componentType;
     }
 
     public ApplicationToolkit toolkit() {
@@ -63,13 +65,10 @@ public class AppComponentRendererContext {
     }
 
     public Class<? extends AppComponent> componentType() {
-        if(options==null){
-            return null;
-        }
-        return options.componentType();
+        return componentType;
     }
 
-    public AppTool tool() {
+    public AppComponentModel tool() {
         return tool;
     }
 

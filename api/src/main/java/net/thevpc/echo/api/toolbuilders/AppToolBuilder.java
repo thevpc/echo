@@ -24,7 +24,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //
 //import java.util.List;
 //
@@ -44,7 +44,7 @@
 //
 //    AppToolBuilder path(String... path);
 //
-//    public AppTool tool();
+//    public AppComponentModel tool();
 //
 //    public AppComponent component();
 //

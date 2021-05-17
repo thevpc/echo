@@ -2,20 +2,23 @@ package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.components.AppTable;
-import net.thevpc.echo.api.tools.AppToolTable;
-import net.thevpc.echo.impl.tools.ToolTable;
+import net.thevpc.echo.api.peers.AppTablePeer;
+import net.thevpc.echo.api.tools.AppTableModel;
+import net.thevpc.echo.impl.tools.TableModel;
 
-public class Table extends AppComponentBase implements AppTable {
-    public Table(AppToolTable tool) {
-        super(tool);
+public class Table extends AppControlBase implements AppTable {
+    public Table(AppTableModel tool) {
+        super(tool
+                , AppTableModel.class, AppTable.class, AppTablePeer.class
+        );
     }
 
     public Table(Application app) {
-        super(new ToolTable(app));
+        this(new TableModel(app));
     }
 
-    public AppToolTable tool() {
-        return (AppToolTable) super.tool();
+    public AppTableModel model() {
+        return (AppTableModel) super.model();
     }
 
 }

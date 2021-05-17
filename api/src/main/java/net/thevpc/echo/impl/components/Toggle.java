@@ -2,20 +2,22 @@ package net.thevpc.echo.impl.components;
 
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.components.AppToggle;
-import net.thevpc.echo.api.tools.AppToolToggle;
-import net.thevpc.echo.impl.tools.ToolToggle;
+import net.thevpc.echo.api.peers.AppTogglePeer;
+import net.thevpc.echo.api.tools.AppToggleModel;
+import net.thevpc.echo.impl.tools.ToggleModel;
 
-public class Toggle extends AppComponentBase implements AppToggle {
+public class Toggle extends ToggleBase {
     public Toggle(Application app) {
-        super(new ToolToggle(app));
+        this(new ToggleModel(app));
     }
 
-    public Toggle(AppToolToggle tool) {
-        super(tool);
+    public Toggle(AppToggleModel tool) {
+        super(tool
+                , AppToggleModel.class, AppToggle.class, AppTogglePeer.class);
     }
 
-    public AppToolToggle tool() {
-        return (AppToolToggle) super.tool();
+    public AppToggleModel model() {
+        return (AppToggleModel) super.model();
     }
 
 }

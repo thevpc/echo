@@ -1,10 +1,9 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.components.AppControl;
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolFolder;
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppContainerModel;
 
-public interface AppPanel extends AppContainer<AppComponent, AppTool> {
-    AppToolFolder tool();
+public interface AppPanel extends AppContainer<AppComponentModel, AppComponent> {
+    AppContainerModel model();
 
 }

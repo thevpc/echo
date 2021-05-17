@@ -24,7 +24,7 @@
 //import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppAlert;
 //import net.thevpc.echo.api.components.AppComponent;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //import net.thevpc.echo.impl.DefaultAppDialogContext;
 //import net.thevpc.echo.impl.dialog.DefaultAppDialogResult;
 //import net.thevpc.echo.jfx.FxPeer;

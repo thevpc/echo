@@ -3,23 +3,24 @@ package net.thevpc.echo.impl.components;
 import net.thevpc.common.props.Path;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.components.*;
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolFolder;
-import net.thevpc.echo.impl.tools.ToolFolder;
+import net.thevpc.echo.api.peers.AppToolBarGroupPeer;
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppContainerModel;
+import net.thevpc.echo.impl.tools.ContainerModel;
 
-public class ToolBarGroup extends AppContainerBase<AppComponent, AppTool> implements AppToolBarGroup {
-    public ToolBarGroup(AppToolFolder tool) {
-        super(tool,AppComponent.class, AppTool.class);
+public class ToolBarGroup extends AppContainerBase<AppComponentModel, AppComponent> implements AppToolBarGroup {
+    public ToolBarGroup(AppContainerModel tool) {
+        super(tool,
+                AppContainerModel.class, AppToolBarGroup.class, AppToolBarGroupPeer.class,
+                AppComponentModel.class, AppComponent.class
+        );
     }
     public ToolBarGroup(Application app) {
-        super(new ToolFolder(app), AppComponent.class, AppTool.class);
+        this(new ContainerModel(app));
     }
     @Override
-    public AppComponent createPreferredComponent(AppTool tool, String name, Path absolutePath, AppComponentOptions options) {
-        if(options.componentType()==null && tool instanceof AppToolFolder){
-            options.componentType(AppToolBar.class);
-        }
-        return super.createPreferredComponent(tool, name, absolutePath, options);
+    public AppComponent createPreferredChild(String name, Path absolutePath) {
+        return new ToolBar(app());
     }
 
 }

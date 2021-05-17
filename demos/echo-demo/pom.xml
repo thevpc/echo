@@ -8,6 +8,11 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
+            <groupId>temp</groupId>
+            <artifactId>swing-explorer</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>net.thevpc.echo</groupId>
             <artifactId>echo-api</artifactId>
             <version>1.0.0</version>

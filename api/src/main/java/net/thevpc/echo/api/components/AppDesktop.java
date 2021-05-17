@@ -1,11 +1,19 @@
 package net.thevpc.echo.api.components;
 
 
-import net.thevpc.common.props.WritableValue;
-import net.thevpc.echo.AppWorkspace;
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolFrame;
+import net.thevpc.echo.AppDimension;
+import net.thevpc.echo.api.peers.AppDesktopPeer;
 
 public interface AppDesktop extends AppWindowContainer {
+    AppDimension size();
 
+    void tileDesktop(boolean vertical);
+
+    void iconDesktop(boolean iconify);
+
+    void closeAllDesktop();
+
+    AppDesktopPeer peer();
+
+    AppDesktopPeer peer(boolean prepareShowing);
 }

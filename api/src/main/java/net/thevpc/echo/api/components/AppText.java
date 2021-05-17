@@ -1,7 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolText;
+import net.thevpc.echo.api.tools.AppTextModel;
 
 public interface AppText extends AppControl {
-    AppToolText tool();
+    AppTextModel model();
 }

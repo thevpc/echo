@@ -26,32 +26,39 @@ import net.thevpc.common.props.Path;
 import net.thevpc.common.props.Property;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.tools.AppComponentModel;
 import net.thevpc.echo.impl.components.AppComponentConstraints;
 import net.thevpc.echo.api.peers.AppComponentPeer;
 
 /**
- * AppComponent inherits all AppTool Property implementation
+ * AppComponent inherits all AppComponentModel Property implementation
  * @author vpc
  */
 public interface AppComponent extends Property {
     AppComponentConstraints constraints();
 
     AppComponent setOptions(AppComponentOptions options);
+
     AppComponent parent();
 
-    AppTool tool();
+    AppComponentModel model();
 
     WritableValue<Path> path();
 
     ObservableValue<Integer> order();
-
-    Class<? extends AppComponent> componentType();
 
     Application app();
 
     default AppComponentPeer peer() {
         return peer(true);
     }
+
     AppComponentPeer peer(boolean prepareShowing);
+
+    Class<? extends AppComponentModel> modelType();
+
+    Class<? extends AppComponent> componentType();
+
+    Class<? extends AppComponentPeer> peerType();
+
 }

@@ -1,20 +1,15 @@
 package net.thevpc.echo.demos.demo;
 
 import net.thevpc.common.i18n.I18nBundle;
+import net.thevpc.common.i18n.Str;
 import net.thevpc.common.props.Path;
 import net.thevpc.echo.AppWindowAnchor;
 import net.thevpc.echo.Application;
-import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.tools.AppTool;
+import net.thevpc.echo.api.components.AppContainer;
+import net.thevpc.echo.api.tools.AppComponentModel;
 import net.thevpc.echo.constraints.Anchor;
-import net.thevpc.echo.impl.components.Alert;
-import net.thevpc.echo.impl.components.AppContainerChildren;
-import net.thevpc.echo.impl.components.Button;
-import net.thevpc.echo.impl.components.Panel;
-import net.thevpc.echo.impl.tools.ToolAction;
-import net.thevpc.echo.impl.tools.ToolSpacer;
-import net.thevpc.echo.impl.tools.ToolToggle;
+import net.thevpc.echo.impl.components.*;
 import net.thevpc.echo.jfx.FxApplication;
 import net.thevpc.echo.jfx.FxApplicationToolkit;
 import net.thevpc.echo.swing.SwingApplication;
@@ -57,12 +52,12 @@ public class EchoAppDemo {
             return name;
         });
         app.start();
-        AppContainerChildren<AppComponent, AppTool> mwt = app.components();
+        AppContainerChildren<AppComponentModel, AppComponent> mwt = app.components();
 //        mwt.addFolder(("/mainFrame/menuBar/File"));
 //        mwt.addFolder(("/mainFrame/menuBar/Edit"));
 //        mwt.addAction("/mainFrame/menuBar/File/Exit").bind(() -> JOptionPane.showMessageDialog(null, "Exit")).tool();
         mwt.add(
-                new ToolAction("B1", (e) -> {
+                new Button("B1", (e) -> {
                     System.out.println("Clicked " + new Date());
                     new Alert(app)
                             .setContentText(Str.of("Example Text"))
@@ -72,26 +67,32 @@ public class EchoAppDemo {
                 "/mainFrame/toolBar/Default/*");
 
         mwt.add(createPanel(app), "/mainFrame/Example");
-        mwt.add(new ToolAction("NewFile", () -> {
+        mwt.add(new Button("NewFile", () -> {
         }, app), Path.of("/mainFrame/toolBar/File/*"));
-        mwt.add(new ToolAction("NewFile", () -> {
+        mwt.add(new Button("NewFile", () -> {
         }, app), Path.of("/mainFrame/statusBar/File/*"));
         for (AppWindowAnchor value : AppWindowAnchor.values()) {
             for (int i = 0; i < 2; i++) {
-                app.mainFrame().get().workspace().get().addWindow(value.name() + " " + (i + 1),
-                        createComponent(app, value.name() + " " + (i + 1)), value
+                AppContainer ws = (AppContainer) app.mainFrame().get().workspace().get();
+                ws.children().add(
+                        new Window(
+                                "id-"+value.name() + " " + (i + 1),
+                                Str.of(value.name() + " " + (i + 1)),
+                                value,
+                                createComponent(app, value.name() + " " + (i + 1)), app
+                        )
                 );
             }
         }
-        mwt.add(new ToolAction("B2", () -> {
+        mwt.add(new Button("B2", () -> {
         }, app), Path.of("/mainFrame/toolBar/File/*"));
-        mwt.add(new ToolAction("B3", () -> {
+        mwt.add(new Button("B3", () -> {
         }, app), Path.of("/mainFrame/statusBar/File/*"));
         mwt.addSeparator(Path.of("/mainFrame/menuBar/File/*"));
-        app.components().add(new ToolToggle("Radio1", "group1", app), "/mainFrame/menuBar/File/*");
-        app.components().add(new ToolToggle("Radio2", "group1", app), "/mainFrame/menuBar/File/*");
-        app.components().add(new ToolToggle("Radio3", "group1", app), "/mainFrame/menuBar/File/*");
-        mwt.add(new ToolSpacer(app).expandX(), "/mainFrame/statusBar/Default/*");
+        app.components().add(new RadioButton("Radio1", "group1", app), "/mainFrame/menuBar/File/*");
+        app.components().add(new RadioButton("Radio2", "group1", app), "/mainFrame/menuBar/File/*");
+        app.components().add(new RadioButton("Radio3", "group1", app), "/mainFrame/menuBar/File/*");
+        mwt.add(new Spacer(app).expandX(), "/mainFrame/statusBar/Default/*");
         mwt.add(new Button(app), "/mainFrame/statusBar/Default/*");
     }
 

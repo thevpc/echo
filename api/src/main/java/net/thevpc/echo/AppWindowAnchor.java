@@ -27,5 +27,5 @@ package net.thevpc.echo;
  */
 public enum AppWindowAnchor {
 
-    LEFT, RIGHT, TOP, BOTTOM, CONTENT, DESKTOP
+    LEFT, RIGHT, TOP, BOTTOM, CENTER, DESKTOP
 }

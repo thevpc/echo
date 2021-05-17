@@ -13,7 +13,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.ToolBarGroup;
 //import net.thevpc.echo.jfx.controls.FxButtonControl;
@@ -25,7 +25,7 @@
 //    @Override
 //    public AppComponent createComponent(AppComponentRendererContext context) {
 //        Object parentGuiElement = ((FxPeer) context.getParent()).fxComponent();
-//        AppTool tool = context.getTool();
+//        AppComponentModel tool = context.getTool();
 //        Path path = context.getPath();
 //        Application application = context.getApplication();
 //        AppComponentOptions options = context.getOptions();

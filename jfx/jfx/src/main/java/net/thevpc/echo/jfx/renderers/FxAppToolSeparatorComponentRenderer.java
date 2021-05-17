@@ -14,7 +14,7 @@
 //import javafx.scene.layout.Region;
 //import javafx.scene.layout.VBox;
 //import net.thevpc.echo.api.components.AppComponent;
-//import net.thevpc.echo.api.tools.AppToolSeparator;
+//import net.thevpc.echo.api.tools.AppSeparatorModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.ToolBarGroup;
 //import net.thevpc.echo.jfx.controls.FxSeparatorControl;
@@ -26,7 +26,7 @@
 //    @Override
 //    public AppComponent createComponent(AppComponentRendererContext context) {
 //        Object parentGuiElement = ((FxPeer) context.getParent()).fxComponent();
-//        AppToolSeparator tool = (AppToolSeparator) context.getTool();
+//        AppSeparatorModel tool = (AppSeparatorModel) context.getTool();
 //        Application application = context.getApplication();
 //        double height = ((Number) tool.height().get()).doubleValue();
 //        double width = ((Number) tool.width().get()).doubleValue();
@@ -48,7 +48,7 @@
 //        return createSpacer(width, height, tool, context, application);
 //    }
 //
-//    protected AppComponent createSpacer(double width, double height, AppToolSeparator tool, AppComponentRendererContext context, Application application) {
+//    protected AppComponent createSpacer(double width, double height, AppSeparatorModel tool, AppComponentRendererContext context, Application application) {
 //        if (isMax(width) && isMax(height)) {
 //            Region m = new Region();
 //            HBox.setHgrow(m, Priority.ALWAYS);

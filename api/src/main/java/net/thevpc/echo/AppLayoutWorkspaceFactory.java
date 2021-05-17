@@ -1,10 +1,10 @@
-package net.thevpc.echo;
-
-import net.thevpc.echo.api.components.AppFrame;
-import net.thevpc.echo.api.components.WindowWorkspaceOptions;
-import net.thevpc.echo.api.tools.AppToolFolder;
-import net.thevpc.echo.api.peers.AppWorkspacePeer;
-
-public interface AppLayoutWorkspaceFactory {
-    SupportSupplier<AppWorkspacePeer> createWorkspace(AppToolFolder tool, AppFrame frame, WindowWorkspaceOptions options);
-}
+//package net.thevpc.echo;
+//
+//import net.thevpc.echo.api.components.AppFrame;
+//import net.thevpc.echo.api.components.AppWorkspaceOptions;
+//import net.thevpc.echo.api.tools.AppContainerModel;
+//import net.thevpc.echo.api.peers.AppWorkspacePeer;
+//
+//public interface AppLayoutWorkspaceFactory {
+//    SupportSupplier<AppWorkspacePeer> createWorkspace(AppContainerModel tool, AppFrame frame, AppWorkspaceOptions options);
+//}

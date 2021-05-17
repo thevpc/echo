@@ -6,16 +6,19 @@ import net.thevpc.echo.DefaultAppComponentOptions;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppMenu;
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolFolder;
-import net.thevpc.echo.impl.tools.ToolFolder;
+import net.thevpc.echo.api.peers.AppMenuPeer;
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppContainerModel;
+import net.thevpc.echo.impl.tools.ContainerModel;
 
-public class Menu extends AppContainerBase<AppComponent, AppTool> implements AppMenu {
-    public Menu(AppToolFolder tool) {
-        super(tool,AppComponent.class, AppTool.class);
+public class Menu extends AppContainerBase<AppComponentModel, AppComponent> implements AppMenu {
+    public Menu(AppContainerModel tool) {
+        super(tool,
+                AppContainerModel.class, AppMenu.class, AppMenuPeer.class,
+                AppComponentModel.class, AppComponent.class);
     }
     public Menu(Application app) {
-        super(new ToolFolder(app), AppComponent.class, AppTool.class);
+        this(new ContainerModel(app));
     }
 
     @Override
@@ -28,11 +31,8 @@ public class Menu extends AppContainerBase<AppComponent, AppTool> implements App
 
     }
     @Override
-    public AppComponent createPreferredComponent(AppTool tool, String name, Path absolutePath, AppComponentOptions options) {
-        if(tool instanceof AppToolFolder){
-            options= DefaultAppComponentOptions.copy(options).componentTypeIfNull(AppMenu.class);
-        }
-        return super.createPreferredComponent(tool, name, absolutePath, options);
+    public AppComponent createPreferredChild(String name, Path absolutePath) {
+        return new Menu(app());
     }
 }
 

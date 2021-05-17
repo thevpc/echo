@@ -5,16 +5,16 @@ import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppAlert;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppLabel;
-import net.thevpc.echo.api.tools.AppToolAlert;
+import net.thevpc.echo.api.tools.AppAlertModel;
 import net.thevpc.echo.impl.dialog.InputTextAreaPanel;
 import net.thevpc.echo.impl.dialog.InputTextFieldPanel;
-import net.thevpc.echo.impl.tools.ToolAlert;
+import net.thevpc.echo.impl.tools.AlertModel;
 import net.thevpc.echo.api.peers.AppAlertPeer;
 
 import java.util.*;
 import java.util.function.Supplier;
 
-public class Alert extends AppComponentBase implements AppAlert {
+public class Alert extends AppControlBase implements AppAlert {
     protected Str title;
     protected List<Object> titleParameters = new ArrayList<>();
     protected AppComponent content;
@@ -29,10 +29,10 @@ public class Alert extends AppComponentBase implements AppAlert {
 
 
     public Alert(Application app) {
-        super(new ToolAlert(app));
+        this(new AlertModel(app));
     }
-    public Alert(AppToolAlert tool) {
-        super(tool);
+    public Alert(AppAlertModel tool) {
+        super(tool, AppAlertModel.class,AppAlert.class,AppAlertPeer.class);
     }
 
     public AppDimension getPreferredSize() {
@@ -82,7 +82,7 @@ public class Alert extends AppComponentBase implements AppAlert {
 
     public AppAlert setContentText(Str labelId) {
         AppLabel label = new Label(app());
-        label.tool().text().set(labelId);
+        label.model().text().set(labelId);
         return setContent(label);
     }
 
@@ -237,7 +237,17 @@ public class Alert extends AppComponentBase implements AppAlert {
     }
 
     @Override
-    public AppToolAlert tool() {
-        return (AppToolAlert) super.tool();
+    public AppAlertModel model() {
+        return (AppAlertModel) super.model();
+    }
+
+    @Override
+    public AppAlertPeer peer() {
+        return (AppAlertPeer) super.peer();
+    }
+
+    @Override
+    public AppAlertPeer peer(boolean prepareShowing) {
+        return (AppAlertPeer) super.peer(prepareShowing);
     }
 }

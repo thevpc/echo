@@ -3,13 +3,12 @@ package net.thevpc.echo.swing;
 import net.thevpc.common.props.*;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.common.i18n.Str;
-import net.thevpc.echo.api.components.AppAction;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.tools.*;
 import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.swing.icons.SwingAppImage;
 import net.thevpc.echo.*;
-import net.thevpc.echo.impl.DefaultAppActionEvent;
+import net.thevpc.echo.impl.DefaultActionEvent;
 
 import java.awt.Component;
 
@@ -88,10 +87,10 @@ public class SwingApplicationUtils {
     }
 
     public static void prepareAbstractButton(AbstractButton button, AppComponent binding, Application application, boolean text) {
-        prepareAbstractButton(button, binding.tool(), application, text);
+        prepareAbstractButton(button, binding.model(), application, text);
     }
 
-    public static void prepareAbstractButton(AbstractButton button, AppTool tool, Application app, boolean text) {
+    public static void prepareAbstractButton(AbstractButton button, AppComponentModel tool, Application app, boolean text) {
         if (text) {
             tool.title().listeners().add((PropertyEvent event) -> {
                 button.setText(
@@ -140,8 +139,8 @@ public class SwingApplicationUtils {
         }
 
         ObservableValue<String> group = null;
-        if (tool instanceof AppToolToggle) {
-            AppToolToggle cc = (AppToolToggle) tool;
+        if (tool instanceof AppToggleModel) {
+            AppToggleModel cc = (AppToggleModel) tool;
             group = cc.group();
             button.setSelected(cc.selected().get());
         }
@@ -165,28 +164,28 @@ public class SwingApplicationUtils {
             });
         }
 
-        if (tool instanceof AppToolAction) {
-            AppToolAction action = (AppToolAction) tool;
+        if (tool instanceof AppToolButtonModel) {
+            AppToolButtonModel action = (AppToolButtonModel) tool;
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    AppAction a = action.action().get();
+                    net.thevpc.echo.api.components.Action a = action.action().get();
                     if (a != null) {
-                        a.run(new DefaultAppActionEvent(app, tool, e.getSource(), e));
+                        a.run(new DefaultActionEvent(app, tool, e.getSource(), e));
                     }
                 }
             });
         }
 
-        if (tool instanceof AppToolToggle) {
+        if (tool instanceof AppToggleModel) {
             button.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    ((AppToolToggle) tool).selected().set(e.getStateChange() == ItemEvent.SELECTED);
+                    ((AppToggleModel) tool).selected().set(e.getStateChange() == ItemEvent.SELECTED);
                 }
             });
-            button.setSelected(((AppToolToggle) tool).selected().get());
-            ((AppToolToggle) tool).selected().listeners().add(new PropertyListener() {
+            button.setSelected(((AppToggleModel) tool).selected().get());
+            ((AppToggleModel) tool).selected().listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     button.setSelected(event.getNewValue());
@@ -196,15 +195,15 @@ public class SwingApplicationUtils {
     }
 
     public static JComponent createMenuItem(AppComponent b, Application application) {
-        AppTool t = b.tool();
-        if (t instanceof AppToolFolder) {
-            AppToolFolder a = (AppToolFolder) t;
+        AppComponentModel t = b.model();
+        if (t instanceof AppContainerModel) {
+            AppContainerModel a = (AppContainerModel) t;
             JMenu m = new JMenu();
             prepareAbstractButton(m, b, application, true);
             return m;
         }
-        if (t instanceof AppToolToggle) {
-            AppToolToggle a = (AppToolToggle) t;
+        if (t instanceof AppToggleModel) {
+            AppToggleModel a = (AppToggleModel) t;
             JCheckBoxMenuItem m = new JCheckBoxMenuItem();
             m.addItemListener(new ItemListener() {
                 @Override
@@ -215,13 +214,13 @@ public class SwingApplicationUtils {
             prepareAbstractButton(m, b, application, true);
             return m;
         }
-        if (t instanceof AppToolAction) {
-            AppToolAction a = (AppToolAction) t;
+        if (t instanceof AppToolButtonModel) {
+            AppToolButtonModel a = (AppToolButtonModel) t;
             JMenuItem m = new JMenuItem();
             prepareAbstractButton(m, b, application, true);
             return m;
         }
-        if (t instanceof AppToolSeparator) {
+        if (t instanceof AppSeparatorModel) {
             return new JPopupMenu.Separator();
         }
         throw new IllegalArgumentException("Unsupported");
@@ -248,7 +247,7 @@ public class SwingApplicationUtils {
         }
     }
 
-    public static void updateAction(Action b, Application app) {
+    public static void updateAction(javax.swing.Action b, Application app) {
         String iconId = (String) b.getValue("icon-id");
         if (iconId != null) {
             if (iconId.startsWith("$")) {
@@ -321,11 +320,11 @@ public class SwingApplicationUtils {
         );
     }
 
-    public static Action registerStandardAction(Action b, String actionId, Application app) {
+    public static javax.swing.Action registerStandardAction(javax.swing.Action b, String actionId, Application app) {
         return registerAction(b, "Action." + actionId, "$Action." + actionId + ".icon", app);
     }
 
-    public static Action registerAction(Action b, String messageId, String iconId, Application app) {
+    public static javax.swing.Action registerAction(javax.swing.Action b, String messageId, String iconId, Application app) {
         b.putValue("icon-id", iconId);
         b.putValue("message-id", messageId);
         ActionUpdaterPropertyListener li = new ActionUpdaterPropertyListener(b, app);
@@ -337,14 +336,14 @@ public class SwingApplicationUtils {
         return b;
     }
 
-    public static Action updateAction(Action b, String messageId, String iconId, Application app) {
+    public static javax.swing.Action updateAction(javax.swing.Action b, String messageId, String iconId, Application app) {
         b.putValue("icon-id", iconId);
         b.putValue("message-id", messageId);
         updateAction(b, app);
         return b;
     }
 
-    public static void unregisterAction(Action b, Application app) {
+    public static void unregisterAction(javax.swing.Action b, Application app) {
         app.iconSets().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
                 && ((ButtonUpdaterPropertyListener) x).b == b
         );
@@ -357,14 +356,14 @@ public class SwingApplicationUtils {
         String path = subBinding.path().toString();
         String s = app.i18n().getString(path, (x) -> null);
         if (s == null) {
-            s = app.i18n().getString(subBinding.tool().id(), (x) -> null);
+            s = app.i18n().getString(subBinding.model().id(), (x) -> null);
             if (s == null) {
                 LOG
-                        .log(Level.FINE, "updateToolComponent failed : " + "NotFound(" + path + "," + subBinding.tool().id() + ")");
+                        .log(Level.FINE, "updateToolComponent failed : " + "NotFound(" + path + "," + subBinding.model().id() + ")");
                 return;
             }
         }
-        subBinding.tool().title().set(Str.of(s));
+        subBinding.model().title().set(Str.of(s));
     }
 
     public static void bindSwingAppContent(Component jcomponent, SwingPeer aa) {
@@ -409,10 +408,10 @@ public class SwingApplicationUtils {
 
     private static class ActionUpdaterPropertyListener implements PropertyListener {
 
-        private final Action b;
+        private final javax.swing.Action b;
         private final Application app;
 
-        public ActionUpdaterPropertyListener(Action b, Application app) {
+        public ActionUpdaterPropertyListener(javax.swing.Action b, Application app) {
             this.b = b;
             this.app = app;
         }
@@ -426,18 +425,18 @@ public class SwingApplicationUtils {
     public static class Tracker {
 
         private Application app;
-        private List<Action> actions = new ArrayList<>();
+        private List<javax.swing.Action> actions = new ArrayList<>();
         private List<AbstractButton> buttons = new ArrayList<>();
 
         public Tracker(Application app) {
             this.app = app;
         }
 
-        public List<Action> getActions() {
+        public List<javax.swing.Action> getActions() {
             return actions;
         }
 
-        public Tracker add(Action a) {
+        public Tracker add(javax.swing.Action a) {
             actions.add(a);
             return this;
         }
@@ -447,7 +446,7 @@ public class SwingApplicationUtils {
             return this;
         }
 
-        public Action registerStandardAction(Runnable b, String actionId) {
+        public javax.swing.Action registerStandardAction(Runnable b, String actionId) {
             AbstractAction a = new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -459,7 +458,7 @@ public class SwingApplicationUtils {
             return a;
         }
 
-        public Action registerStandardAction(Action b, String actionId) {
+        public javax.swing.Action registerStandardAction(javax.swing.Action b, String actionId) {
             SwingApplicationUtils.registerStandardAction(b, actionId, app);
             actions.add(b);
             return b;
@@ -472,8 +471,8 @@ public class SwingApplicationUtils {
         }
 
         public void unregisterAll() {
-            for (Iterator<Action> it = actions.iterator(); it.hasNext();) {
-                Action action = it.next();
+            for (Iterator<javax.swing.Action> it = actions.iterator(); it.hasNext();) {
+                javax.swing.Action action = it.next();
                 SwingApplicationUtils.unregisterAction(action, app);
                 it.remove();
             }

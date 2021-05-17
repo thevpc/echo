@@ -7,11 +7,11 @@ package net.thevpc.echo.swing.mydoggy;
 
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
+import net.thevpc.echo.AppBounds;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppWindow;
 import net.thevpc.echo.api.peers.AppWindowPeer;
-import net.thevpc.echo.swing.icons.SwingAppImage;
 import net.thevpc.echo.swing.peers.SwingPeer;
 import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
@@ -40,10 +40,10 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
             toolWindowManager = (MyDoggyToolWindowManager) win.parent().peer().toolkitComponent();
 
             ContentManager contentManager = toolWindowManager.getContentManager();
-            content = contentManager.addContent(win.tool().id(), win.tool().title().get().getValue(
+            content = contentManager.addContent(win.model().id(), win.model().title().get().getValue(
                     win.app().i18n()
-            ), getIcon(win.tool().smallIcon().get()),
-                    (Component) win.tool().component().get().peer().toolkitComponent()
+            ), getIcon(win.model().smallIcon().get()),
+                    (Component) win.model().component().get().peer().toolkitComponent()
                     );
 
             content.setEnabled(true);
@@ -52,31 +52,31 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
             content.getContentUI().setMinimizable(false);
             content.getContentUI().setMinimizable(false);
 
-            win.tool().active().set(content.isSelected());
-            win.tool().enabled().set(content.isEnabled());
+            win.model().active().set(content.isSelected());
+            win.model().enabled().set(content.isEnabled());
             content.addPropertyChangeListener(new PropertyChangeListener() {
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     switch (evt.getPropertyName()) {
                         case "visible":
                         case "selected": {
-                            win.tool().active().set(content.isVisible() && content.isSelected());
+                            win.model().active().set(content.isVisible() && content.isSelected());
                             break;
                         }
                         case "enabled": {
-                            win.tool().enabled().set((Boolean) evt.getNewValue());
+                            win.model().enabled().set((Boolean) evt.getNewValue());
                             break;
                         }
                     }
                 }
             });
-            win.tool().active().listeners().add(new PropertyListener() {
+            win.model().active().listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     content.setSelected((Boolean) event.getNewValue());
                 }
             });
-            win.tool().smallIcon().listeners().add(new PropertyListener() {
+            win.model().smallIcon().listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     content.setIcon(
@@ -84,19 +84,19 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
                     );
                 }
             });
-            win.tool().title().listeners().add(new PropertyListener() {
+            win.model().title().listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     content.setTitle((String) event.getNewValue());
                 }
             });
-            win.tool().component().listeners().add(new PropertyListener() {
+            win.model().component().listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     content.setComponent((JComponent) event.getNewValue());
                 }
             });
-            win.tool().closable().listeners().add(new PropertyListener() {
+            win.model().closable().listeners().add(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     content.getContentUI().setCloseable((Boolean) event.getNewValue());
@@ -112,13 +112,20 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
         Icon ii = i == null ? null : (Icon) i.peer().toolkitImage();
         return ii;
     }
-    @Override
-    public void centerOnDesktop() {
 
-    }
 
 
     public Dockable toolkitComponent() {
         return content;
+    }
+    @Override
+    public void resize(double x, double y, double w, double h) {
+
+    }
+
+    @Override
+    public AppBounds bounds() {
+        Rectangle r = content.getComponent().getBounds();
+        return new AppBounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
     }
 }

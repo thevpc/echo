@@ -5,13 +5,16 @@ import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppCheckBox;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppRadioButton;
-import net.thevpc.echo.api.tools.AppToolToggle;
+import net.thevpc.echo.api.peers.AppCheckBoxPeer;
+import net.thevpc.echo.api.peers.AppRadioButtonPeer;
+import net.thevpc.echo.api.peers.AppTogglePeer;
+import net.thevpc.echo.api.tools.AppToggleModel;
 import net.thevpc.echo.impl.components.AppComponentBase;
 import net.thevpc.echo.swing.SwingApplicationUtils;
 
 import javax.swing.*;
 
-public class SwingTogglePeer implements SwingPeer {
+public class SwingTogglePeer implements SwingPeer, AppTogglePeer, AppCheckBoxPeer, AppRadioButtonPeer {
     private Object peer;
     private AppComponent component;
 
@@ -20,7 +23,7 @@ public class SwingTogglePeer implements SwingPeer {
 
     public void install(AppComponent component) {
         AppComponentBase ecomp = (AppComponentBase) component;
-        AppToolToggle etool=(AppToolToggle) ecomp.tool();
+        AppToggleModel etool=(AppToggleModel) ecomp.model();
 //        AppComponentType ct = component.componentType();
         Object sParent = component.parent()==null?null:component.parent().peer().toolkitComponent();
         if (
@@ -35,7 +38,7 @@ public class SwingTogglePeer implements SwingPeer {
                                 (component instanceof AppRadioButton)? new JRadioButtonMenuItem():
                                 new JCheckBoxMenuItem();
                 ;
-                SwingApplicationUtils.prepareAbstractButton((AbstractButton) peer, ecomp.tool(),ecomp.app(),
+                SwingApplicationUtils.prepareAbstractButton((AbstractButton) peer, ecomp.model(),ecomp.app(),
                         true
                 );
             }
@@ -46,7 +49,7 @@ public class SwingTogglePeer implements SwingPeer {
                                 (component instanceof AppRadioButton)? new JRadioButton():
                                         new JToggleButton();
                 ;
-                SwingApplicationUtils.prepareAbstractButton((AbstractButton) peer, ecomp.tool(),ecomp.app(),
+                SwingApplicationUtils.prepareAbstractButton((AbstractButton) peer, ecomp.model(),ecomp.app(),
                         !(sParent instanceof JToolBar)
                         );
             }

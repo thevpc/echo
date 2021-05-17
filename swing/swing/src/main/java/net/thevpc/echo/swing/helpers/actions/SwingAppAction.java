@@ -8,12 +8,12 @@ package net.thevpc.echo.swing.helpers.actions;
 //package net.thevpc.echo.swing.actions;
 //
 //import javax.swing.Action;
-//import net.thevpc.echo.AppAction;
+//import net.thevpc.echo.Action;
 //
 ///**
 // *
 // * @author vpc
 // */
-//public class SwingAppAction implements AppAction{
+//public class SwingAppAction implements Action{
 //    private Action action;
 //}

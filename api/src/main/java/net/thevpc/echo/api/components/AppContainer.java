@@ -1,18 +1,18 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppTool;
-import net.thevpc.echo.api.tools.AppToolFolder;
+import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.tools.AppContainerModel;
 import net.thevpc.echo.impl.components.AppContainerChildren;
 
-public interface AppContainer<C extends AppComponent,T extends AppTool> extends AppComponent {
+public interface AppContainer<T extends AppComponentModel, C extends AppComponent> extends AppComponent {
 
-    AppToolFolder tool();
+    AppContainerModel model();
 
 //    AppComponent get(Path path);
 //
-    AppContainerChildren<C,T> children();
+    AppContainerChildren<T, C> children();
 
-//    AppComponent add(AppTool tool, Path relativePath, AppComponentOptions options);
+//    AppComponent add(AppComponentModel tool, Path relativePath, AppComponentOptions options);
 
 //    AppComponent remove(Path relativePath);
 

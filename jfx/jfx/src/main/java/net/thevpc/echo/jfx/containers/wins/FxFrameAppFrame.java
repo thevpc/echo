@@ -16,7 +16,7 @@
 //import javafx.stage.Stage;
 //import net.thevpc.echo.api.AppImage;
 //import net.thevpc.echo.api.components.*;
-//import net.thevpc.echo.api.tools.AppToolFolder;
+//import net.thevpc.echo.api.tools.AppContainerModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.icons.FxAppImage;
 //
@@ -28,11 +28,11 @@
 //    BorderPane borderPane;
 //    BorderPane menuPane;
 //
-//    public FxFrameAppFrame(AppToolFolder folder, Application application, AppComponentOptions options) {
+//    public FxFrameAppFrame(AppContainerModel folder, Application application, AppComponentOptions options) {
 //        this(folder, JavaFXRawApp.newStage(application), application, options);
 //    }
 //
-//    public FxFrameAppFrame(AppToolFolder folder, Stage stage, Application application, AppComponentOptions options) {
+//    public FxFrameAppFrame(AppContainerModel folder, Stage stage, Application application, AppComponentOptions options) {
 //        super(folder, stage, application, options);
 ////        frame.setLayout(new BorderLayout());
 ////        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

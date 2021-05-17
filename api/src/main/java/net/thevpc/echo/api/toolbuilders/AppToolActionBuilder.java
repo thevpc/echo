@@ -22,11 +22,11 @@
 //package net.thevpc.echo.api.toolbuilders;
 //
 //import net.thevpc.echo.*;
-//import net.thevpc.echo.api.components.AppAction;
+//import net.thevpc.echo.api.components.Action;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
-//import net.thevpc.echo.api.tools.AppToolAction;
+//import net.thevpc.echo.api.tools.AppToolButtonModel;
 //
 //import java.util.List;
 //
@@ -43,7 +43,7 @@
 //    AppToolActionBuilder path(String... path);
 //
 //    @Override
-//    AppToolAction tool();
+//    AppToolButtonModel tool();
 //
 //    @Override
 //    AppComponent component();
@@ -53,7 +53,7 @@
 //
 //    AppToolActionBuilder bindUndo(AppUndoableActionSupplier a);
 //
-//    AppToolActionBuilder bind(AppAction a);
+//    AppToolActionBuilder bind(Action a);
 //
 //    AppToolActionBuilder bind(Runnable a);
 //

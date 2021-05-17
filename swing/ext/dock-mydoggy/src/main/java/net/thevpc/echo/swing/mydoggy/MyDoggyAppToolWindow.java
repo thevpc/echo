@@ -6,6 +6,7 @@
 package net.thevpc.echo.swing.mydoggy;
 
 import net.thevpc.common.props.PropertyEvent;
+import net.thevpc.echo.AppBounds;
 import net.thevpc.echo.AppWindowAnchor;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppImage;
@@ -65,23 +66,23 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
         this.win = (AppWindow) comp;
         this.app = win.app();
         toolWindowManager = (MyDoggyToolWindowManager) win.parent().peer().toolkitComponent();
-        Icon aim = win.tool().smallIcon().get()==null?null:
-                (Icon) win.tool().smallIcon().get().peer().toolkitImage()
+        Icon aim = win.model().smallIcon().get()==null?null:
+                (Icon) win.model().smallIcon().get().peer().toolkitImage()
                 ;
 
         this.toolWindow = toolWindowManager.registerToolWindow(
-                win.tool().id(), win.tool().title().get()
+                win.model().id(), win.model().title().get()
                         .getValue(app.i18n()), aim,
-                (Component) win.tool().component().get().peer().toolkitComponent()
-                , toMyDoggyAnchor(win.tool().anchor().get()));
+                (Component) win.model().component().get().peer().toolkitComponent()
+                , toMyDoggyAnchor(win.model().anchor().get()));
         for (ToolWindowType value : ToolWindowType.values()) {
             this.toolWindow.getTypeDescriptor(value).setIdVisibleOnTitleBar(false);
         }
         toolWindow.getRepresentativeAnchorDescriptor().setTitle(
-                win.tool().title().get().getValue(app.i18n())
+                win.model().title().get().getValue(app.i18n())
         );
         toolWindow.getRepresentativeAnchorDescriptor().setIcon(aim);
-        win.tool().active().set(toolWindow.isActive());
+        win.model().active().set(toolWindow.isActive());
 //        win.tool().title().set(toolWindow.getTitle());
         Icon ic = toolWindow.getIcon();
 //        this.icon.set(ic == null ? null : new SwingAppImage(ic));
@@ -90,21 +91,21 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
             public void propertyChange(PropertyChangeEvent evt) {
                 switch (evt.getPropertyName()) {
                     case "active": {
-                        win.tool().active().set((Boolean) evt.getNewValue());
+                        win.model().active().set((Boolean) evt.getNewValue());
                         break;
                     }
                 }
             }
         });
-        win.tool().active().listeners().add((PropertyEvent event) -> {
+        win.model().active().listeners().add((PropertyEvent event) -> {
             toolWindow.setActive((Boolean) event.getNewValue());
         });
-        win.tool().title().listeners().add((PropertyEvent event) -> {
+        win.model().title().listeners().add((PropertyEvent event) -> {
             String newValue = (String) event.getNewValue();
             toolWindow.setTitle(newValue);
             toolWindow.getRepresentativeAnchorDescriptor().setTitle(newValue);
         });
-        win.tool().smallIcon().listeners().add((PropertyEvent event) -> {
+        win.model().smallIcon().listeners().add((PropertyEvent event) -> {
             AppImage i=event.getNewValue();
             Icon ii = getIcon(i);
             toolWindow.setIcon(ii);
@@ -127,7 +128,13 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
     }
 
     @Override
-    public void centerOnDesktop() {
+    public void resize(double x, double y, double w, double h) {
 
+    }
+
+    @Override
+    public AppBounds bounds() {
+        Rectangle r = toolWindow.getComponent().getBounds();
+        return new AppBounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
     }
 }

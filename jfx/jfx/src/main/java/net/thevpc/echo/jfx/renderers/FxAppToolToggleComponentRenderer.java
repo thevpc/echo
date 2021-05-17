@@ -18,7 +18,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
-//import net.thevpc.echo.api.tools.AppToolToggle;
+//import net.thevpc.echo.api.tools.AppToggleModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.ToolBarGroup;
 //import net.thevpc.echo.jfx.containers.menus.FxToggleButtonControl;
@@ -31,7 +31,7 @@
 //    public AppComponent createComponent(AppComponentRendererContext context) {
 //        Object parentGuiElement = ((FxPeer) context.getParent()).fxComponent();
 //        Application application = context.getApplication();
-//        AppToolToggle tool = (AppToolToggle) context.getTool();
+//        AppToggleModel tool = (AppToggleModel) context.getTool();
 //        AppComponentOptions options = context.getOptions();
 //        AppComponentType componentType = options == null ? null : options.componentType();
 //        boolean inMenu = false;

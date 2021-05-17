@@ -8,13 +8,13 @@
 //import net.thevpc.echo.api.components.AppSeparator;
 //import net.thevpc.echo.api.toolbuilders.AppToolActionBuilder;
 //import net.thevpc.echo.api.toolbuilders.AppToolCustomBuilder;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //
 //public interface AppTools {
 //
 //    AppToolsConfig config();
 //
-//    ObservableList<AppTool> all();
+//    ObservableList<AppComponentModel> all();
 //
 //    default AppComponent getComponent(String path) {
 //        return getComponent(path == null ? null : Path.of(path));
@@ -22,7 +22,7 @@
 //
 //    AppComponent getComponent(Path path);
 //
-//    AppTool getTool(String id);
+//    AppComponentModel getTool(String id);
 //
 //    AppComponent[] getComponents(String id);
 //
@@ -41,10 +41,10 @@
 //    AppToolActionBuilder addAction();
 //
 //    //    @Deprecated
-////    AppToolAction addAction(Action al, String path, String... paths);
-//    AppComponent addTool(AppTool tool, String path, AppComponentOptions options);
+////    AppToolButtonModel addAction(Action al, String path, String... paths);
+//    AppComponent addTool(AppComponentModel tool, String path, AppComponentOptions options);
 //
-//    AppComponent addTool(AppTool tool, Path path, AppComponentOptions options);
+//    AppComponent addTool(AppComponentModel tool, Path path, AppComponentOptions options);
 //
 //    void removeTool(Path tool);
 //

@@ -1,8 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppToolColor;
-import net.thevpc.echo.api.tools.AppToolFont;
+import net.thevpc.echo.api.tools.AppFontChooserModel;
 
 public interface AppFontChooser extends AppControl {
-    AppToolFont tool();
+    AppFontChooserModel model();
 }

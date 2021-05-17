@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import net.thevpc.echo.AppUIPlaf;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.UncheckedException;
+import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.peers.AppColorPeer;
 import net.thevpc.echo.api.peers.AppImagePeer;
@@ -62,10 +63,10 @@ public class FxApplicationToolkit extends AbstractApplicationToolkit {
 //                || object instanceof MenuItem) {
 //            Object obj = object;
 //            AppComponentRenderer renderer = (c) -> new FxAppCustomControl(
-//                    (AppToolCustom) c.getTool(),
+//                    (AppUserControlModel) c.getTool(),
 //                    c.getPath(), obj, application, null
 //            );
-//            ToolCustom tool = new ToolCustom(
+//            UserControlModel tool = new UserControlModel(
 //                    UUID.randomUUID().toString(),
 //                    renderer, application
 //            );
@@ -93,8 +94,11 @@ public class FxApplicationToolkit extends AbstractApplicationToolkit {
     }
 
     @Override
-    public IconTransform createReplaceColorTransform(Color from, Color to) {
-        return new FxAppColorIconTransform(from, to, app);
+    public IconTransform createReplaceColorTransform(AppColor from, AppColor to) {
+        return new FxAppColorIconTransform(
+                (Color) from.peer().toolkitColor(),
+                (Color) to.peer().toolkitColor(),
+                app);
     }
 
     @Override

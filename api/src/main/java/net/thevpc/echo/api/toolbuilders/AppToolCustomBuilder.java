@@ -8,7 +8,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
-//import net.thevpc.echo.api.tools.AppTool;
+//import net.thevpc.echo.api.tools.AppComponentModel;
 //
 //import java.util.List;
 //import java.util.function.Supplier;
@@ -27,7 +27,7 @@
 //    AppToolCustomBuilder path(String... path);
 //
 //    @Override
-//    AppTool tool();
+//    AppComponentModel tool();
 //
 //    @Override
 //    AppComponent component();
