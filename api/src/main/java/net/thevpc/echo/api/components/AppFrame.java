@@ -1,13 +1,20 @@
 package net.thevpc.echo.api.components;
 
 
+import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.common.props.WritableValue;
-import net.thevpc.echo.*;
-import net.thevpc.echo.api.tools.AppComponentModel;
-import net.thevpc.echo.api.tools.AppFrameModel;
+import net.thevpc.echo.FrameDisplayMode;
+import net.thevpc.echo.WindowStateSetValue;
 
-public interface AppFrame extends AppContainer<AppComponentModel, AppComponent> {
+public interface AppFrame extends AppContainer<AppComponent> {
+    WritableBoolean closable();
 
+    WritableBoolean iconifiable();
+
+    void open();
+    WindowStateSetValue state();
+
+    WritableValue<FrameDisplayMode> displayMode();
 
     WritableValue<AppMenuBar> menuBar();
 
@@ -15,9 +22,7 @@ public interface AppFrame extends AppContainer<AppComponentModel, AppComponent> 
 
     WritableValue<AppToolBarGroup> toolBar();
 
-    WritableValue<AppComponent> workspace();
-
-    AppFrameModel model();
+    WritableValue<AppComponent> content();
 
     void centerOnDefaultMonitor();
     

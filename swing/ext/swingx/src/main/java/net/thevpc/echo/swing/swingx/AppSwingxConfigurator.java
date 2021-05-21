@@ -9,8 +9,8 @@ import java.awt.Component;
 import java.util.function.Supplier;
 import javax.swing.JOptionPane;
 
-import net.thevpc.echo.AppEvent;
-import net.thevpc.echo.AppShutdownVeto;
+import net.thevpc.echo.api.AppEvent;
+import net.thevpc.echo.api.AppShutdownVeto;
 import net.thevpc.echo.Application;
 import net.thevpc.common.msg.ExceptionMessage;
 import net.thevpc.common.msg.Message;
@@ -46,7 +46,7 @@ public class AppSwingxConfigurator {
             public void vetoableChange(AppEvent event) {
                 int a = JOptionPane.showConfirmDialog(
                         (Component) app.mainFrame().get().peer().toolkitComponent(), "Are you sure you want to exit "
-                        + app.mainFrame().get().model().title().get()
+                        + app.mainFrame().get().title().get()
                         + "?", "Exit?", JOptionPane.OK_CANCEL_OPTION);
                 if (a == JOptionPane.OK_OPTION) {
                     Supplier<Boolean> e = confirmExit().get();
@@ -62,8 +62,8 @@ public class AppSwingxConfigurator {
             }
         });
 
-        app.errors().listeners().add(e -> {
-            Message v = e.getNewValue();
+        app.errors().onChange(e -> {
+            Message v = e.newValue();
             if (v != null) {
                 app.logs().add(v);
                 if (v instanceof ExceptionMessage) {

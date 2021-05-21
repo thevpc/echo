@@ -6,13 +6,14 @@
 package net.thevpc.echo.swing.mydoggy;
 
 import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.echo.AppBounds;
-import net.thevpc.echo.AppWindowAnchor;
+import net.thevpc.echo.Bounds;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppWindow;
-import net.thevpc.echo.api.peers.AppWindowPeer;
+import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.spi.peers.AppWindowPeer;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 import net.thevpc.echo.swing.peers.SwingPeer;
 import org.noos.xing.mydoggy.ToolWindow;
 import org.noos.xing.mydoggy.ToolWindowAnchor;
@@ -35,24 +36,28 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
     private ToolWindow toolWindow;
     private Application app;
 
-    private static AppWindowAnchor toAppToolWindowAnchor(ToolWindowAnchor a) {
+    private static Anchor toAppToolWindowAnchor(ToolWindowAnchor a) {
         switch (a) {
             case TOP:
-                return AppWindowAnchor.TOP;
+                return Anchor.TOP;
             case BOTTOM:
-                return AppWindowAnchor.BOTTOM;
+                return Anchor.BOTTOM;
             case LEFT:
-                return AppWindowAnchor.LEFT;
+                return Anchor.LEFT;
             case RIGHT:
-                return AppWindowAnchor.RIGHT;
+                return Anchor.RIGHT;
         }
         throw new IllegalArgumentException("unsupported");
     }
-    private static ToolWindowAnchor toMyDoggyAnchor(AppWindowAnchor a) {
+    private static ToolWindowAnchor toMyDoggyAnchor(Anchor a) {
         switch (a) {
             case TOP:
+            case TOP_LEFT:
+            case TOP_RIGHT:
                 return ToolWindowAnchor.TOP;
             case BOTTOM:
+            case BOTTOM_LEFT:
+            case BOTTOM_RIGHT:
                 return ToolWindowAnchor.BOTTOM;
             case LEFT:
                 return ToolWindowAnchor.LEFT;
@@ -66,23 +71,23 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
         this.win = (AppWindow) comp;
         this.app = win.app();
         toolWindowManager = (MyDoggyToolWindowManager) win.parent().peer().toolkitComponent();
-        Icon aim = win.model().smallIcon().get()==null?null:
-                (Icon) win.model().smallIcon().get().peer().toolkitImage()
+        Icon aim = win.smallIcon().get()==null?null:
+                SwingHelpers.toAwtIcon(win.smallIcon().get())
                 ;
 
         this.toolWindow = toolWindowManager.registerToolWindow(
-                win.model().id(), win.model().title().get()
-                        .getValue(app.i18n()), aim,
-                (Component) win.model().component().get().peer().toolkitComponent()
-                , toMyDoggyAnchor(win.model().anchor().get()));
+                win.id(), win.title().get()
+                        .value(app.i18n()), aim,
+                (Component) win.component().get().peer().toolkitComponent()
+                , toMyDoggyAnchor(win.anchor().get()));
         for (ToolWindowType value : ToolWindowType.values()) {
             this.toolWindow.getTypeDescriptor(value).setIdVisibleOnTitleBar(false);
         }
         toolWindow.getRepresentativeAnchorDescriptor().setTitle(
-                win.model().title().get().getValue(app.i18n())
+                win.title().get().value(app.i18n())
         );
         toolWindow.getRepresentativeAnchorDescriptor().setIcon(aim);
-        win.model().active().set(toolWindow.isActive());
+        win.active().set(toolWindow.isActive());
 //        win.tool().title().set(toolWindow.getTitle());
         Icon ic = toolWindow.getIcon();
 //        this.icon.set(ic == null ? null : new SwingAppImage(ic));
@@ -91,22 +96,22 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
             public void propertyChange(PropertyChangeEvent evt) {
                 switch (evt.getPropertyName()) {
                     case "active": {
-                        win.model().active().set((Boolean) evt.getNewValue());
+                        win.active().set((Boolean) evt.getNewValue());
                         break;
                     }
                 }
             }
         });
-        win.model().active().listeners().add((PropertyEvent event) -> {
-            toolWindow.setActive((Boolean) event.getNewValue());
+        win.active().onChange((PropertyEvent event) -> {
+            toolWindow.setActive((Boolean) event.newValue());
         });
-        win.model().title().listeners().add((PropertyEvent event) -> {
-            String newValue = (String) event.getNewValue();
+        win.title().onChange((PropertyEvent event) -> {
+            String newValue = (String) event.newValue();
             toolWindow.setTitle(newValue);
             toolWindow.getRepresentativeAnchorDescriptor().setTitle(newValue);
         });
-        win.model().smallIcon().listeners().add((PropertyEvent event) -> {
-            AppImage i=event.getNewValue();
+        win.smallIcon().onChange((PropertyEvent event) -> {
+            AppImage i=event.newValue();
             Icon ii = getIcon(i);
             toolWindow.setIcon(ii);
             toolWindow.getRepresentativeAnchorDescriptor().setIcon(ii);
@@ -118,7 +123,7 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
         if(i !=null){
             i = i.scaleTo(16,16);
         }
-        Icon ii = i == null ? null : (Icon) i.peer().toolkitImage();
+        Icon ii = SwingHelpers.toAwtIcon(i);
         return ii;
     }
 
@@ -133,8 +138,8 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
     }
 
     @Override
-    public AppBounds bounds() {
+    public Bounds bounds() {
         Rectangle r = toolWindow.getComponent().getBounds();
-        return new AppBounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
+        return new Bounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
     }
 }

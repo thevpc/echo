@@ -9,7 +9,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppDock;
 //import net.thevpc.echo.api.peers.AppComponentPeer;
-//import net.thevpc.echo.api.tools.AppContainerModel;
+//import net.thevpc.echo.api.model.AppContainerModel;
 //import net.thevpc.echo.swing.SwingApplicationToolkit;
 //
 //import java.util.Arrays;

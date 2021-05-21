@@ -8,13 +8,13 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.swing.dock.JDockPane;
 import net.thevpc.common.swing.win.InternalWindowsHelper;
 import net.thevpc.common.swing.win.WindowInfo;
-import net.thevpc.echo.AppDimension;
-import net.thevpc.echo.AppWindowAnchor;
+import net.thevpc.echo.Dimension;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppDesktop;
 import net.thevpc.echo.api.components.AppWindow;
-import net.thevpc.echo.api.peers.AppDesktopPeer;
-import net.thevpc.echo.swing.peers.SwingPeer;
+import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.spi.peers.AppDesktopPeer;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +27,7 @@ public class SwingDesktopPeer implements SwingPeer, AppDesktopPeer {
     InternalWindowsHelper desktop = new InternalWindowsHelper();
     private AppDesktop appDesktop;
 
-    public static JDockPane.DockAnchor toDocAnchor(AppWindowAnchor anchor) {
+    public static JDockPane.DockAnchor toDocAnchor(Anchor anchor) {
         return JDockPane.DockAnchor.valueOf(anchor.name());
     }
 
@@ -50,24 +50,24 @@ public class SwingDesktopPeer implements SwingPeer, AppDesktopPeer {
         info.setMaximizable(false);
         info.setResizable(false);
         info.setTitle(
-                win.model().title().get() == null ? null :
-                        win.model().title().get().getValue(win.app().i18n())
+                win.title().get() == null ? null :
+                        win.title().get().value(win.app().i18n())
         );
-        info.setComponent((Component) win.model().component().get().peer().toolkitComponent());
+        info.setComponent((Component) win.component().get().peer().toolkitComponent());
         JInternalFrame frame = desktop.addFrame(info);
         frame.putClientProperty(AppWindow.class.getName(), win);
-        win.model().title().listeners().add(
-                v -> win.model().title().withValue(
-                        x -> frame.setTitle(x == null ? null : x.getValue(win.app().i18n()))));
-        win.model().smallIcon().listeners().add(
-                v -> win.model().smallIcon().withValue(
-                        x -> frame.setFrameIcon(x == null ? null : (Icon) x.peer().toolkitImage())));
-        win.model().closable().listeners().add(
-                v -> win.model().closable().withValue(
+        win.title().onChange(
+                v -> win.title().withValue(
+                        x -> frame.setTitle(x == null ? null : x.value(win.app().i18n()))));
+        win.smallIcon().onChange(
+                v -> win.smallIcon().withValue(
+                        x -> frame.setFrameIcon(SwingHelpers.toAwtIcon(x))));
+        win.closable().onChange(
+                v -> win.closable().withValue(
                         x -> frame.setClosable(x)));
-//        win.model().anchor().listeners().add(
-//                v -> win.model().anchor().withValue(
-//                        x -> frame.setWindowAnchor(win.model().id(), toDocAnchor(x))));
+//        win.anchor().onChange(
+//                v -> win.anchor().withValue(
+//                        x -> frame.setWindowAnchor(win.id(), toDocAnchor(x))));
     }
 
     @Override
@@ -87,9 +87,9 @@ public class SwingDesktopPeer implements SwingPeer, AppDesktopPeer {
     }
 
     @Override
-    public AppDimension size() {
-        Dimension size = desktop.getDesktop().getSize();
-        return new AppDimension(
+    public Dimension size() {
+        java.awt.Dimension size = desktop.getDesktop().getSize();
+        return new Dimension(
                 size.getWidth(), size.getHeight()
         );
     }

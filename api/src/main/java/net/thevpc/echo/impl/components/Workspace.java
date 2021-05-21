@@ -23,9 +23,9 @@
 //import net.thevpc.echo.AppWorkspace;
 //import net.thevpc.echo.Application;
 //import net.thevpc.echo.api.peers.AppWorkspacePeer;
-//import net.thevpc.echo.api.tools.AppContainerModel;
-//import net.thevpc.echo.api.tools.AppWindowModel;
-//import net.thevpc.echo.impl.tools.ContainerModel;
+//import net.thevpc.echo.api.model.AppContainerModel;
+//import net.thevpc.echo.api.model.AppWindowModel;
+//import net.thevpc.echo.impl.model.ContainerModel;
 //
 ///**
 // * @author vpc

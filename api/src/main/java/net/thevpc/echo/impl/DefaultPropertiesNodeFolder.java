@@ -24,8 +24,8 @@ package net.thevpc.echo.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.echo.AppPropertiesNode;
-import net.thevpc.echo.AppPropertiesNodeFolder;
+import net.thevpc.echo.api.AppPropertiesNode;
+import net.thevpc.echo.api.AppPropertiesNodeFolder;
 
 /**
  *

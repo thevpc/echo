@@ -2,7 +2,7 @@ package net.thevpc.echo.constraints;
 
 import java.util.Objects;
 
-public class ParentMargin implements AppChildConstraint {
+public class ParentMargin implements AppParentConstraint {
     private double top;
     private double left;
     private double bottom;

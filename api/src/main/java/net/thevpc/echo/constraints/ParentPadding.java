@@ -2,7 +2,7 @@ package net.thevpc.echo.constraints;
 
 import java.util.Objects;
 
-public class ParentPadding implements AppChildConstraint {
+public class ParentPadding implements AppParentConstraint {
     private double top;
     private double left;
     private double bottom;

@@ -5,17 +5,10 @@
  */
 package net.thevpc.echo.swing.icons;
 
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 /**
  *
@@ -115,6 +108,13 @@ public class IconUtils {
             w = h;
         } else if (h <= 0 && w > 0) {
             h = w;
+        }
+        MediaTracker mt = new MediaTracker(new JLabel());
+        mt.addImage(srcImg, 0);
+        try {
+            mt.waitForAll();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         int width = srcImg.getWidth(null);
         int height = srcImg.getHeight(null);

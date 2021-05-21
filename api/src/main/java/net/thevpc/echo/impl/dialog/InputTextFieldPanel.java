@@ -1,16 +1,13 @@
 package net.thevpc.echo.impl.dialog;
 
-import net.thevpc.echo.AppDialogInputPanel;
-import net.thevpc.echo.Application;
+import net.thevpc.echo.*;
+import net.thevpc.echo.api.AppDialogInputPanel;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.constraints.ParentLayout;
+import net.thevpc.echo.constraints.Layout;
 import net.thevpc.echo.constraints.ParentMargin;
-import net.thevpc.echo.impl.components.Label;
-import net.thevpc.echo.impl.components.Panel;
-import net.thevpc.echo.impl.components.TextField;
 
-public class InputTextFieldPanel extends Panel implements AppDialogInputPanel {
+public class InputTextFieldPanel extends VerticalPane implements AppDialogInputPanel {
 
     private Label header;
     private TextField value;
@@ -19,11 +16,11 @@ public class InputTextFieldPanel extends Panel implements AppDialogInputPanel {
     public InputTextFieldPanel(Application app, Str headerId, Str initialValue) {
         super(app);
         this.app = app;
-        constraints().addAll(ParentLayout.VERTICAL, new ParentMargin(5, 5, 5, 5));
+        parentConstraints().addAll(new ParentMargin(5, 5, 5, 5));
         header = new Label(app);
         value = new TextField(app);
-        header.model().text().set(headerId);
-        value.model().text().set(initialValue);
+        header.text().set(headerId);
+        value.text().set(initialValue);
         children().addAll(header, value);
     }
 
@@ -34,7 +31,7 @@ public class InputTextFieldPanel extends Panel implements AppDialogInputPanel {
 
     @Override
     public Object getValue() {
-        return value.model().text().get().getValue(app.i18n());
+        return value.text().get().value(app.i18n());
     }
 
 }

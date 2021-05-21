@@ -1,16 +1,24 @@
 package net.thevpc.echo.api.components;
 
 
-import net.thevpc.echo.api.tools.AppComponentModel;
-import net.thevpc.echo.api.tools.AppWindowModel;
+import net.thevpc.common.props.WritableBoolean;
+import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.WindowStateSetValue;
 
-public interface AppWindow extends AppContainer<AppComponentModel, AppComponent> {
+public interface AppWindow extends AppContainer<AppComponent> {
 
-    void centerOnDesktop();
+    WritableBoolean active();
 
+    WritableBoolean closable();
+
+    WritableBoolean iconifiable();
+
+    WritableValue<AppComponent> component();
+
+    WindowStateSetValue state();
     void close();
 
-    AppWindowModel model();
+    void centerOnDesktop();
 
     void resize(double x,double y,double w,double h);
 }

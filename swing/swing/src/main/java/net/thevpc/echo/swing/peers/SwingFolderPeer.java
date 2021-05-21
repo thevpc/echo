@@ -6,9 +6,9 @@
 //import net.thevpc.echo.api.components.AppContainer;
 //import net.thevpc.echo.api.components.AppPanel;
 //import net.thevpc.echo.api.components.AppWindowContainer;
-//import net.thevpc.echo.api.tools.AppComponentModel;
-//import net.thevpc.echo.api.tools.AppTextModel;
-//import net.thevpc.echo.impl.components.AppComponentBase;
+//import net.thevpc.echo.api.model.AppComponentModel;
+//import net.thevpc.echo.api.model.AppTextModel;
+//import net.thevpc.echo.impl.components.ComponentBase;
 //import net.thevpc.echo.swing.SwingApplicationUtils;
 //import net.thevpc.echo.swing.icons.SwingAppImage;
 //import net.thevpc.echo.swing.raw.JToolBarGroup;
@@ -24,7 +24,7 @@
 //    }
 //
 //    public void install(AppComponent component) {
-//        AppComponentBase ecomp = (AppComponentBase) component;
+//        ComponentBase ecomp = (ComponentBase) component;
 //        AppComponentModel etool = ecomp.tool();
 //        Object sParent = component.parent() == null ? null : component.parent().peer().toolkitComponent();
 //        if (
@@ -36,11 +36,11 @@
 //            if (jcomponent == null) {
 //                this.jcomponent = new JMenuItem();
 //                JMenuItem mLabel = (JMenuItem) this.jcomponent;
-//                etool.title().listeners().add(x -> mLabel.setText(
+//                etool.title().onChange(x -> mLabel.setText(
 //                        etool.title().get() == null ? "" :
 //                                etool.title().get().getValue(etool.app().i18n())
 //                ));
-//                etool.smallIcon().listeners().add(x -> mLabel.setIcon(
+//                etool.smallIcon().onChange(x -> mLabel.setIcon(
 //                        SwingAppImage.iconOf(etool.smallIcon().get())
 //                ));
 //            }

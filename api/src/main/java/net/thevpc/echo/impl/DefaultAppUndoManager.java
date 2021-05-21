@@ -1,8 +1,8 @@
 package net.thevpc.echo.impl;
 
-import net.thevpc.echo.AppHistory;
+import net.thevpc.echo.api.AppHistory;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.UndoableAction;
+import net.thevpc.echo.api.UndoableAction;
 import net.thevpc.common.msg.Message;
 import net.thevpc.common.props.Props;
 import net.thevpc.common.props.impl.WritableStackImpl;
@@ -39,18 +39,18 @@ public class DefaultAppUndoManager implements AppHistory {
 
     public void discardUndoFirstAction() {
         ((WritableStackImpl<UndoableAction>) undoList).remove(0);
-        undoListDescription.remove(0);
+        undoListDescription.removeAt(0);
     }
 
     public void discardRedoFirstAction() {
         ((WritableStackImpl<UndoableAction>) redoList).remove(0);
-        redoListDescription.remove(0);
+        redoListDescription.removeAt(0);
     }
 
     @Override
     public void undoAction() {
         UndoableAction poped = undoList.pop();
-        Message msg = undoListDescription.remove(undoListDescription.size() - 1);
+        Message msg = undoListDescription.removeAt(undoListDescription.size() - 1);
         poped.undoAction(new DefaultAppEvent(application, null));
 
         redoList.push(poped);
@@ -66,7 +66,7 @@ public class DefaultAppUndoManager implements AppHistory {
     @Override
     public void redoAction() {
         UndoableAction action = redoList.pop();
-        Message msg = redoListDescription.remove(redoListDescription.size() - 1);
+        Message msg = redoListDescription.removeAt(redoListDescription.size() - 1);
         action.redoAction(new DefaultAppEvent(application, null));
         undoList.push(action);
         undoListDescription.add(msg);

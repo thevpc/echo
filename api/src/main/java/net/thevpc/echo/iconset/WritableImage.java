@@ -39,7 +39,7 @@ public class WritableImage extends WritableValueImpl<AppImage> {
     public WritableImage(String name, Application app) {
         super(name, PropertyType.of(String.class), null);
         this.app = app;
-        app.iconSets().listeners().add(e -> {
+        app.iconSets().onChange(e -> {
             reevalValue();
         });
     }
@@ -52,7 +52,7 @@ public class WritableImage extends WritableValueImpl<AppImage> {
                 superSet(null);
                 return;
             }else if (iconId.is18n()) {
-                String id2 = app.i18n().getString(iconId.getValue(), x -> null);
+                String id2 = app.i18n().getString(iconId.value(), x -> null);
                 if (id2 != null) {
                     iconId0 = id2.trim();
                     if (iconId0.isEmpty()) {
@@ -64,7 +64,7 @@ public class WritableImage extends WritableValueImpl<AppImage> {
                     return;
                 }
             }else{
-                iconId0=iconId.getValue();
+                iconId0=iconId.value();
             }
             superSet(app.iconSets().icon(iconId0).get());
         }
@@ -87,9 +87,9 @@ public class WritableImage extends WritableValueImpl<AppImage> {
 
     @Override
     public void set(AppImage image) {
-        if (id == null) {
+//        if (id == null) {
             superSet(image);
-        }
+//        }
     }
 
 }

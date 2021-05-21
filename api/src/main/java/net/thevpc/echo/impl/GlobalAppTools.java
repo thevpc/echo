@@ -6,7 +6,7 @@
 //import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
-//import net.thevpc.echo.api.tools.AppComponentModel;
+//import net.thevpc.echo.api.model.AppComponentModel;
 //
 //import java.util.*;
 //
@@ -14,9 +14,9 @@
 //
 //    private List<AddToolArgs> tools0 = new ArrayList<>();
 //
-//    public GlobalAppTools(AbstractApplication application) {
+//    public GlobalAppTools(DefaultApplication application) {
 //        super(application);
-//        this.application.state().listeners().add(new PropertyListener() {
+//        this.application.state().onChange(new PropertyListener() {
 //            @Override
 //            public void propertyUpdated(PropertyEvent event) {
 //                AppState s = (AppState) event.getNewValue();
@@ -61,13 +61,13 @@
 //
 ////    protected void addRootContainer(AppContainer c) {
 ////        if (c != null) {
-////            c.components().listeners().add(toolMapResolverAppPropertyListener);
+////            c.components().onChange(toolMapResolverAppPropertyListener);
 ////        }
 ////    }
 ////
 ////    protected void removeRootContainer(AppContainer c) {
 ////        if (c != null) {
-////            c.components().listeners().add(toolMapResolverAppPropertyListener);
+////            c.components().onChange(toolMapResolverAppPropertyListener);
 ////        }
 ////    }
 //}

@@ -22,7 +22,7 @@
 package net.thevpc.echo.impl;
 
 import net.thevpc.echo.api.components.AppAlert;
-import net.thevpc.echo.AppDialogContext;
+import net.thevpc.echo.api.AppDialogContext;
 
 /**
  *

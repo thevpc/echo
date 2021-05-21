@@ -21,9 +21,9 @@
 
 package net.thevpc.echo.impl;
 
-import net.thevpc.echo.ActionEvent;
-import net.thevpc.echo.api.tools.AppComponentModel;
+import net.thevpc.echo.api.ActionEvent;
 import net.thevpc.echo.Application;
+import net.thevpc.echo.api.components.AppComponent;
 
 /**
  *
@@ -31,14 +31,14 @@ import net.thevpc.echo.Application;
  */
 public class DefaultActionEvent implements ActionEvent {
     private Application app;
-    private AppComponentModel tool;
+    private AppComponent component;
     private Object source;
     private Object base;
 
-    public DefaultActionEvent(Application app, AppComponentModel tool, Object source, Object base) {
+    public DefaultActionEvent(Application app, AppComponent component, Object source, Object base) {
         this.app = app;
         this.source = source;
-        this.tool = tool;
+        this.component = component;
         this.base = base;
     }
 

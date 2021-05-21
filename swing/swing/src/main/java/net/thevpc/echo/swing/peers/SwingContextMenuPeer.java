@@ -1,8 +1,8 @@
 package net.thevpc.echo.swing.peers;
 
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.peers.AppComponentPeer;
-import net.thevpc.echo.api.peers.AppContextMenuPeer;
+import net.thevpc.echo.spi.peers.AppComponentPeer;
+import net.thevpc.echo.spi.peers.AppContextMenuPeer;
 
 import javax.swing.*;
 import java.awt.*;

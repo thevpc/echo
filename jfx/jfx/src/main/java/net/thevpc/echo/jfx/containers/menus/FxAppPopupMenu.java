@@ -4,7 +4,7 @@
 //import javafx.scene.control.ContextMenu;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppMenu;
-//import net.thevpc.echo.api.tools.AppContainerModel;
+//import net.thevpc.echo.api.model.AppContainerModel;
 //import net.thevpc.echo.Application;
 //
 //public class FxAppPopupMenu extends FxAppBaseMenu implements AppMenu {

@@ -1,6 +1,6 @@
 package net.thevpc.echo.impl.dialog;
 
-import net.thevpc.echo.AppDialogResult;
+import net.thevpc.echo.api.AppDialogResult;
 import net.thevpc.echo.Application;
 import net.thevpc.common.i18n.Str;
 
@@ -43,7 +43,7 @@ public class DefaultAppDialogResult implements AppDialogResult {
             return ((String) o).trim().isEmpty();
         }
         if (o instanceof Str) {
-            return ((Str) o).getValue(app.i18n()).isEmpty();
+            return ((Str) o).value(app.i18n()).isEmpty();
         }
         return false;
     }

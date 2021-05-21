@@ -3,8 +3,8 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppFileChooser;
-import net.thevpc.echo.api.tools.AppFileFilter;
-import net.thevpc.echo.api.peers.AppFileChooserPeer;
+import net.thevpc.echo.api.AppFileFilter;
+import net.thevpc.echo.spi.peers.AppFileChooserPeer;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class SwingAppFileChooserPeer implements AppFileChooserPeer {
     private AppFileChooser chooser;
     private Application application;
-    private JFileChooser toolkitComponent;
+    private JFileChooser swingComponent;
 
     public SwingAppFileChooserPeer() {
     }
@@ -30,37 +30,40 @@ public class SwingAppFileChooserPeer implements AppFileChooserPeer {
 
     @Override
     public Object toolkitComponent() {
-        return toolkitComponent;
+        return swingComponent;
     }
 
     private JFileChooser newInstance() {
-        if (toolkitComponent == null) {
-            toolkitComponent = new JFileChooser();
+        if (swingComponent == null) {
+            swingComponent = new JFileChooser();
         }
-        boolean acceptAll = chooser.model().filters().size() == 0;
-        for (FileFilter ff : toolkitComponent.getChoosableFileFilters()) {
-            toolkitComponent.removeChoosableFileFilter(ff);
+        boolean acceptAll = chooser.filters().size() == 0;
+        for (FileFilter ff : swingComponent.getChoosableFileFilters()) {
+            swingComponent.removeChoosableFileFilter(ff);
         }
-        for (AppFileFilter filter : chooser.model().filters()) {
-            if (filter.getExtensions().size() > 0) {
-                if (filter.getExtensions().size() == 1 && filter.getExtensions().contains("*.*")) {
-                    acceptAll = true;
-                } else {
-                    toolkitComponent.addChoosableFileFilter(new SwingFileFilter(filter));
+        for (AppFileFilter filter : chooser.filters()) {
+            if(filter instanceof net.thevpc.echo.FileFilter) {
+                net.thevpc.echo.FileFilter f=(net.thevpc.echo.FileFilter) filter;
+                if (f.getExtensions().size() > 0) {
+                    if (f.getExtensions().size() == 1 && f.getExtensions().contains("*.*")) {
+                        acceptAll = true;
+                    } else {
+                        swingComponent.addChoosableFileFilter(new SwingFileFilter(filter));
+                    }
                 }
             }
         }
-        toolkitComponent.setAcceptAllFileFilterUsed(acceptAll);
-        toolkitComponent.setCurrentDirectory(chooser.model().currentDirectory().get() == null ? null : new File(chooser.model().currentDirectory().get()));
-        if (chooser.model().acceptDirectories().get() && chooser.model().acceptFiles().get()) {
-            toolkitComponent.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        } else if (chooser.model().acceptDirectories().get()) {
-            toolkitComponent.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        swingComponent.setAcceptAllFileFilterUsed(acceptAll);
+        swingComponent.setCurrentDirectory(chooser.currentDirectory().get() == null ? null : new File(chooser.currentDirectory().get()));
+        if (chooser.acceptDirectories().get() && chooser.acceptFiles().get()) {
+            swingComponent.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        } else if (chooser.acceptDirectories().get()) {
+            swingComponent.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         } else {
-            toolkitComponent.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            swingComponent.setFileSelectionMode(JFileChooser.FILES_ONLY);
         }
-        toolkitComponent.setMultiSelectionEnabled(chooser.model().multipleValues().get());
-        return toolkitComponent;
+        swingComponent.setMultiSelectionEnabled(chooser.multipleValues().get());
+        return swingComponent;
     }
 
     private Component getComponentOwner(Object parent) {
@@ -76,49 +79,38 @@ public class SwingAppFileChooserPeer implements AppFileChooserPeer {
 
     @Override
     public boolean showOpenDialog(Object parent) {
-        chooser.model().selection().clear();
+        chooser.selection().clear();
         JFileChooser jfc = newInstance();
         int d = jfc.showOpenDialog(getComponentOwner(parent));
-        String[] selection = {};
         if (d == JFileChooser.APPROVE_OPTION) {
-            chooser.model().selection().clear();
-            chooser.model().selection().addAll(
-                    Arrays.stream(jfc.getSelectedFiles())
-                            .map(x -> x.getPath())
-                            .toArray(String[]::new)
-            );
-            chooser.model().selection().set(
-                    chooser.model().selection().size() == 0 ? null :
-                            chooser.model().selection().get(0)
-            );
+            File sf = jfc.getSelectedFile();
+            if(sf==null){
+                chooser.selection().clear();
+            }else{
+                chooser.selection().set(sf.getPath());
+            }
             return true;
         } else {
-            chooser.model().selection().clear();
-            chooser.model().selection().set(null);
+            chooser.selection().clear();
         }
         return false;
     }
 
     @Override
     public boolean showSaveDialog(Object parent) {
-        chooser.model().selection().clear();
+        chooser.selection().clear();
         JFileChooser jfc = newInstance();
         int d = jfc.showSaveDialog(getComponentOwner(parent));
         if (d == JFileChooser.APPROVE_OPTION) {
-            chooser.model().selection().clear();
-            chooser.model().selection().addAll(
-                    Arrays.stream(jfc.getSelectedFiles())
-                            .map(x -> x.getPath())
-                            .toArray(String[]::new)
-            );
-            chooser.model().selection().set(
-                    chooser.model().selection().size() == 0 ? null :
-                            chooser.model().selection().get(0)
-            );
+            File sf = jfc.getSelectedFile();
+            if(sf==null){
+                chooser.selection().clear();
+            }else{
+                chooser.selection().set(sf.getPath());
+            }
             return true;
         } else {
-            chooser.model().selection().clear();
-            chooser.model().selection().set(null);
+            chooser.selection().clear();
         }
         return false;
     }
@@ -129,57 +121,59 @@ public class SwingAppFileChooserPeer implements AppFileChooserPeer {
 
         public SwingFileFilter(AppFileFilter filter) {
             this.filter = filter;
-            StringBuilder pattern = new StringBuilder();
-            for (String extension : filter.getExtensions()) {
-                if (pattern.length() > 0) {
-                    pattern.append("|");
-                } else {
-                    pattern.append("^");
-                }
-                for (char c : extension.toCharArray()) {
-                    switch (c) {
-                        case '*': {
-                            pattern.append(".*");
-                            break;
-                        }
-                        case '?': {
-                            pattern.append(".");
-                            break;
-                        }
-                        case '.': {
-                            pattern.append("[.]");
-                            break;
-                        }
-                        case '\\':
-                        case '[':
-                        case ']':
-                        case '(':
-                        case ')':
-                        case '{':
-                        case '}':
-                        case '^':
-                        case '$': {
-                            pattern.append("\\").append(c);
-                            break;
-                        }
-                        default: {
-                            pattern.append(c);
+            if(filter instanceof net.thevpc.echo.FileFilter) {
+                StringBuilder pattern = new StringBuilder();
+                for (String extension : ((net.thevpc.echo.FileFilter)filter).getExtensions()) {
+                    if (pattern.length() > 0) {
+                        pattern.append("|");
+                    } else {
+                        pattern.append("^");
+                    }
+                    for (char c : extension.toCharArray()) {
+                        switch (c) {
+                            case '*': {
+                                pattern.append(".*");
+                                break;
+                            }
+                            case '?': {
+                                pattern.append(".");
+                                break;
+                            }
+                            case '.': {
+                                pattern.append("[.]");
+                                break;
+                            }
+                            case '\\':
+                            case '[':
+                            case ']':
+                            case '(':
+                            case ')':
+                            case '{':
+                            case '}':
+                            case '^':
+                            case '$': {
+                                pattern.append("\\").append(c);
+                                break;
+                            }
+                            default: {
+                                pattern.append(c);
+                            }
                         }
                     }
                 }
+                pattern.append("$");
+                p = Pattern.compile(pattern.toString());
             }
-            pattern.append("$");
-            p = Pattern.compile(pattern.toString());
         }
 
         @Override
         public boolean accept(File f) {
-            return p.matcher(f.getName()).matches();
+            return p!=null && p.matcher(f.getName()).matches();
         }
 
         @Override
         public String getDescription() {
-            return filter.getDescription().getValue(application.i18n());
+            return filter.getDescription().value(application.i18n());
         }
     }
 }

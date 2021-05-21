@@ -1,7 +1,9 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppTemporalFieldModel;
+import net.thevpc.common.props.WritableValue;
 
-public interface AppTemporalField extends AppControl{
-    AppTemporalFieldModel model();
+import java.time.temporal.Temporal;
+
+public interface AppTemporalField<T extends Temporal> extends AppControl{
+    WritableValue<T> value();
 }

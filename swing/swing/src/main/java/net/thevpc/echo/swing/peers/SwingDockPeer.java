@@ -5,13 +5,14 @@
  */
 package net.thevpc.echo.swing.peers;
 
+import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.common.swing.dock.JDockPane;
-import net.thevpc.echo.AppWindowAnchor;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppDock;
 import net.thevpc.echo.api.components.AppWindow;
-import net.thevpc.echo.api.peers.AppDockPeer;
-import net.thevpc.echo.swing.peers.SwingPeer;
+import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.spi.peers.AppDockPeer;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 
@@ -38,36 +39,43 @@ public class SwingDockPeer implements SwingPeer, AppDockPeer {
 
     @Override
     public void addChild(AppComponent other, int index) {
-        AppWindow win=(AppWindow) other;
+        AppComponent win=(AppComponent) other;
         JComponent j = (JComponent) win.peer().toolkitComponent();
+        boolean closable=false;
+        if(win instanceof AppWindow){
+            closable=((AppWindow)win).closable().get();
+        }
         workspacePanel.add(
-                win.model().id(),
-                j, win.model().title().getOr(x->x==null?null:x.getValue(win.app().i18n())),
-                win.model().smallIcon().getOr(x->x==null?null:(Icon) x.peer().toolkitImage()),
-                win.model().closable().get(),
-                toDocAnchor(win.model().anchor().get())
+                win.id(),
+                j, win.title().getOr(x->x==null?null:x.value(win.app().i18n())),
+                SwingHelpers.toAwtIcon(win.smallIcon().get()),
+                closable,
+                toDocAnchor(win.anchor().get())
         );
-        win.model().title().listeners().add(
-                v->win.model().title().withValue(
-                        x->workspacePanel.setWindowTitle(win.model().id(),x==null?null:x.getValue(win.app().i18n()))));
-        win.model().smallIcon().listeners().add(
-                v->win.model().smallIcon().withValue(
-                        x->workspacePanel.setWindowIcon(win.model().id(),x==null?null:(Icon) x.peer().toolkitImage())));
-        win.model().closable().listeners().add(
-                v->win.model().closable().withValue(
-                        x->workspacePanel.setWindowClosable(win.model().id(),x)));
-        win.model().anchor().listeners().add(
-                v->win.model().anchor().withValue(
-                        x->workspacePanel.setWindowAnchor(win.model().id(), toDocAnchor(x))));
+        win.title().onChange(
+                v->win.title().withValue(
+                        x->workspacePanel.setWindowTitle(win.id(),x==null?null:x.value(win.app().i18n()))));
+        win.smallIcon().onChange(
+                v->win.smallIcon().withValue(
+                        x->workspacePanel.setWindowIcon(win.id(),SwingHelpers.toAwtIcon(x))));
+        if(win instanceof AppWindow) {
+            WritableBoolean cp = ((AppWindow) win).closable();
+            cp.onChange(
+                    v -> cp.withValue(
+                            x -> workspacePanel.setWindowClosable(win.id(), x)));
+        }
+        win.anchor().onChange(
+                v->win.anchor().withValue(
+                        x->workspacePanel.setWindowAnchor(win.id(), toDocAnchor(x))));
     }
 
     @Override
     public void removeChild(AppComponent other, int index) {
-        AppWindow win=(AppWindow) other;
-        workspacePanel.remove(win.model().id());
+        AppComponent win=(AppComponent) other;
+        workspacePanel.remove(win.id());
     }
 
-    public static JDockPane.DockAnchor toDocAnchor(AppWindowAnchor anchor) {
+    public static JDockPane.DockAnchor toDocAnchor(Anchor anchor) {
         return JDockPane.DockAnchor.valueOf(anchor.name());
     }
 

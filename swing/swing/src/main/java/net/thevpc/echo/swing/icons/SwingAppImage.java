@@ -10,7 +10,7 @@ import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import net.thevpc.echo.api.AppImage;
-import net.thevpc.echo.api.peers.AppImagePeer;
+import net.thevpc.echo.spi.peers.AppImagePeer;
 
 /**
  *
@@ -40,8 +40,8 @@ public class SwingAppImage implements AppImagePeer {
         if (a instanceof SwingAppImage) {
             return ((SwingAppImage) a).getIcon();
         }
-        if (a instanceof net.thevpc.echo.impl.components.Image) {
-            AppImagePeer p = ((net.thevpc.echo.impl.components.Image) a).peer();
+        if (a instanceof net.thevpc.echo.Image) {
+            AppImagePeer p = ((net.thevpc.echo.Image) a).peer();
             if (p instanceof SwingAppImage) {
                 return ((SwingAppImage) p).getIcon();
             }

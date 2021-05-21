@@ -3,9 +3,9 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.peers.AppSpacerPeer;
-import net.thevpc.echo.api.tools.AppSpacerModel;
-import net.thevpc.echo.impl.components.AppComponentBase;
+import net.thevpc.echo.api.components.AppSpacer;
+import net.thevpc.echo.spi.peers.AppSpacerPeer;
+import net.thevpc.echo.impl.components.ComponentBase;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,11 +21,10 @@ public class SwingSpacerPeer implements SwingPeer, AppSpacerPeer {
         if(separator !=null) {
             return;
         }
-        AppComponentBase ecomp = (AppComponentBase) component;
-        AppSpacerModel etool=(AppSpacerModel) ecomp.model();
+        AppSpacer ecomp = (AppSpacer) component;
         Object sParent = component.parent()==null?null:component.parent().peer().toolkitComponent();
-        double height = ((Number) etool.height().get()).doubleValue();
-        double width = ((Number) etool.width().get()).doubleValue();
+        double height = ecomp.height().get().doubleValue();
+        double width = ecomp.width().get().doubleValue();
         if (
                 sParent instanceof JMenu
                         ||sParent instanceof JPopupMenu

@@ -9,7 +9,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import net.thevpc.echo.api.AppImage;
-import net.thevpc.echo.api.peers.AppImagePeer;
+import net.thevpc.echo.spi.peers.AppImagePeer;
 
 import java.net.URL;
 
@@ -33,8 +33,8 @@ public class FxAppImage implements AppImagePeer {
         if (a instanceof FxAppImage) {
             return (FxAppImage) a;
         }
-        if (a instanceof net.thevpc.echo.impl.components.Image) {
-            AppImagePeer p = ((net.thevpc.echo.impl.components.Image) a).peer();
+        if (a instanceof net.thevpc.echo.Image) {
+            AppImagePeer p = ((net.thevpc.echo.Image) a).peer();
             if (p instanceof FxAppImage) {
                 return ((FxAppImage) p);
             }

@@ -47,8 +47,8 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
 
     public DefaultIconsets(String name) {
         this.base = Props.of(name).lmapOf(String.class, IconSet.class, x -> x.getId());
-        id.listeners().add(this::updateAllLoadedIcons);
-        config.listeners().add(this::updateAllLoadedIcons);
+        id.onChange(this::updateAllLoadedIcons);
+        config.onChange(this::updateAllLoadedIcons);
     }
 
     @Override

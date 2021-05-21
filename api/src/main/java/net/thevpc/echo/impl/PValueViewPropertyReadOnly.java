@@ -1,6 +1,6 @@
 package net.thevpc.echo.impl;
 
-import net.thevpc.echo.AppPropertiesNodeItem;
+import net.thevpc.echo.api.AppPropertiesNodeItem;
 import net.thevpc.echo.Application;
 
 public class PValueViewPropertyReadOnly extends AbstractPropertiesNode implements AppPropertiesNodeItem {

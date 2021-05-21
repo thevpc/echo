@@ -5,8 +5,11 @@
  */
 package net.thevpc.echo.jfx;
 
-import net.thevpc.echo.api.tools.AppComponentModel;
-import net.thevpc.echo.api.tools.AppToggleModel;
+import net.thevpc.common.i18n.WritableStr;
+import net.thevpc.echo.api.components.AppButton;
+import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.components.AppToggleControl;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.DefaultActionEvent;
 import net.thevpc.echo.jfx.icons.FxAppImage;
 import javafx.beans.InvalidationListener;
@@ -21,8 +24,7 @@ import javafx.stage.Window;
 import net.thevpc.common.props.ObservableValue;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
-import net.thevpc.echo.api.components.Action;
-import net.thevpc.echo.api.tools.AppToolButtonModel;
+import net.thevpc.echo.api.Action;
 import net.thevpc.echo.Application;
 
 /**
@@ -71,35 +73,38 @@ public class FxApplicationUtils {
         }
     }
     
-    public static void prepareAbstractButton(MenuItem button, AppComponentModel tool, Application app, boolean text) {
+    public static void prepareAbstractButton(MenuItem button, AppComponent tool, Application app, boolean text) {
+        WritableStr tp = Applications.resolveTextProperty(tool);
         if (text) {
-            tool.title().listeners().add((PropertyEvent event) -> {
-                button.setText((String) event.getNewValue());
-            });
-            button.setText(tool.title().getOr(v->v==null?null:v.getValue(app.i18n())));
+            if(tp!=null) {
+                tp.onChange((PropertyEvent event) -> {
+                    button.setText((String) event.newValue());
+                });
+                button.setText(tp.getOr(v -> v == null ? null : v.value(app.i18n())));
+            }
         } else {
             button.setText(null);
-//            tool.title().listeners().add((PropertyEvent event) -> {
+//            tool.title().onChange((PropertyEvent event) -> {
 //                button.setToolTipText((String) event.getNewValue());
 //            });
 //            button.setToolTipText(tool.title().get());
         }
-        tool.enabled().listeners().add((PropertyEvent event) -> {
-            button.setDisable(!(Boolean) event.getNewValue());
+        tool.enabled().onChange((PropertyEvent event) -> {
+            button.setDisable(!(Boolean) event.newValue());
         });
         button.setDisable(!tool.enabled().get());
-        tool.visible().listeners().add((PropertyEvent event) -> {
-            button.setVisible((Boolean) event.getNewValue());
+        tool.visible().onChange((PropertyEvent event) -> {
+            button.setVisible((Boolean) event.newValue());
         });
         button.setVisible(tool.visible().get());
 
-        tool.smallIcon().listeners().add((PropertyEvent event) -> {
-            button.setGraphic(FxAppImage.imageViewOf(event.getNewValue()));
+        tool.smallIcon().onChange((PropertyEvent event) -> {
+            button.setGraphic(FxAppImage.imageViewOf(event.newValue()));
         });
 //        tool.smallIcon().reevalValue();
         button.setGraphic(FxAppImage.imageViewOf(tool.smallIcon().get()));
 
-        tool.mnemonic().listeners().add((PropertyEvent event) -> {
+        tool.mnemonic().onChange((PropertyEvent event) -> {
             //button.setMnemonicParsing(true);
             //should repace mnemonic with text!!
             //button.setMnemonic((Integer) event.getNewValue());
@@ -107,8 +112,8 @@ public class FxApplicationUtils {
 //        button.setMnemonic(tool.mnemonic().get());
 
         if (button instanceof MenuItem && !(button instanceof Menu)) {
-            tool.accelerator().listeners().add((PropertyEvent event) -> {
-                String s = (String) event.getNewValue();
+            tool.accelerator().onChange((PropertyEvent event) -> {
+                String s = (String) event.newValue();
 //                ((MenuItem) button).setAccelerator(
 //                        (s == null || s.isEmpty()) ? null : KeyStroke.getKeyStroke(s)
 //                );
@@ -119,8 +124,8 @@ public class FxApplicationUtils {
 //            );
         }
 
-        if (tool instanceof AppToolButtonModel) {
-            AppToolButtonModel action = (AppToolButtonModel) tool;
+        if (tool instanceof AppButton) {
+            AppButton action = (AppButton) tool;
             button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
@@ -139,43 +144,46 @@ public class FxApplicationUtils {
 
     }
 
-    public static void prepareAbstractButton(ButtonBase button, AppComponentModel tool, Application app, boolean text) {
+    public static void prepareAbstractButton(ButtonBase button, AppComponent tool, Application app, boolean text) {
         if (text) {
-            tool.title().listeners().add((PropertyEvent event) -> {
-                button.setText((String) event.getNewValue());
-            });
-            button.setText(tool.title().getOr(x->x==null?null:x.getValue(app.i18n())));
+            WritableStr tp = Applications.resolveTextProperty(tool);
+            if(tp!=null) {
+                tp.onChange((PropertyEvent event) -> {
+                    button.setText((String) event.newValue());
+                });
+                button.setText(tp.getOr(x -> x == null ? null : x.value(app.i18n())));
+            }
         } else {
             button.setText(null);
-//            tool.title().listeners().add((PropertyEvent event) -> {
+//            tool.title().onChange((PropertyEvent event) -> {
 //                button.setToolTipText((String) event.getNewValue());
 //            });
 //            button.setToolTipText(tool.title().get());
         }
-        tool.enabled().listeners().add((PropertyEvent event) -> {
-            button.setDisable(!(Boolean) event.getNewValue());
+        tool.enabled().onChange((PropertyEvent event) -> {
+            button.setDisable(!(Boolean) event.newValue());
         });
         button.setDisable(!tool.enabled().get());
-        tool.visible().listeners().add((PropertyEvent event) -> {
-            button.setVisible((Boolean) event.getNewValue());
+        tool.visible().onChange((PropertyEvent event) -> {
+            button.setVisible((Boolean) event.newValue());
         });
         button.setVisible(tool.visible().get());
 
-        tool.smallIcon().listeners().add((PropertyEvent event) -> {
-            button.setGraphic(FxAppImage.imageViewOf(event.getNewValue()));
+        tool.smallIcon().onChange((PropertyEvent event) -> {
+            button.setGraphic(FxAppImage.imageViewOf(event.newValue()));
         });
 //        tool.smallIcon().reevalValue();
         button.setGraphic(FxAppImage.imageViewOf(tool.smallIcon().get()));
 
-        tool.mnemonic().listeners().add((PropertyEvent event) -> {
+        tool.mnemonic().onChange((PropertyEvent event) -> {
             //button.setMnemonicParsing(true);
             //should repace mnemonic with text!!
             //button.setMnemonic((Integer) event.getNewValue());
         });
 //        button.setMnemonic(tool.mnemonic().get());
 
-        if (tool instanceof AppToolButtonModel) {
-            AppToolButtonModel action = (AppToolButtonModel) tool;
+        if (tool instanceof AppButton) {
+            AppButton action = (AppButton) tool;
             button.setOnAction(new EventHandler<javafx.event.ActionEvent>() {
                 @Override
                 public void handle(javafx.event.ActionEvent t) {
@@ -193,9 +201,9 @@ public class FxApplicationUtils {
         }
     }
 
-    public static void _prepareToggle(Toggle tg, AppComponentModel tool, Application application) {
+    public static void _prepareToggle(Toggle tg, AppComponent tool, Application application) {
         ObservableValue<String> group = null;
-        AppToggleModel cc = (AppToggleModel) tool;
+        AppToggleControl cc = (AppToggleControl) tool;
         group = cc.group();
         if (group != null) {
             String s = group.get();
@@ -203,10 +211,10 @@ public class FxApplicationUtils {
             if (s != null) {
                 tg.setToggleGroup(tk.getButtonGroup(s));
             }
-            group.listeners().add(new PropertyListener() {
+            group.onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
-                    tg.setToggleGroup(tk.getButtonGroup((String) event.getNewValue()));
+                    tg.setToggleGroup(tk.getButtonGroup((String) event.newValue()));
                 }
             });
         }
@@ -214,14 +222,14 @@ public class FxApplicationUtils {
         tg.toggleGroupProperty().addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable o) {
-                ((AppToggleModel) tool).selected().set(tg.isSelected());
+                ((AppToggleControl) tool).selected().set(tg.isSelected());
             }
         });
         tg.setSelected(cc.selected().get());
-        cc.selected().listeners().add(new PropertyListener() {
+        cc.selected().onChange(new PropertyListener() {
             @Override
             public void propertyUpdated(PropertyEvent event) {
-                tg.setSelected(event.getNewValue());
+                tg.setSelected(event.newValue());
             }
         });
     }

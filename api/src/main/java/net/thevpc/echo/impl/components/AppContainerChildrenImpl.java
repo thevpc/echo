@@ -1,62 +1,58 @@
 package net.thevpc.echo.impl.components;
 
-import net.thevpc.common.i18n.Str;
 import net.thevpc.common.props.Path;
+import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyType;
 import net.thevpc.common.props.impl.WritableListImpl;
+import net.thevpc.echo.Separator;
+import net.thevpc.echo.api.AppContainerChildren;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppContainer;
-import net.thevpc.echo.api.tools.AppComponentModel;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class AppContainerChildrenImpl<T extends AppComponentModel, C extends AppComponent> extends WritableListImpl<C>
-        implements AppContainerChildren<T, C> {
+public class AppContainerChildrenImpl<
+        C extends AppComponent> extends WritableListImpl<C>
+        implements AppContainerChildren<C> {
     private AppContainer base;
     private Class componentType;
-    private Class modelType;
 
-    public AppContainerChildrenImpl(String name, Class<? extends T> modelType, Class<? extends C> componentType, AppContainer base) {
+    public AppContainerChildrenImpl(String name, Class<? extends C> componentType, AppContainer base) {
         super(name, PropertyType.of(componentType));
         this.base = base;
         this.componentType = componentType;
-        this.modelType = modelType;
+        base.listeners().addDelegate(this,()-> Path.of(base.propertyName()));
     }
 
     public Class getComponentType() {
         return componentType;
     }
 
-    public Class getModelType() {
-        return modelType;
-    }
 
     @Override
     protected boolean addImpl(int index, C child) {
-        if (!child.path().get().parent().startsWith(base.path().get())) {
-            String name = null;
-            if (child.path().get() == null || child.path().get().isEmpty()) {
-                name = child.model().id();
-                if (name == null) {
-                    name = UUID.randomUUID().toString();
+        base.app().toolkit().runUIAndWait(()-> {
+            if (!child.path().get().parent().startsWith(base.path().get())) {
+                String name = null;
+                if (child.path().get() == null || child.path().get().isEmpty()) {
+                    name = child.id();
+                    if (name == null) {
+                        name = UUID.randomUUID().toString();
+                    }
+                } else {
+                    name = child.path().get().name();
                 }
-            } else {
-                name = child.path().get().name();
+                child.path().set(base.path().get().append(name));
+                //throw new IllegalArgumentException("cannot add " + child.path().get() + " to " + base.path().get());
             }
-            child.path().set(base.path().get().append(name));
-            //throw new IllegalArgumentException("cannot add " + child.path().get() + " to " + base.path().get());
-        }
-        super.addImpl(index, child);
-        base.app().toolkit().runUI(()-> {
+            int size0=size();
+            super.addImpl(index, child);
 
             base.peer();
-            if (child instanceof AppComponentBase) {
-                AppComponentBase cc = (AppComponentBase) child;
-                cc.internal_setParent(base);
-            }
+            ComponentBase cc = (ComponentBase) child;
+            cc.parent=base;
             child.peer();
             base.peer().addChild(child, index);
         });
@@ -64,19 +60,48 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
     }
 
     @Override
-    protected C removeImpl(int index) {
-        C c = super.removeImpl(index);
-        AppComponentBase cc = (AppComponentBase) c;
-        base.app().toolkit().runUI(()-> {
+    protected C removeAtImpl(int index) {
+        C c = super.removeAtImpl(index);
+        ComponentBase cc = (ComponentBase) c;
+        base.app().toolkit().runUIAndWait(()-> {
             cc.prepareUnshowing();
             base.peer().removeChild(cc, index);
         });
         return c;
     }
 
-    @Override
-    public C get(String id) {
-        return stream().filter(x->x.model().id().equals(id)).findFirst().orElse(null);
+    public int indexOf(String pathName){
+        for (int i = 0; i < size(); i++) {
+            AppComponent child = (AppComponent) base.children().get(i);
+            if (child.path().get().name().equals(pathName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+//    @Override
+//    public C get(String id) {
+//        return stream().filter(x->x.id().equals(id)).findFirst().orElse(null);
+//    }
+//
+    public C get(String pathName) {
+        int old = indexOf(pathName);
+        return old<0?null:get(old);
+    }
+    public void set(C component,String name) {
+        int old = indexOf(name);
+        if(old>=0){
+            if(component==null){
+                removeAt(old);
+            }else{
+                set(old,component);
+            }
+        }else{
+            if(component!=null) {
+                add(component, name);
+            }
+        }
     }
 
     public AppComponent get(Path relativePath) {
@@ -119,15 +144,14 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
                 goodParent = null;
                 for (Object ochild : parentContainer.children()) {
                     AppComponent child = (AppComponent) ochild;
-                    if (child.path().get().name().equals(first)) {
+                    if (child.path().get().name()!=null && child.path().get().name().equals(first)) {
                         goodParent = (AppContainer) child;
                         break;
                     }
                 }
                 if (goodParent == null) {
-                    AppContainerBase cb=(AppContainerBase) parentContainer;
+                    ContainerBase cb=(ContainerBase) parentContainer;
                     AppComponent cc = cb.createPreferredChild(first, curr);
-                    cc.model().title().set(Str.i18n(curr.toString()));
                     parentContainer = (AppContainer) parentContainer.children().add(cc, first);
                 } else {
                     parentContainer = goodParent;
@@ -142,7 +166,8 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
 
         String theName = relativePath.name();
         if(relativePath.last().equals("*") || relativePath.isEmpty()){
-            relativePath=relativePath.parent().append(component.model().id());
+            relativePath=relativePath.parent().append(component.id());
+            theName=component.id();
         }
         AppContainer parentContainer = ensureParentExists(relativePath.parent());
         return parentContainer.children().add(component, theName);
@@ -176,7 +201,7 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
 //        if (name.indexOf('/') > 0) {
 //            throw new IllegalArgumentException("use add(AppComponentModel,Path) instead");
 //        }
-//        C component = (C) ((AppContainerBase)(base)).createPreferredComponent(tool,
+//        C component = (C) ((ContainerBase)(base)).createPreferredComponent(tool,
 //                name, base.path().get().append(name),
 //                options
 //        );
@@ -188,7 +213,6 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
         if (name.indexOf('/') > 0) {
             throw new IllegalArgumentException("use add(AppComponentModel,Path) instead");
         }
-        component.path().set(base.path().get().append(name));
 
         int u = size();
         int index = -1;
@@ -203,17 +227,29 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
         if (index < 0) {
             index = u;
         }
+        component.userObjects().put("preferredName",name);
 //        System.out.println("add "+name+" (order "+order+") at index "+index+"/"+u);
         add(index,component);
         return component;
     }
 
-//    @Override
+    @Override
+    protected void firePropertyUpdated(PropertyEvent e) {
+        AppComponent nv = e.newValue();
+        if(nv!=null) {
+            String preferredName =(String) nv.userObjects().get("preferredName");
+            if(preferredName!=null) {
+                nv.path().set(base.path().get().append(preferredName));
+            }
+        }
+        super.firePropertyUpdated(e);
+    }
+    //    @Override
 //    public C add(int index, T tool, String name, AppComponentOptions options) {
 //        if (name.indexOf('/') > 0) {
 //            throw new IllegalArgumentException("use add(AppComponentModel,Path) instead");
 //        }
-//        C component = (C) ((AppContainerBase)(base)).createPreferredComponent(tool,
+//        C component = (C) ((ContainerBase)(base)).createPreferredComponent(tool,
 //                name, base.path().get().append(name),
 //                options
 //        );
@@ -238,7 +274,7 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
         for (int i = 0; i < size(); i++) {
             AppComponent child = get(i);
             if (child.path().propertyName().equals(name)) {
-                return remove(i);
+                return removeAt(i);
             }
         }
         return null;
@@ -268,42 +304,11 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
 //        return add(tool, relativePath, null);
 //    }
 
-    protected AppComponent createComponentCopy(AppComponent component){
-        Class componentType=component.getClass();
-        AppComponentModel model=component.model();
-        Constructor c = resolveDefaultComponentConstructor(componentType, model.getClass());
-        c.setAccessible(true);
-        try {
-            return (AppComponent) c.newInstance(model);
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("invalid constructor "+componentType.getSimpleName()+"("+model.getClass().getSimpleName()+")",ex);
-        }
-    }
-
-    protected Constructor resolveDefaultComponentConstructor(Class componentType,Class modelClass){
-        List<Constructor> possibilities=new ArrayList<>();
-        for (Constructor cc : componentType.getDeclaredConstructors()) {
-            if(cc.getParameterCount()==1){
-                Class t1 = cc.getParameterTypes()[0];
-                if(t1.isAssignableFrom(modelClass)){
-                    possibilities.add(cc);
-                }
-            }
-        }
-        if(possibilities.isEmpty()){
-            throw new IllegalArgumentException("Missing constructor "+componentType.getSimpleName()+"("+modelClass.getSimpleName()+")");
-        }
-        if(possibilities.size()>1){
-            throw new IllegalArgumentException("Ambiguous constructors "+componentType.getSimpleName()+"("+modelClass.getSimpleName()+") : "+possibilities);
-        }
-        return possibilities.get(0);
-    }
-
     public List<AppComponent> addAll(AppComponent component, Path relativePath, Path... all) {
         List<AppComponent> a = new ArrayList<>();
         add(component, relativePath);
         for (Path path : all) {
-            AppComponent copy = createComponentCopy(component);
+            AppComponent copy = component.copy(true);
             add(copy, path);
             a.add(copy);
         }
@@ -324,4 +329,8 @@ public class AppContainerChildrenImpl<T extends AppComponentModel, C extends App
         return add(new Separator(base.app()), relativePath);
     }
 
+    @Override
+    public AppComponent addSeparator() {
+        return addSeparator(Path.of("*"));
+    }
 }

@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.util.Objects;
-import javax.swing.ImageIcon;
+
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.iconset.IconTransform;
@@ -34,7 +34,7 @@ public class SwingColorIconTransform implements IconTransform {
 
     @Override
     public AppImage transformIcon(AppImage image) {
-        return new net.thevpc.echo.impl.components.Image(
+        return new net.thevpc.echo.Image(
                 new SwingAppImage(transformIcon(((SwingAppImage) image).getImage())),app
         );
     }

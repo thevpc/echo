@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppImage;
-import net.thevpc.echo.impl.components.Image;
+import net.thevpc.echo.Image;
 
 /**
  *

@@ -5,7 +5,7 @@
  */
 package net.thevpc.echo.swing.helpers.actions;
 
-import net.thevpc.echo.AppWindowState;
+import net.thevpc.echo.WindowState;
 import net.thevpc.echo.Application;
 
 import java.awt.event.ActionEvent;
@@ -21,7 +21,7 @@ public class SwingQuitAction extends SwingAbstractAppAction {
 
     @Override
     public void actionPerformedImpl(ActionEvent e) {
-        getApplication().mainFrame().get().model().state().add(AppWindowState.CLOSED);
+        getApplication().mainFrame().get().state().add(WindowState.CLOSED);
     }
 
 }

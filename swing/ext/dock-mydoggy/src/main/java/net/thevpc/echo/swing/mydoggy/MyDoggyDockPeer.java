@@ -9,10 +9,9 @@ import javax.swing.JComponent;
 
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.peers.AppDockPeer;
+import net.thevpc.echo.spi.peers.AppDockPeer;
 import org.noos.xing.mydoggy.plaf.MyDoggyToolWindowManager;
 import net.thevpc.echo.swing.peers.SwingPeer;
-import org.noos.xing.mydoggy.Content;
 
 /**
  *
@@ -45,7 +44,7 @@ public class MyDoggyDockPeer implements SwingPeer, AppDockPeer {
 
 
 //    @Override
-//    public AppWindowPeer addWindowImpl(String id, AppComponent component, AppWindowAnchor anchor) {
+//    public AppWindowPeer addWindowImpl(String id, AppComponent component, WindowAnchor anchor) {
 //        ToolWindowAnchor jdanchor = ToolWindowAnchor.LEFT;
 //        switch (anchor) {
 //            case TOP: {

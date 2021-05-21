@@ -1,6 +1,6 @@
 package net.thevpc.echo.impl;
 
-import net.thevpc.echo.AppEvent;
+import net.thevpc.echo.api.AppEvent;
 import net.thevpc.echo.Application;
 
 public class DefaultAppEvent implements AppEvent {

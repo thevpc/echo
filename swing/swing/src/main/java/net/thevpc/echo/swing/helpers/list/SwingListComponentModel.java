@@ -12,20 +12,20 @@ public class SwingListComponentModel<T> extends AbstractListModel<T> {
     public SwingListComponentModel(ObservableList<T> items) {
         super();
         this.items = items;
-        items.listeners().add(new PropertyListener() {
+        items.onChange(new PropertyListener() {
             @Override
             public void propertyUpdated(PropertyEvent event) {
-                switch (event.getAction()){
+                switch (event.eventType()){
                     case ADD:{
-                        fireIntervalAdded(SwingListComponentModel.this,event.getIndex(),event.getIndex());
+                        fireIntervalAdded(SwingListComponentModel.this,event.index(),event.index());
                         break;
                     }
                     case REMOVE:{
-                        fireIntervalRemoved(SwingListComponentModel.this,event.getIndex(),event.getIndex());
+                        fireIntervalRemoved(SwingListComponentModel.this,event.index(),event.index());
                         break;
                     }
                     case UPDATE:{
-                        fireContentsChanged(SwingListComponentModel.this,event.getIndex(),event.getIndex());
+                        fireContentsChanged(SwingListComponentModel.this,event.index(),event.index());
                         break;
                     }
                 }

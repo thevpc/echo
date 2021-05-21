@@ -23,9 +23,7 @@ package net.thevpc.echo;
 
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyVeto;
-import net.thevpc.common.props.Props;
-import net.thevpc.common.props.WritableBoolean;
-import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.api.ApplicationStartupConfig;
 
 /**
  *
@@ -35,13 +33,6 @@ public class DefaultApplicationStartupConfig implements ApplicationStartupConfig
 
     private Application app;
     private AppStartedVeto appStartedVeto;
-    private final WritableBoolean enableQuit = Props.of("enableQuit").booleanOf(true);
-    private final WritableBoolean enableDocking = Props.of("enableDocking").booleanOf(false);
-    private final WritableBoolean enablePlaf = Props.of("enablePlaf").booleanOf(true);
-    private final WritableBoolean enableIcons = Props.of("enableIcons").booleanOf(true);
-    private final WritableValue<String[]> enableLocales = Props.of("enableLocales").valueOf(String[].class, null);
-    private final WritableBoolean enableInternalFrames = Props.of("enableInternalFrames").booleanOf(false);
-    private final WritableBoolean enableAppearance = Props.of("enableAppearance").booleanOf(true);
 
     public DefaultApplicationStartupConfig() {
     }
@@ -49,48 +40,6 @@ public class DefaultApplicationStartupConfig implements ApplicationStartupConfig
     public void prepare(Application app) {
         this.app = app;
         appStartedVeto = new AppStartedVeto(app);
-        enableQuit.vetos().add(appStartedVeto);
-        enableDocking.vetos().add(appStartedVeto);
-        enablePlaf.vetos().add(appStartedVeto);
-        enableIcons.vetos().add(appStartedVeto);
-        enableLocales.vetos().add(appStartedVeto);
-        enableInternalFrames.vetos().add(appStartedVeto);
-        enableAppearance.vetos().add(appStartedVeto);
-    }
-
-    @Override
-    public WritableBoolean enableDocking() {
-        return enableDocking;
-    }
-
-    @Override
-    public WritableBoolean enablePlaf() {
-        return enablePlaf;
-    }
-
-    @Override
-    public WritableBoolean enableIcons() {
-        return enableIcons;
-    }
-
-    @Override
-    public WritableValue<String[]> enableLocales() {
-        return enableLocales;
-    }
-
-    @Override
-    public WritableBoolean enableDesktop() {
-        return enableInternalFrames;
-    }
-
-    @Override
-    public WritableBoolean enableAppearance() {
-        return enableAppearance;
-    }
-
-    @Override
-    public WritableBoolean enableQuit() {
-        return enableQuit;
     }
 
     private static class AppStartedVeto implements PropertyVeto {

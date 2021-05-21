@@ -7,11 +7,12 @@ package net.thevpc.echo.swing.mydoggy;
 
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
-import net.thevpc.echo.AppBounds;
+import net.thevpc.echo.Bounds;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppWindow;
-import net.thevpc.echo.api.peers.AppWindowPeer;
+import net.thevpc.echo.spi.peers.AppWindowPeer;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 import net.thevpc.echo.swing.peers.SwingPeer;
 import org.noos.xing.mydoggy.Content;
 import org.noos.xing.mydoggy.ContentManager;
@@ -40,10 +41,10 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
             toolWindowManager = (MyDoggyToolWindowManager) win.parent().peer().toolkitComponent();
 
             ContentManager contentManager = toolWindowManager.getContentManager();
-            content = contentManager.addContent(win.model().id(), win.model().title().get().getValue(
+            content = contentManager.addContent(win.id(), win.title().get().value(
                     win.app().i18n()
-            ), getIcon(win.model().smallIcon().get()),
-                    (Component) win.model().component().get().peer().toolkitComponent()
+            ), getIcon(win.smallIcon().get()),
+                    (Component) win.component().get().peer().toolkitComponent()
                     );
 
             content.setEnabled(true);
@@ -52,54 +53,54 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
             content.getContentUI().setMinimizable(false);
             content.getContentUI().setMinimizable(false);
 
-            win.model().active().set(content.isSelected());
-            win.model().enabled().set(content.isEnabled());
+            win.active().set(content.isSelected());
+            win.enabled().set(content.isEnabled());
             content.addPropertyChangeListener(new PropertyChangeListener() {
                 @Override
                 public void propertyChange(PropertyChangeEvent evt) {
                     switch (evt.getPropertyName()) {
                         case "visible":
                         case "selected": {
-                            win.model().active().set(content.isVisible() && content.isSelected());
+                            win.active().set(content.isVisible() && content.isSelected());
                             break;
                         }
                         case "enabled": {
-                            win.model().enabled().set((Boolean) evt.getNewValue());
+                            win.enabled().set((Boolean) evt.getNewValue());
                             break;
                         }
                     }
                 }
             });
-            win.model().active().listeners().add(new PropertyListener() {
+            win.active().onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
-                    content.setSelected((Boolean) event.getNewValue());
+                    content.setSelected((Boolean) event.newValue());
                 }
             });
-            win.model().smallIcon().listeners().add(new PropertyListener() {
+            win.smallIcon().onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     content.setIcon(
-                            getIcon(event.getNewValue())
+                            getIcon(event.newValue())
                     );
                 }
             });
-            win.model().title().listeners().add(new PropertyListener() {
+            win.title().onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
-                    content.setTitle((String) event.getNewValue());
+                    content.setTitle((String) event.newValue());
                 }
             });
-            win.model().component().listeners().add(new PropertyListener() {
+            win.component().onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
-                    content.setComponent((JComponent) event.getNewValue());
+                    content.setComponent((JComponent) event.newValue());
                 }
             });
-            win.model().closable().listeners().add(new PropertyListener() {
+            win.closable().onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
-                    content.getContentUI().setCloseable((Boolean) event.getNewValue());
+                    content.getContentUI().setCloseable((Boolean) event.newValue());
                 }
             });
         }
@@ -109,7 +110,7 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
         if(i !=null){
             i = i.scaleTo(16,16);
         }
-        Icon ii = i == null ? null : (Icon) i.peer().toolkitImage();
+        Icon ii = SwingHelpers.toAwtIcon(i);
         return ii;
     }
 
@@ -124,8 +125,8 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
     }
 
     @Override
-    public AppBounds bounds() {
+    public Bounds bounds() {
         Rectangle r = content.getComponent().getBounds();
-        return new AppBounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
+        return new Bounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
     }
 }

@@ -19,9 +19,16 @@
     <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-msg:1.0.0" level="project" />
     <orderEntry type="module" module-name="echo-swing" />
     <orderEntry type="module" module-name="thevpc-common-swing" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-plaf:1.0.0" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-plaf" />
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:1.1.2" level="project" />
     <orderEntry type="library" name="Maven: com.kitfox.svg:svg-salamander:1.0" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.more.shef:shef-core:0.4" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.jtidy:jtidy:r938" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.jeep:jeep-editor-swing:1.2.7" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.jeep:jeep:1.2.7" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-text-source:1.3.0" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-text-source-log:1.3.0" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-classpath:1.3.2" level="project" />
     <orderEntry type="module" module-name="echo-swing-mydoggy" />
     <orderEntry type="library" name="Maven: net.thevpc.more.mydoggy:mydoggy-api:1.5.1" level="project" />
     <orderEntry type="library" name="Maven: net.thevpc.more.mydoggy:mydoggy-plaf:1.5.1" level="project" />

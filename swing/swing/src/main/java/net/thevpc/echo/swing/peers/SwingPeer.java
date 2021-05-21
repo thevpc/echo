@@ -8,7 +8,7 @@ package net.thevpc.echo.swing.peers;
 import java.awt.Component;
 import javax.swing.JComponent;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.peers.AppComponentPeer;
+import net.thevpc.echo.spi.peers.AppComponentPeer;
 
 /**
  *

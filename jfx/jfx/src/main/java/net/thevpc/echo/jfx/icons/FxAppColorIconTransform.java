@@ -38,7 +38,7 @@ public class FxAppColorIconTransform implements IconTransform {
         //
         BufferedImage bi = SwingFXUtils.fromFXImage(FxAppImage.imageOf(image), null);
         BufferedImage bi2 = toBufferedImage(transformIcon(bi));
-        return new net.thevpc.echo.impl.components.Image(
+        return new net.thevpc.echo.Image(
                 FxAppImage.of(SwingFXUtils.toFXImage(bi2, null)),
                 app
         );

@@ -13,7 +13,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
-//import net.thevpc.echo.api.tools.AppComponentModel;
+//import net.thevpc.echo.api.model.AppComponentModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.ToolBarGroup;
 //import net.thevpc.echo.jfx.controls.FxButtonControl;

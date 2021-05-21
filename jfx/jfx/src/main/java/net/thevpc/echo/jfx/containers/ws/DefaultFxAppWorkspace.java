@@ -18,10 +18,10 @@
 //import net.thevpc.echo.api.components.AppFrame;
 //import net.thevpc.echo.api.components.AppWorkspaceOptions;
 //import net.thevpc.echo.api.peers.AppWorkspacePeer;
-//import net.thevpc.echo.api.tools.AppContainerModel;
-//import net.thevpc.echo.api.tools.AppWindowModel;
+//import net.thevpc.echo.api.model.AppContainerModel;
+//import net.thevpc.echo.api.model.AppWindowModel;
 //import net.thevpc.echo.impl.components.Window;
-////import net.thevpc.echo.impl.tools.WindowModel;
+////import net.thevpc.echo.impl.model.WindowModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.icons.FxAppImage;
 //import net.thevpc.echo.jfx.raw.FxDockedPane;
@@ -44,7 +44,7 @@
 //                    app().toolkit().createComponent(
 //                            desktopPane
 //                    ),
-//                    AppWindowAnchor.CONTENT);
+//                    WindowAnchor.CONTENT);
 //        }
 //    }
 //
@@ -63,7 +63,7 @@
 //        //
 //    }
 //
-//    protected static FxDockedPane.Anchor toAnchor2(AppWindowAnchor anchor1) {
+//    protected static FxDockedPane.Anchor toAnchor2(WindowAnchor anchor1) {
 //        FxDockedPane.Anchor a = FxDockedPane.Anchor.CENTER;
 //        switch (anchor1) {
 //            case BOTTOM: {
@@ -95,11 +95,11 @@
 //    }
 //
 //    @Override
-//    public AppFrame addWindowImpl(String id, AppComponent component, AppWindowAnchor anchor) {
+//    public AppFrame addWindowImpl(String id, AppComponent component, WindowAnchor anchor) {
 //        return app().toolkit().callUIAndWait(() -> {
 //            FxDockedPane dd = (FxDockedPane) toolkitComponent();
 //            net.thevpc.echo.impl.components.Window w = new net.thevpc.echo.impl.components.Window(id, anchor, component, app());
-//            if (anchor == AppWindowAnchor.DESKTOP) {
+//            if (anchor == WindowAnchor.DESKTOP) {
 //                jfxtras.scene.control.window.Window internalWindow = new jfxtras.scene.control.window.Window();
 //                Node n = (Node) ((FxPeer) w.component().get()).toolkitComponent();
 //                internalWindow.setContentPane(new BorderPane(n));
@@ -111,7 +111,7 @@
 //            }
 //            w.closable().listeners().addInstall(() -> {
 //                app().runUI(() -> {
-//                    if (w.anchor().get() == AppWindowAnchor.DESKTOP) {
+//                    if (w.anchor().get() == WindowAnchor.DESKTOP) {
 //                        Window ww = internalFrames.get(w.id());
 //                        //ww.setClo
 //                    } else {
@@ -122,7 +122,7 @@
 //            });
 //            w.title().listeners().addInstall(() -> {
 //                app().runUI(() -> {
-//                    if (w.anchor().get() == AppWindowAnchor.DESKTOP) {
+//                    if (w.anchor().get() == WindowAnchor.DESKTOP) {
 //
 //                    } else {
 //                        FxDockedPane dd2 = (FxDockedPane) toolkitComponent();
@@ -132,7 +132,7 @@
 //            });
 //            w.icon().listeners().addInstall(() -> {
 //                app().runUI(() -> {
-//                    if (w.anchor().get() == AppWindowAnchor.DESKTOP) {
+//                    if (w.anchor().get() == WindowAnchor.DESKTOP) {
 //                    } else {
 //                        FxDockedPane dd2 = (FxDockedPane) toolkitComponent();
 //                        dd2.setTabIcon(w.id(), FxAppImage.imageOf(w.icon().get()));
@@ -140,10 +140,10 @@
 //                });
 //            });
 //
-//            w.anchor().listeners().add(new PropertyListener() {
+//            w.anchor().onChange(new PropertyListener() {
 //                @Override
 //                public void propertyUpdated(PropertyEvent event) {
-//                    if (w.anchor().get() == AppWindowAnchor.DESKTOP) {
+//                    if (w.anchor().get() == WindowAnchor.DESKTOP) {
 //                        dd.remove(id);
 //
 //                        Window internalWindow = new Window();

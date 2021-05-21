@@ -4,7 +4,7 @@
 //import javafx.scene.control.MenuItem;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.Path;
-//import net.thevpc.echo.api.tools.AppComponentModel;
+//import net.thevpc.echo.api.model.AppComponentModel;
 //import net.thevpc.echo.Application;
 //
 //import net.thevpc.echo.jfx.FxApplicationUtils;

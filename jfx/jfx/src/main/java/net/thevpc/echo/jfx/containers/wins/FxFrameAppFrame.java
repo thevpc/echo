@@ -16,7 +16,7 @@
 //import javafx.stage.Stage;
 //import net.thevpc.echo.api.AppImage;
 //import net.thevpc.echo.api.components.*;
-//import net.thevpc.echo.api.tools.AppContainerModel;
+//import net.thevpc.echo.api.model.AppContainerModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.icons.FxAppImage;
 //
@@ -24,7 +24,7 @@
 //
 //    private boolean _in_windowClosing = false;
 //    private boolean _in_windowClosed = false;
-////    private ContainerAppTools tools;
+////    private ContainerAppTools model;
 //    BorderPane borderPane;
 //    BorderPane menuPane;
 //
@@ -50,16 +50,16 @@
 //                }
 //            }
 //        });
-//        title().listeners().add(event -> application.toolkit().runUI(() -> frame().setTitle(event.getNewValue())));
-//        icon().listeners().add(event -> application.toolkit().runUI(() -> frame().getIcons().add(FxAppImage.imageOf(((AppImage) event.getNewValue())))));
+//        title().onChange(event -> application.toolkit().runUI(() -> frame().setTitle(event.getNewValue())));
+//        icon().onChange(event -> application.toolkit().runUI(() -> frame().getIcons().add(FxAppImage.imageOf(((AppImage) event.getNewValue())))));
 //
 //        frame().iconifiedProperty().addListener(new ChangeListener<Boolean>() {
 //            @Override
 //            public void changed(javafx.beans.value.ObservableValue<? extends Boolean> prop, Boolean oldValue, Boolean newValue) {
 //                if (newValue) {
-//                    state().add(AppWindowState.ICONIFIED);
+//                    state().add(WindowState.ICONIFIED);
 //                } else {
-//                    state().add(AppWindowState.ICONIFIED);
+//                    state().add(WindowState.ICONIFIED);
 //                }
 //            }
 //        });
@@ -67,9 +67,9 @@
 //            @Override
 //            public void changed(javafx.beans.value.ObservableValue<? extends Boolean> prop, Boolean oldValue, Boolean newValue) {
 //                if (newValue) {
-//                    state().add(AppWindowState.MAXIMIZED_BOTH);
+//                    state().add(WindowState.MAXIMIZED_BOTH);
 //                } else {
-//                    state().remove(AppWindowState.MAXIMIZED_BOTH);
+//                    state().remove(WindowState.MAXIMIZED_BOTH);
 //                }
 //            }
 //        });
@@ -77,9 +77,9 @@
 //            @Override
 //            public void changed(javafx.beans.value.ObservableValue<? extends Boolean> prop, Boolean oldValue, Boolean newValue) {
 //                if (newValue) {
-//                    state().add(AppWindowState.ACTIVATED);
+//                    state().add(WindowState.ACTIVATED);
 //                } else {
-//                    state().remove(AppWindowState.ACTIVATED);
+//                    state().remove(WindowState.ACTIVATED);
 //                }
 //            }
 //        });
@@ -87,44 +87,44 @@
 //            @Override
 //            public void changed(javafx.beans.value.ObservableValue<? extends Boolean> prop, Boolean oldValue, Boolean newValue) {
 //                if (newValue) {
-//                    state().add(AppWindowState.OPENING);
+//                    state().add(WindowState.OPENING);
 //                } else {
-//                    state().remove(AppWindowState.CLOSING);
+//                    state().remove(WindowState.CLOSING);
 //                }
 //            }
 //        });
-//        state().listeners().add(event -> {
+//        state().onChange(event -> {
 //            application.toolkit().runUI(() -> {
-//                AppWindowStateSet aws = event.getNewValue();
+//                WindowStateSet aws = event.getNewValue();
 //                if (aws == null) {
-//                    aws = new AppWindowStateSet();
+//                    aws = new WindowStateSet();
 //                }
-//                if (aws.is(AppWindowState.CLOSING)) {
+//                if (aws.is(WindowState.CLOSING)) {
 //                    if (frame().showingProperty().get()) {
 //                        frame().close();
 //                    } else {
-//                        state().add(AppWindowState.CLOSED);
+//                        state().add(WindowState.CLOSED);
 //                    }
-//                } else if (aws.is(AppWindowState.CLOSED)) {
+//                } else if (aws.is(WindowState.CLOSED)) {
 //                    if (frame().showingProperty().get()) {
 //                        frame().close();
 //                    }
-//                } else if (aws.is(AppWindowState.OPENED)) {
+//                } else if (aws.is(WindowState.OPENED)) {
 //                    if (!frame().showingProperty().get()) {
 //                        frame().show();
 //                    }
 //                } else {
-//                    if (aws.is(AppWindowState.ICONIFIED)) {
+//                    if (aws.is(WindowState.ICONIFIED)) {
 //                        frame().setIconified(true);
-//                    } else if (aws.is(AppWindowState.DEICONIFIED)) {
+//                    } else if (aws.is(WindowState.DEICONIFIED)) {
 //                        frame().setIconified(false);
-//                    } else if (aws.is(AppWindowState.MAXIMIZED_BOTH)) {
+//                    } else if (aws.is(WindowState.MAXIMIZED_BOTH)) {
 //                        frame().setMaximized(true);
-//                    } else if (aws.is(AppWindowState.MAXIMIZED_VERT)) {
+//                    } else if (aws.is(WindowState.MAXIMIZED_VERT)) {
 //                        frame().setMaximized(true);
-//                    } else if (aws.is(AppWindowState.MAXIMIZED_HORIZ)) {
+//                    } else if (aws.is(WindowState.MAXIMIZED_HORIZ)) {
 //                        frame().setMaximized(true);
-//                    } else if (aws.is(AppWindowState.NORMAL)) {
+//                    } else if (aws.is(WindowState.NORMAL)) {
 //                        frame().setMaximized(false);
 //                    }
 //                }
@@ -140,7 +140,7 @@
 //                throw new IllegalArgumentException("Already BoundMenu");
 //            }
 //        });
-//        menuBar().listeners().add(new PropertyListener() {
+//        menuBar().onChange(new PropertyListener() {
 //            @Override
 //            public void propertyUpdated(PropertyEvent event) {
 //                AppMenuBar v = event.getNewValue();
@@ -159,7 +159,7 @@
 //                throw new IllegalArgumentException("Already BoundM Toolbar");
 //            }
 //        });
-//        toolBar().listeners().add(new PropertyListener() {
+//        toolBar().onChange(new PropertyListener() {
 //            @Override
 //            public void propertyUpdated(PropertyEvent event) {
 //                AppToolBarGroup v = event.getNewValue();
@@ -179,7 +179,7 @@
 //                throw new IllegalArgumentException("Already BoundM Toolbar");
 //            }
 //        });
-//        statusBar().listeners().add(new PropertyListener() {
+//        statusBar().onChange(new PropertyListener() {
 //            @Override
 //            public void propertyUpdated(PropertyEvent event) {
 //                AppStatusBarGroup v = event.getNewValue();
@@ -199,7 +199,7 @@
 //                throw new IllegalArgumentException("Already BoundM Toolbar");
 //            }
 //        });
-//        workspace().listeners().add(new PropertyListener() {
+//        workspace().onChange(new PropertyListener() {
 //            @Override
 //            public void propertyUpdated(PropertyEvent event) {
 //                AppWorkspace v = event.getNewValue();
@@ -208,7 +208,7 @@
 //                });
 //            }
 //        });
-//        displayMode.listeners().add(new PropertyListener() {
+//        displayMode.onChange(new PropertyListener() {
 //            @Override
 //            public void propertyUpdated(PropertyEvent event) {
 //                application.toolkit().runUI(() -> {
@@ -243,7 +243,7 @@
 //
 //    @Override
 //    public void centerOnDefaultMonitor() {
-//        if (frame() != null && displayMode().get() != AppWindowDisplayMode.FULLSCREEN) {
+//        if (frame() != null && displayMode().get() != FrameDisplayMode.FULLSCREEN) {
 //            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 //            Rectangle sb = gd.getDefaultConfiguration().getBounds();
 //            int swidth = gd.getDisplayMode().getWidth();
@@ -259,9 +259,9 @@
 //
 //    @Override
 //    public void close() {
-//        AppWindowStateSetValue _state = state();
-//        if (!_state.is(AppWindowState.CLOSING)
-//                && !_state.is(AppWindowState.CLOSED)) {
+//        WindowStateSetValue _state = state();
+//        if (!_state.is(WindowState.CLOSING)
+//                && !_state.is(WindowState.CLOSED)) {
 //            frame().hide();
 //        }
 //    }

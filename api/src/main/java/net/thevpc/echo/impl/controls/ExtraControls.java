@@ -3,7 +3,7 @@ package net.thevpc.echo.impl.controls;
 import net.thevpc.echo.Application;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppLabel;
-import net.thevpc.echo.impl.components.Label;
+import net.thevpc.echo.Label;
 
 import java.time.LocalDateTime;
 import java.util.Timer;
@@ -18,7 +18,7 @@ public class ExtraControls {
             @Override
             public void run() {
                 app.toolkit().runUI(
-                        () -> label.model().text().set(
+                        () -> label.text().set(
                                 Str.of(LocalDateTime.now().toString())
                         )
                 );
@@ -27,14 +27,14 @@ public class ExtraControls {
         return label;
     }
 
-    public static Object createMemoryMonitorLabel(Application app) {
+    public static AppLabel createMemoryMonitorLabel(Application app) {
         //new MemoryUseIconTray(true)
         AppLabel label = new Label(app);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 app.toolkit().runUI(
-                        () -> label.model().text().set(
+                        () -> label.text().set(
                                 Str.of(
                                         Runtime.getRuntime().freeMemory()
                                                 / 1024 / 1024

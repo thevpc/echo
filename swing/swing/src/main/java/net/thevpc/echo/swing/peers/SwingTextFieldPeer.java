@@ -1,20 +1,14 @@
 package net.thevpc.echo.swing.peers;
 
 import net.thevpc.common.i18n.Str;
-import net.thevpc.common.swing.button.JDropDownButton;
-import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppTextField;
-import net.thevpc.echo.api.peers.AppTextFieldPeer;
-import net.thevpc.echo.api.peers.AppTextPeer;
-import net.thevpc.echo.api.tools.AppTextModel;
-import net.thevpc.echo.impl.components.AppComponentBase;
-import net.thevpc.echo.swing.icons.SwingAppImage;
+import net.thevpc.echo.spi.peers.AppTextFieldPeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.*;
 
 public class SwingTextFieldPeer implements SwingPeer, AppTextFieldPeer {
     private JTextField jTextField;
@@ -27,8 +21,9 @@ public class SwingTextFieldPeer implements SwingPeer, AppTextFieldPeer {
         appTextField=(AppTextField) component;
         jTextField=new JTextField();
         jTextField.setText(
-                appTextField.model().text().getOr(x->x==null?"":x.toString())
+                appTextField.text().getOr(x->x==null?"":x.toString())
         );
+        SwingPeerHelper.installComponent(appTextField,this.jTextField);
         jTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -45,11 +40,11 @@ public class SwingTextFieldPeer implements SwingPeer, AppTextFieldPeer {
                 update();
             }
             protected void update(){
-                appTextField.model().text().set(Str.of(jTextField.getText()));
+                appTextField.text().set(Str.of(jTextField.getText()));
             }
         });
-        appTextField.listeners().add(e->jTextField.setText(
-                appTextField.model().text().getOr(x->x==null?"":x.toString())
+        appTextField.onChange(e->jTextField.setText(
+                appTextField.text().getOr(x->x==null?"":x.toString())
         ));
     }
 

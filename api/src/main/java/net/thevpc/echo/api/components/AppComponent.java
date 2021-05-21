@@ -5,7 +5,7 @@
  * Echo is a simple Desktop Application Framework witj productivity in mind.
  * Currently Echo has two ports : swing and javafx
  * <br>
- *
+ * <p>
  * Copyright [2021] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,34 +18,42 @@
  */
 
 
-
 package net.thevpc.echo.api.components;
 
-import net.thevpc.common.props.ObservableValue;
-import net.thevpc.common.props.Path;
-import net.thevpc.common.props.Property;
-import net.thevpc.common.props.WritableValue;
+import net.thevpc.common.i18n.WritableStr;
+import net.thevpc.common.props.*;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.tools.AppComponentModel;
-import net.thevpc.echo.impl.components.AppComponentConstraints;
-import net.thevpc.echo.api.peers.AppComponentPeer;
+import net.thevpc.echo.Dimension;
+import net.thevpc.echo.WritableTextStyle;
+import net.thevpc.echo.api.AppChildConstraints;
+import net.thevpc.echo.api.AppColor;
+import net.thevpc.echo.api.AppParentConstraints;
+import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.iconset.WritableImage;
+import net.thevpc.echo.spi.peers.AppComponentPeer;
 
 /**
  * AppComponent inherits all AppComponentModel Property implementation
+ *
  * @author vpc
  */
 public interface AppComponent extends Property {
-    AppComponentConstraints constraints();
+
+    AppComponentEvents events();
+
+    AppChildConstraints childConstraints();
+
+    AppParentConstraints parentConstraints();
 
     AppComponent setOptions(AppComponentOptions options);
 
     AppComponent parent();
 
-    AppComponentModel model();
-
     WritableValue<Path> path();
 
     ObservableValue<Integer> order();
+
+    WritableValue<AppContextMenu> contextMenu();
 
     Application app();
 
@@ -55,10 +63,54 @@ public interface AppComponent extends Property {
 
     AppComponentPeer peer(boolean prepareShowing);
 
-    Class<? extends AppComponentModel> modelType();
-
     Class<? extends AppComponent> componentType();
 
     Class<? extends AppComponentPeer> peerType();
 
+    String id();
+
+    WritableValue<Dimension> prefSize();
+
+    WritableBoolean focused();
+
+    WritableBoolean editing();
+
+    WritableBoolean active();
+
+    WritableValue<Anchor> anchor();
+
+    WritableImage smallIcon();
+
+    /**
+     * used as a title when this component is placed into a container.
+     * a good example can be the Tab title, the window title etc...
+     *
+     * @return title property
+     */
+    WritableStr title();
+
+    WritableTextStyle titleStyle();
+
+    WritableImage largeIcon();
+
+    WritableInt mnemonic();
+
+    WritableString accelerator();
+
+    WritableBoolean enabled();
+
+    WritableBoolean editable();
+
+    WritableBoolean visible();
+
+    WritableStr tooltip();
+
+    WritableMap<Object, Object> properties();
+
+
+    WritableValue<AppColor> backgroundColor();
+
+    WritableBoolean opaque();
+
+    AppComponent copy(boolean bind);
 }

@@ -1,9 +1,9 @@
 package net.thevpc.echo.swing.mydoggy;
 
-import net.thevpc.echo.ApplicationToolkit;
-import net.thevpc.echo.ApplicationToolkitConfigurator;
-import net.thevpc.echo.api.peers.AppDockPeer;
-import net.thevpc.echo.api.peers.AppWindowPeer;
+import net.thevpc.echo.api.ApplicationToolkit;
+import net.thevpc.echo.spi.ApplicationToolkitConfigurator;
+import net.thevpc.echo.spi.peers.AppDockPeer;
+import net.thevpc.echo.spi.peers.AppWindowPeer;
 import net.thevpc.echo.impl.AbstractApplicationToolkit;
 
 public class MyDoggyConfigurator implements ApplicationToolkitConfigurator {

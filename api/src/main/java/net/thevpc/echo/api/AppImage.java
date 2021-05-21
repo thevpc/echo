@@ -21,7 +21,7 @@
 
 package net.thevpc.echo.api;
 
-import net.thevpc.echo.api.peers.AppImagePeer;
+import net.thevpc.echo.spi.peers.AppImagePeer;
 
 /**
  * @author vpc

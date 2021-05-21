@@ -3,9 +3,8 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.peers.AppLabelPeer;
-import net.thevpc.echo.api.tools.AppTextModel;
-import net.thevpc.echo.impl.components.AppComponentBase;
+import net.thevpc.echo.api.components.AppLabel;
+import net.thevpc.echo.spi.peers.AppLabelPeer;
 import net.thevpc.echo.swing.icons.SwingAppImage;
 
 import javax.swing.*;
@@ -19,8 +18,7 @@ public class SwingLabelPeer implements SwingPeer, AppLabelPeer {
     }
 
     public void install(AppComponent component) {
-        AppComponentBase ecomp = (AppComponentBase) component;
-        AppTextModel etool = (AppTextModel) ecomp.model();
+        AppLabel ecomp = (AppLabel) component;
         Object sParent = component.parent() == null ? null : component.parent().peer().toolkitComponent();
         if (
                 sParent instanceof JMenu
@@ -32,15 +30,15 @@ public class SwingLabelPeer implements SwingPeer, AppLabelPeer {
                 this.label = new JMenuItem();
                 JMenuItem mLabel = (JMenuItem) this.label;
                 mLabel.setText(
-                        etool.text().getOr(tt-> tt== null ? "" :
-                                tt.getValue(etool.app().i18n())
+                        ecomp.text().getOr(tt-> tt== null ? "" :
+                                tt.value(ecomp.app().i18n())
                         ));
-                etool.text().listeners().add(x -> mLabel.setText(
-                        etool.text().getOr(tt-> tt== null ? "" :
-                                tt.getValue(etool.app().i18n())
+                ecomp.text().onChange(x -> mLabel.setText(
+                        ecomp.text().getOr(tt-> tt== null ? "" :
+                                tt.value(ecomp.app().i18n())
                 )));
-                etool.smallIcon().listeners().add(x -> mLabel.setIcon(
-                        SwingAppImage.iconOf(etool.smallIcon().get())
+                ecomp.smallIcon().onChange(x -> mLabel.setIcon(
+                        SwingAppImage.iconOf(ecomp.smallIcon().get())
                 ));
             }
         } else {
@@ -48,16 +46,16 @@ public class SwingLabelPeer implements SwingPeer, AppLabelPeer {
                 this.label = new JLabel();
                 JLabel mLabel = (JLabel) this.label;
                 mLabel.setText(
-                        etool.text().getOr(tt-> tt== null ? "" :
-                                tt.getValue(etool.app().i18n())
+                        ecomp.text().getOr(tt-> tt== null ? "" :
+                                tt.value(ecomp.app().i18n())
                         ));
-                etool.text().listeners().add(x -> mLabel.setText(
-                        etool.text().get() == null ? "" :
-                                etool.text().get().getValue(etool.app().i18n())
+                ecomp.text().onChange(x -> mLabel.setText(
+                        ecomp.text().get() == null ? "" :
+                                ecomp.text().get().value(ecomp.app().i18n())
                 ));
-//                etool.title().listeners().add(x->mLabel.setText(etool.title().get()));
-                etool.smallIcon().listeners().add(x -> mLabel.setIcon(
-                        SwingAppImage.iconOf(etool.smallIcon().get())
+//                etool.title().onChange(x->mLabel.setText(etool.title().get()));
+                ecomp.smallIcon().onChange(x -> mLabel.setIcon(
+                        SwingAppImage.iconOf(ecomp.smallIcon().get())
                 ));
             }
         }

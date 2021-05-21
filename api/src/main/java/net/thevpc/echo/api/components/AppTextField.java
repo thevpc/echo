@@ -1,4 +1,4 @@
 package net.thevpc.echo.api.components;
 
-public interface AppTextField extends AppText {
+public interface AppTextField extends AppTextControl {
 }

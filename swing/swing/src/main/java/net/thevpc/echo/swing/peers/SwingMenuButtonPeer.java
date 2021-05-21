@@ -11,7 +11,7 @@ public class SwingMenuButtonPeer implements SwingPeer{
     @Override
     public void install(AppComponent comp) {
         jcomponent = new JDropDownButton();
-        SwingApplicationUtils.prepareAbstractButton(jcomponent,comp.model(), comp.app(), false);
+        SwingApplicationUtils.prepareAbstractButton(jcomponent,comp, comp.app(), false);
     }
 
     @Override

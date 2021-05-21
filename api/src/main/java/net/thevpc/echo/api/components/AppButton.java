@@ -1,6 +1,7 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.components.AppControl;
+import net.thevpc.echo.api.AppActionValue;
 
-public interface AppButton extends AppControl {
+public interface AppButton extends AppTextControl {
+    AppActionValue action();
 }

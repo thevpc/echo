@@ -1,19 +1,19 @@
 package net.thevpc.echo.impl;
 
 import net.thevpc.echo.*;
-import net.thevpc.common.props.Path;
+import net.thevpc.echo.api.AppComponentPeerFactory;
+import net.thevpc.echo.api.ApplicationToolkit;
+import net.thevpc.echo.spi.ApplicationToolkitConfigurator;
+import net.thevpc.echo.api.SupportSupplier;
 import net.thevpc.echo.api.components.*;
-import net.thevpc.echo.api.peers.AppComponentPeer;
-import net.thevpc.echo.api.tools.*;
-import net.thevpc.echo.impl.components.*;
-import net.thevpc.echo.impl.components.Calendar;
+import net.thevpc.echo.spi.peers.AppComponentPeer;
+import net.thevpc.echo.impl.util._ClassMap;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import java.util.function.Function;
 
 public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
 
+    protected String id;
     protected Application app;
     /**
      * used to map a peer instance for a given component
@@ -32,81 +32,16 @@ public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
      */
 //    private _ClassMap<Function<AppComponentRendererContext, AppComponent>> componentsDefaultFactories = (_ClassMap) new _ClassMap<AppComponentPeerFactory>(AppComponent.class, (Class) Function.class);
 
-    public AbstractApplicationToolkit(Application application) {
-        this.app = application;
-//        ServiceLoader<AppComponentFactory> csl = ServiceLoader.load(AppComponentFactory.class, Thread.currentThread().getContextClassLoader());
-//        for (AppComponentFactory appComponentPeerFactory : csl) {
-//            addComponentFactory(appComponentPeerFactory);
-//        }
-
-//        ServiceLoader<AppComponentPeerFactory> psl = ServiceLoader.load(AppComponentPeerFactory.class, Thread.currentThread().getContextClassLoader());
-//        for (AppComponentPeerFactory appComponentPeerFactory : psl) {
-//            addPeerFactory(appComponentPeerFactory);
-//        }
-        ServiceLoader<ApplicationToolkitConfigurator> psl = ServiceLoader.load(ApplicationToolkitConfigurator.class, Thread.currentThread().getContextClassLoader());
-        for (ApplicationToolkitConfigurator cc : psl) {
-            cc.configure(this);
-        }
-
-//        addComponentDefaultFactory(AppButton.class, (c) -> new Button((AppToolButtonModel) c.tool()));
-//        addComponentDefaultFactory(AppFrame.class, (c) -> new Frame((AppFrameModel) c.tool()));
-//        addComponentDefaultFactory(AppAlert.class, (c) -> new Alert((AppAlertModel) c.tool()));
-//        addComponentDefaultFactory(AppFileChooser.class, (c) -> new FileChooser((AppFileChooserModel) c.tool()));
-//        addComponentDefaultFactory(AppSeparator.class, (c) -> new Separator((AppSeparatorModel) c.tool()));
-//        addComponentDefaultFactory(AppSpacer.class, (c) -> new Spacer((AppSpacerModel) c.tool()));
-//        addComponentDefaultFactory(AppRadioButton.class, (c) -> new RadioButton((AppToggleModel) c.tool()));
-//        addComponentDefaultFactory(AppCheckBox.class, (c) -> new CheckBox((AppToggleModel) c.tool()));
-//        addComponentDefaultFactory(AppToggle.class, (c) -> new Toggle((AppToggleModel) c.tool()));
-//        addComponentDefaultFactory(AppComboBox.class, (c) -> new ComboBox((AppChoiceModel) c.tool()));
-//        addComponentDefaultFactory(AppChoiceList.class, (c) -> new ChoiceList((AppChoiceModel) c.tool()));
-//        addComponentDefaultFactory(AppCalendar.class, (c) -> new Calendar((AppCalendarModel) c.tool()));
-//        addComponentDefaultFactory(AppFontChooser.class, (c) -> new FontChooser((AppFontChooserModel) c.tool()));
-//        addComponentDefaultFactory(AppColorChooser.class, (c) -> new ColorChooser((AppColorChooserModel) c.tool()));
-//        addComponentDefaultFactory(AppNumberField.class, (c) -> new NumberField((AppNumberFieldModel) c.tool()));
-//        addComponentDefaultFactory(AppTemporalField.class, (c) -> new TemporalField((AppTemporalFieldModel) c.tool()));
-//        addComponentDefaultFactory(AppTextField.class, (c) -> new TextField((AppTextModel) c.tool()));
-//        addComponentDefaultFactory(AppTextArea.class, (c) -> new TextArea((AppTextModel) c.tool()));
-//        addComponentDefaultFactory(AppTree.class, (c) -> new Tree((AppTreeModel) c.tool()));
-//        addComponentDefaultFactory(AppTable.class, (c) -> new Table((AppTableModel) c.tool()));
-//        addComponentDefaultFactory(AppMenu.class, (c) -> new Menu((AppContainerModel) c.tool()));
-//        addComponentDefaultFactory(AppMenuBar.class, (c) -> new MenuBar((AppContainerModel) c.tool()));
-//        addComponentDefaultFactory(AppToolBar.class, (c) -> new ToolBar((AppContainerModel) c.tool()));
-//        addComponentDefaultFactory(AppToolBarGroup.class, (c) -> new ToolBarGroup((AppContainerModel) c.tool()));
-//        addComponentDefaultFactory(AppDesktop.class, (c) -> new Desktop((AppContainerModel) c.tool()));
-//        addComponentDefaultFactory(AppDock.class, (c) -> new DockPane((AppContainerModel) c.tool()));
-//        addComponentDefaultFactory(AppPanel.class, (c) -> new Panel((AppContainerModel) c.tool()));
-//        addComponentDefaultFactory(AppTabs.class, (c) -> new Tabs((AppContainerModel) c.tool()));
-//        addComponentDefaultFactory(AppWindow.class, (c) -> new Window((AppWindowModel) c.tool()));
-//        addComponentDefaultFactory(AppUserControl.class, (c) -> new UserControl((AppUserControlModel) c.tool()));
-//        addComponentDefaultFactory(AppMemoryMonitor.class, (c) -> new MemoryMonitor((AppMemoryMonitorModel) c.tool()));
-
-//        addComponentTypeByToolFactory(AppToolButtonModel.class, AppButton.class);
-//        addComponentTypeByToolFactory(AppFrameModel.class, AppFrame.class);
-//        addComponentTypeByToolFactory(AppAlertModel.class, AppAlert.class);
-//        addComponentTypeByToolFactory(AppFileChooserModel.class, AppFileChooser.class);
-//        addComponentTypeByToolFactory(AppSeparatorModel.class, AppSeparator.class);
-//        addComponentTypeByToolFactory(AppSpacerModel.class, AppSpacer.class);
-//        addComponentTypeByToolFactory(AppChoiceModel.class, (c) -> AppComboBox.class);
-//        addComponentTypeByToolFactory(AppCalendarModel.class, (c) -> AppCalendar.class);
-//        addComponentTypeByToolFactory(AppFontChooserModel.class, (c) -> AppFontChooser.class);
-//        addComponentTypeByToolFactory(AppColorChooserModel.class, (c) -> AppColorChooser.class);
-//        addComponentTypeByToolFactory(AppNumberFieldModel.class, (c) -> AppNumberField.class);
-//        addComponentTypeByToolFactory(AppTemporalFieldModel.class, (c) -> AppTemporalField.class);
-//        addComponentTypeByToolFactory(AppTextModel.class, (c) -> AppTextField.class);
-//        addComponentTypeByToolFactory(AppTreeModel.class, (c) -> AppTree.class);
-//        addComponentTypeByToolFactory(AppTableModel.class, (c) -> AppTable.class);
-//        addComponentTypeByToolFactory(AppWindowModel.class, (c) -> AppWindow.class);
-//        addComponentTypeByToolFactory(AppUserControlModel.class, (c) -> AppUserControl.class);
-//        addComponentTypeByToolFactory(AppToggleModel.class, (c) -> {
-//            AppToggleModel t = (AppToggleModel) c.tool();
-//            if (t.group().get() != null) {
-//                return (Class)AppRadioButton.class;
-//            }
-//            return CheckBox.class;
-//        });
+    public AbstractApplicationToolkit(String id) {
+        this.id=id;
     }
 
-//    public AppComponent createDefaultComponent(AppComponentRendererContext context) {
+    @Override
+    public String id() {
+        return id;
+    }
+
+    //    public AppComponent createDefaultComponent(AppComponentRendererContext context) {
 //        if(context==null || context.componentType()==null){
 //            throw new IllegalArgumentException("null componentType");
 //        }
@@ -404,4 +339,11 @@ public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
                 +" with expected peerType "+component.peerType());
     }
 
+    public void initialize(Application app){
+        this.app=app;
+        ServiceLoader<ApplicationToolkitConfigurator> psl = ServiceLoader.load(ApplicationToolkitConfigurator.class, Thread.currentThread().getContextClassLoader());
+        for (ApplicationToolkitConfigurator cc : psl) {
+            cc.configure(this);
+        }
+    }
 }

@@ -13,6 +13,6 @@ public interface AppComponentOptions {
     AppComponentOptions componentTypeIfNull(Class<? extends AppComponent> value);
 
     void copyFrom(AppComponentOptions other,boolean nonNull);
-    
+
     AppComponentOptions copy();
 }

@@ -4,7 +4,7 @@
 //import javafx.scene.control.ToolBar;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppToolBar;
-//import net.thevpc.echo.api.tools.AppContainerModel;
+//import net.thevpc.echo.api.model.AppContainerModel;
 //import net.thevpc.echo.Application;
 //
 //public class FxAppToolBar extends FxAppBarBase implements AppToolBar {

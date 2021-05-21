@@ -18,7 +18,7 @@
 //import net.thevpc.echo.api.components.AppComponent;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppComponentType;
-//import net.thevpc.echo.api.tools.AppToggleModel;
+//import net.thevpc.echo.api.model.AppToggleModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.ToolBarGroup;
 //import net.thevpc.echo.jfx.containers.menus.FxToggleButtonControl;

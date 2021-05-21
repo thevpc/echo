@@ -8,12 +8,12 @@
 //import net.thevpc.echo.api.components.*;
 //import net.thevpc.echo.api.toolbuilders.AppToolActionBuilder;
 //import net.thevpc.echo.api.toolbuilders.AppToolCustomBuilder;
-//import net.thevpc.echo.api.tools.AppComponentModel;
+//import net.thevpc.echo.api.model.AppComponentModel;
 //import net.thevpc.echo.impl.toolbuilders.DefaultAppToolActionBuilder;
 //import net.thevpc.echo.impl.toolbuilders.DefaultAppToolCustomBuilder;
 //import net.thevpc.echo.impl.toolbuilders.DefaultAppToolToggleBuilder;
-//import net.thevpc.echo.impl.tools.ContainerModel;
-//import net.thevpc.echo.impl.tools.SeparatorModel;
+//import net.thevpc.echo.impl.model.ContainerModel;
+//import net.thevpc.echo.impl.model.SeparatorModel;
 //
 //import java.util.HashMap;
 //import java.util.Map;
@@ -24,7 +24,7 @@
 //    protected Map<String, ToolInfo> toolsMap = new HashMap<>();
 //    protected Application application;
 //    //    protected ToolMapResolverPropertyListener toolMapResolverAppPropertyListener = new ToolMapResolverPropertyListener();
-//    private WritableList<AppComponentModel> toolsList = Props.of("tools").listOf(AppComponentModel.class);
+//    private WritableList<AppComponentModel> toolsList = Props.of("model").listOf(AppComponentModel.class);
 //    private AppToolsConfig config = new AppToolsConfig();
 //
 //    public AbstractAppToolsBase(Application application) {
@@ -120,7 +120,7 @@
 //        return application;
 //    }
 //
-//    //    public AppToolButtonModel addAction(Action al, String path, String... paths) {
+//    //    public AppButtonModel addAction(Action al, String path, String... paths) {
 ////        return addAction().bind(al).path(path).path(paths).tool();
 ////    }
 //    public static class ToolInfo {

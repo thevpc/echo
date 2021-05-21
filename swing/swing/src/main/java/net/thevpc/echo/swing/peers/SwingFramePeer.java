@@ -4,16 +4,16 @@ import net.thevpc.common.msg.StringMessage;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.PropertyVeto;
-import net.thevpc.echo.AppWindowDisplayMode;
-import net.thevpc.echo.AppWindowState;
-import net.thevpc.echo.AppWindowStateSet;
+import net.thevpc.echo.FrameDisplayMode;
+import net.thevpc.echo.WindowState;
+import net.thevpc.echo.WindowStateSet;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppFrame;
 import net.thevpc.echo.api.components.AppMenuBar;
 import net.thevpc.echo.api.components.AppToolBarGroup;
-import net.thevpc.echo.api.peers.AppFramePeer;
+import net.thevpc.echo.spi.peers.AppFramePeer;
 import net.thevpc.echo.swing.SwingApplicationUtils;
-import net.thevpc.echo.swing.icons.SwingAppImage;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,110 +27,127 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
 
     private JFrame frame;
     private JPanel contentPanel;
-    private AppFrame component;
+    private AppFrame appComponent;
     private boolean _in_windowClosing = false;
     private boolean _in_windowClosed = false;
 
     @Override
     public void install(AppComponent component0) {
-        this.component = (AppFrame) component0;
+        this.appComponent = (AppFrame) component0;
         this.frame = new JFrame();
-        this.component.model().title().listeners().add(event -> frame.setTitle(event.getNewValue()));
-        this.component.model().smallIcon().listeners().add(event -> frame.setIconImage(
-                ((SwingAppImage) event.getNewValue()).getImage())
-        );
-        component.model().state().listeners().add(event -> {
-            AppWindowStateSet aws = event.getNewValue();
-            applyFrameState(aws);
+        contentPanel = new JPanel(new BorderLayout());
+        //title binding...
+        this.appComponent.title().listeners().addInstall(() -> {
+            appComponent.app().runUI(() -> {
+                frame.setTitle(
+                        appComponent.title().getOr(x -> x == null ? "" : x.value(appComponent.app().i18n()))
+                );
+            });
         });
-        component.menuBar().vetos().add(new PropertyVeto() {
-            @Override
-            public void vetoableChange(PropertyEvent event) {
-                JMenuBar m = frame.getJMenuBar();
-                if (m == null) {
-                    return;
-                }
-                throw new IllegalArgumentException("Already BoundMenu");
-            }
+        this.appComponent.smallIcon().listeners().addInstall(() ->
+                appComponent.app().runUI(() -> {
+                    frame.setIconImage(
+                            SwingHelpers.toAwtImage(this.appComponent.smallIcon().get())
+                    );
+                }));
+        appComponent.state().onChange(event -> {
+            applyFrameState(appComponent.state().get());
         });
-        component.menuBar().listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                AppMenuBar v = event.getNewValue();
-                JMenuBar m = frame.getJMenuBar();
-                if (m != null) {
-                    throw new IllegalArgumentException("");
-                }
+//        appComponent.menuBar().vetos().add(new PropertyVeto() {
+//            @Override
+//            public void vetoableChange(PropertyEvent event) {
+//                JMenuBar m = frame.getJMenuBar();
+//                if (m == null) {
+//                    return;
+//                }
+//                throw new IllegalArgumentException("Already BoundMenu");
+//            }
+//        });
+        appComponent.menuBar().listeners().addInstall(() -> {
+            appComponent.app().runUI(() -> {
+                AppMenuBar v = appComponent.menuBar().get();
                 if (v == null) {
                     frame.setJMenuBar(null);
-
                 } else {
-                    frame.setJMenuBar((JMenuBar) SwingPeer.jcompOf(v));
+                    frame.setJMenuBar((JMenuBar) v.peer().toolkitComponent());
                 }
-            }
+                frame.invalidate();
+                frame.revalidate();
+                frame.repaint();
+            });
         });
-        component.toolBar().vetos().add(new PropertyVeto() {
-            @Override
-            public void vetoableChange(PropertyEvent event) {
-                JMenuBar m = event.getOldValue();
-                if (m == null) {
-                    return;
-                }
-                throw new IllegalArgumentException("Already BoundM Toolbar");
-            }
+//        appComponent.toolBar().vetos().add(new PropertyVeto() {
+//            @Override
+//            public void vetoableChange(PropertyEvent event) {
+//                JMenuBar m = event.oldValue();
+//                if (m == null) {
+//                    return;
+//                }
+//                throw new IllegalArgumentException("Already Bound Toolbar");
+//            }
+//        });
+        appComponent.toolBar().listeners().addInstall(() -> {
+            appComponent.app().runUI(() -> {
+                AppToolBarGroup v = appComponent.toolBar().get();
+                setComponentByConstraint(v, BorderLayout.PAGE_START);
+                frame.invalidate();
+                frame.revalidate();
+                frame.repaint();
+            });
         });
-        component.toolBar().listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                AppToolBarGroup v = event.getNewValue();
-                setComponentByConstraint(v,BorderLayout.PAGE_START);
-            }
+        appComponent.statusBar().listeners().addInstall(() -> {
+            appComponent.app().runUI(() -> {
+                AppToolBarGroup v = appComponent.statusBar().get();
+                setComponentByConstraint(v, BorderLayout.PAGE_END);
+                frame.invalidate();
+                frame.revalidate();
+                frame.repaint();
+            });
         });
-        component.statusBar().vetos().add(new PropertyVeto() {
-            @Override
-            public void vetoableChange(PropertyEvent event) {
-                JMenuBar m = event.getOldValue();
-                if (m == null) {
-                    return;
-                }
-                throw new IllegalArgumentException("Already BoundM Toolbar");
-            }
+        appComponent.content().listeners().addInstall(() -> {
+            appComponent.app().runUI(() -> {
+                AppComponent v = appComponent.content().get();
+                setComponentByConstraint(v, BorderLayout.CENTER);
+                frame.invalidate();
+                frame.revalidate();
+                frame.repaint();
+            });
         });
-        component.statusBar().listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                AppToolBarGroup v = event.getNewValue();
-                setComponentByConstraint(v,BorderLayout.PAGE_END);
-            }
-        });
-        component.workspace().vetos().add(new PropertyVeto() {
-            @Override
-            public void vetoableChange(PropertyEvent event) {
-                JMenuBar m = event.getOldValue();
-                if (m == null) {
-                    return;
-                }
-                throw new IllegalArgumentException("Already BoundM Toolbar");
-            }
-        });
-        component.workspace().listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                AppComponent v = event.getNewValue();
-                setComponentByConstraint(v,BorderLayout.CENTER);
-            }
-        });
-        component.model().displayMode().listeners().add(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                applyDisplayMode();
-            }
-
-        });
-        component.app().toolkit().runUI(()-> {
+//        appComponent.statusBar().vetos().add(new PropertyVeto() {
+//            @Override
+//            public void vetoableChange(PropertyEvent event) {
+//                JMenuBar m = event.oldValue();
+//                if (m == null) {
+//                    return;
+//                }
+//                throw new IllegalArgumentException("Already BoundM Toolbar");
+//            }
+//        });
+//        appComponent.statusBar().onChange(new PropertyListener() {
+//            @Override
+//            public void propertyUpdated(PropertyEvent event) {
+//                AppToolBarGroup v = event.newValue();
+//                setComponentByConstraint(v, BorderLayout.PAGE_END);
+//            }
+//        });
+//        appComponent.content().vetos().add(new PropertyVeto() {
+//            @Override
+//            public void vetoableChange(PropertyEvent event) {
+//                JMenuBar m = event.oldValue();
+//                if (m == null) {
+//                    return;
+//                }
+//                throw new IllegalArgumentException("Already BoundM Toolbar");
+//            }
+//        });
+//        appComponent.content().onChange(event -> {
+//            AppComponent v = event.newValue();
+//            setComponentByConstraint(v, BorderLayout.CENTER);
+//        });
+        appComponent.displayMode().listeners().addInstall(() -> applyDisplayMode());
+        appComponent.app().toolkit().runUI(() -> {
 
             frame.getContentPane().setLayout(new BorderLayout());
-            contentPanel = new JPanel(new BorderLayout());
             frame.getContentPane().add(contentPanel, BorderLayout.CENTER);
             frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             UIManager.addPropertyChangeListener(new PropertyChangeListener() {
@@ -148,23 +165,23 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
                 int s = e.getNewState();
                 switch (s) {
                     case Frame.NORMAL: {
-                        this.component.model().state().add(AppWindowState.NORMAL);
+                        this.appComponent.state().add(WindowState.NORMAL);
                         break;
                     }
                     case Frame.ICONIFIED: {
-                        this.component.model().state().add(AppWindowState.ICONIFIED);
+                        this.appComponent.state().add(WindowState.ICONIFIED);
                         break;
                     }
                     case Frame.MAXIMIZED_HORIZ: {
-                        this.component.model().state().add(AppWindowState.MAXIMIZED_HORIZ);
+                        this.appComponent.state().add(WindowState.MAXIMIZED_HORIZ);
                         break;
                     }
                     case Frame.MAXIMIZED_VERT: {
-                        this.component.model().state().add(AppWindowState.MAXIMIZED_VERT);
+                        this.appComponent.state().add(WindowState.MAXIMIZED_VERT);
                         break;
                     }
                     case Frame.MAXIMIZED_BOTH: {
-                        this.component.model().state().add(AppWindowState.MAXIMIZED_BOTH);
+                        this.appComponent.state().add(WindowState.MAXIMIZED_BOTH);
                         break;
                     }
                 }
@@ -172,7 +189,7 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
             frame.addWindowListener(new WindowListener() {
                                         @Override
                                         public void windowOpened(WindowEvent e) {
-                                            component.model().state().add(AppWindowState.OPENED);
+                                            appComponent.state().add(WindowState.OPENED);
                                         }
 
                                         @Override
@@ -181,9 +198,9 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
                                                 try {
                                                     _in_windowClosing = true;
                                                     try {
-                                                        component.model().state().add(AppWindowState.CLOSING);
+                                                        appComponent.state().add(WindowState.CLOSING);
                                                     } catch (Exception ex) {
-                                                        component.app().logs().add(new StringMessage(Level.WARNING, "Closing Window canceled : " + ex.getMessage()));
+                                                        appComponent.app().logs().add(new StringMessage(Level.WARNING, "Closing Window canceled : " + ex.getMessage()));
                                                     }
                                                 } finally {
                                                     _in_windowClosing = false;
@@ -197,9 +214,9 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
                                                 try {
                                                     _in_windowClosed = true;
                                                     try {
-                                                        component.model().state().add(AppWindowState.CLOSED);
+                                                        appComponent.state().add(WindowState.CLOSED);
                                                     } catch (Exception ex) {
-                                                        component.app().logs().add(new StringMessage(Level.WARNING, "Closing Window canceled : " + ex.getMessage()));
+                                                        appComponent.app().logs().add(new StringMessage(Level.WARNING, "Closing Window canceled : " + ex.getMessage()));
                                                     }
                                                 } finally {
                                                     _in_windowClosed = false;
@@ -209,102 +226,37 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
 
                                         @Override
                                         public void windowIconified(WindowEvent e) {
-                                            component.model().state().add(AppWindowState.ICONIFIED);
+                                            appComponent.state().add(WindowState.ICONIFIED);
                                         }
 
                                         @Override
                                         public void windowDeiconified(WindowEvent e) {
-                                            component.model().state().add(AppWindowState.DEICONIFIED);
+                                            appComponent.state().add(WindowState.DEICONIFIED);
                                         }
 
                                         @Override
                                         public void windowActivated(WindowEvent e) {
-                                            component.model().state().add(AppWindowState.ACTIVATED);
+                                            appComponent.state().add(WindowState.ACTIVATED);
                                         }
 
                                         @Override
                                         public void windowDeactivated(WindowEvent e) {
-                                            component.model().state().add(AppWindowState.DEACTIVATED);
+                                            appComponent.state().add(WindowState.DEACTIVATED);
                                         }
                                     }
             );
             applyDisplayMode();
             frame.setLocationRelativeTo(null);
-            applyFrameState(component.model().state().get());
+            applyFrameState(appComponent.state().get());
         });
     }
 
-    private void setComponentByConstraint(AppComponent v,String constraint) {
-        if (v == null) {
-            BorderLayout layout = (BorderLayout)contentPanel.getLayout();
-            Component old = layout.getLayoutComponent(constraint);
-            if(old!=null) {
-                contentPanel.remove(old);
-            }
-        } else {
-            contentPanel.add(SwingPeer.of(v).awtComponent(), constraint);
-        }
-    }
-
-    private void applyFrameState(AppWindowStateSet aws) {
-        if (aws == null) {
-            aws = new AppWindowStateSet();
-        }
-        if (aws.is(AppWindowState.CLOSING)) {
-            if (!_in_windowClosing) {
-                try {
-                    _in_windowClosing = true;
-                    frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
-                } finally {
-                    _in_windowClosing = false;
-                }
-                if (frame.isVisible()) {
-                    frame.setVisible(false);
-                }
-            }
-        } else if (aws.is(AppWindowState.CLOSED)) {
-            if (!_in_windowClosed) {
-                try {
-                    _in_windowClosed = true;
-                    frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSED));
-                } finally {
-                    _in_windowClosed = false;
-                }
-                if (frame.isVisible()) {
-                    frame.setVisible(false);
-                }
-            }
-        } else if (aws.is(AppWindowState.OPENED)) {
-            if (!frame.isVisible()) {
-                SwingApplicationUtils.invokeLater(() -> {
-                    frame.setMinimumSize(new Dimension(600, 400));
-                    frame.pack();
-                    frame.setVisible(true);
-                });
-            }
-        } else {
-            if (aws.is(AppWindowState.ICONIFIED) && (frame.getExtendedState() & Frame.ICONIFIED) == 0) {
-                frame.setState(Frame.ICONIFIED);
-            } else if (aws.is(AppWindowState.DEICONIFIED) && (frame.getExtendedState() & Frame.ICONIFIED) != 0) {
-                frame.setState(Frame.NORMAL);
-            } else if (aws.is(AppWindowState.MAXIMIZED_BOTH) && (frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == 0) {
-                frame.setState(Frame.MAXIMIZED_BOTH);
-            } else if (aws.is(AppWindowState.MAXIMIZED_VERT) && (frame.getExtendedState() & Frame.MAXIMIZED_VERT) == 0) {
-                frame.setState(Frame.MAXIMIZED_VERT);
-            } else if (aws.is(AppWindowState.MAXIMIZED_HORIZ) && (frame.getExtendedState() & Frame.MAXIMIZED_HORIZ) == 0) {
-                frame.setState(Frame.MAXIMIZED_HORIZ);
-            } else if (aws.is(AppWindowState.NORMAL)) {
-                frame.setState(Frame.NORMAL);
-            }
-        }
-    }
-
     public void addChild(AppComponent other, int index) {
-        component.app().toolkit().runUI(() -> {
+        appComponent.app().toolkit().runUI(() -> {
             String pn = other.path().get().last();
             Component a = (Component) other.peer().toolkitComponent();
             switch (pn) {
-                case "workspace": {
+                case "content": {
                     contentPanel.add(a, BorderLayout.CENTER);
                     break;
                 }
@@ -325,7 +277,7 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
     }
 
     public void removeChild(AppComponent other, int index) {
-        component.app().toolkit().runUI(() -> {
+        appComponent.app().toolkit().runUI(() -> {
             frame.getContentPane().remove((Component) other.peer().toolkitComponent());
         });
     }
@@ -335,20 +287,85 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
         return frame;
     }
 
+    private void setComponentByConstraint(AppComponent v, String constraint) {
+        if (v == null) {
+            BorderLayout layout = (BorderLayout) contentPanel.getLayout();
+            Component old = layout.getLayoutComponent(constraint);
+            if (old != null) {
+                contentPanel.remove(old);
+            }
+        } else {
+            contentPanel.add(SwingPeer.of(v).awtComponent(), constraint);
+        }
+    }
+
+    private void applyFrameState(WindowStateSet aws) {
+        if (aws == null) {
+            aws = new WindowStateSet();
+        }
+        if (aws.is(WindowState.CLOSING)) {
+            if (!_in_windowClosing) {
+                try {
+                    _in_windowClosing = true;
+                    frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+                } finally {
+                    _in_windowClosing = false;
+                }
+                if (frame.isVisible()) {
+                    frame.setVisible(false);
+                }
+            }
+        } else if (aws.is(WindowState.CLOSED)) {
+            if (!_in_windowClosed) {
+                try {
+                    _in_windowClosed = true;
+                    frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSED));
+                } finally {
+                    _in_windowClosed = false;
+                }
+                if (frame.isVisible()) {
+                    frame.setVisible(false);
+                }
+            }
+        } else if (aws.is(WindowState.OPENED)) {
+            if (!frame.isVisible()) {
+                SwingApplicationUtils.invokeLater(() -> {
+                    frame.setMinimumSize(new Dimension(600, 400));
+                    frame.pack();
+                    frame.setVisible(true);
+                });
+            }
+        } else {
+            if (aws.is(WindowState.ICONIFIED) && (frame.getExtendedState() & Frame.ICONIFIED) == 0) {
+                frame.setState(Frame.ICONIFIED);
+            } else if (aws.is(WindowState.DEICONIFIED) && (frame.getExtendedState() & Frame.ICONIFIED) != 0) {
+                frame.setState(Frame.NORMAL);
+            } else if (aws.is(WindowState.MAXIMIZED_BOTH) && (frame.getExtendedState() & Frame.MAXIMIZED_BOTH) == 0) {
+                frame.setState(Frame.MAXIMIZED_BOTH);
+            } else if (aws.is(WindowState.MAXIMIZED_VERT) && (frame.getExtendedState() & Frame.MAXIMIZED_VERT) == 0) {
+                frame.setState(Frame.MAXIMIZED_VERT);
+            } else if (aws.is(WindowState.MAXIMIZED_HORIZ) && (frame.getExtendedState() & Frame.MAXIMIZED_HORIZ) == 0) {
+                frame.setState(Frame.MAXIMIZED_HORIZ);
+            } else if (aws.is(WindowState.NORMAL)) {
+                frame.setState(Frame.NORMAL);
+            }
+        }
+    }
+
 //    @Override
 //    public void close() {
-//        AppWindowStateSetValue _state = component.tool().state();
-//        if (!_state.is(AppWindowState.CLOSING)
-//                && !_state.is(AppWindowState.CLOSED)) {
+//        WindowStateSetValue _state = component.tool().state();
+//        if (!_state.is(WindowState.CLOSING)
+//                && !_state.is(WindowState.CLOSED)) {
 //            frame.setVisible(false);
 //            frame.dispose();
 //        }
 //    }
 
     private void applyDisplayMode() {
-        component.app().toolkit().runUI(()-> {
+        appComponent.app().toolkit().runUI(() -> {
 
-            switch (component.model().displayMode().get()) {
+            switch (appComponent.displayMode().get()) {
                 case FULLSCREEN: {
                     GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
@@ -379,7 +396,7 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
 
     @Override
     public void centerOnDefaultMonitor() {
-        if (frame != null && component.model().displayMode().get() != AppWindowDisplayMode.FULLSCREEN) {
+        if (frame != null && appComponent.displayMode().get() != FrameDisplayMode.FULLSCREEN) {
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             Rectangle sb = gd.getDefaultConfiguration().getBounds();
             int swidth = gd.getDisplayMode().getWidth();

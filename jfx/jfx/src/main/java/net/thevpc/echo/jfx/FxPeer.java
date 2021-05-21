@@ -7,7 +7,7 @@ package net.thevpc.echo.jfx;
 
 import javafx.scene.Node;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.peers.AppComponentPeer;
+import net.thevpc.echo.spi.peers.AppComponentPeer;
 
 /**
  *

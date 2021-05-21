@@ -7,7 +7,7 @@
 //import net.thevpc.echo.api.Path;
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppSeparator;
-//import net.thevpc.echo.api.tools.AppSeparatorModel;
+//import net.thevpc.echo.api.model.AppSeparatorModel;
 //
 //public class FxSeparatorControl extends FxControlBase implements AppSeparator {
 //

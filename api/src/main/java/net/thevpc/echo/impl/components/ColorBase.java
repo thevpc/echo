@@ -1,24 +1,28 @@
 package net.thevpc.echo.impl.components;
 
+import net.thevpc.common.props.Props;
+import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.Application;
+import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.components.AppColorChooser;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.components.AppToggle;
-import net.thevpc.echo.api.peers.AppColorChooserPeer;
-import net.thevpc.echo.api.peers.AppComponentPeer;
-import net.thevpc.echo.api.tools.AppColorChooserModel;
-import net.thevpc.echo.api.tools.AppToggleModel;
+import net.thevpc.echo.spi.peers.AppComponentPeer;
 
-public class ColorBase extends AppControlBase implements AppColorChooser {
-    public ColorBase(AppColorChooserModel model, Class<? extends AppColorChooserModel> modelType,
-                     Class<? extends AppComponent> componentType,
-                     Class<? extends AppComponentPeer> peerType) {
-        super(model
-                , modelType, componentType, peerType);
+public class ColorBase extends ControlBase implements AppColorChooser {
+    private WritableValue<AppColor> value= Props.of("value").valueOf(AppColor.class);
+    public ColorBase(String id, Application app,
+                    Class<? extends AppComponent> componentType,
+                    Class<? extends AppComponentPeer> peerType) {
+        super(id
+                , app, componentType, peerType);
+        propagateEvents(value);
     }
 
-    public AppColorChooserModel model() {
-        return (AppColorChooserModel) super.model();
+    @Override
+    public WritableValue<AppColor> value() {
+        return value;
     }
+
 
 }
 

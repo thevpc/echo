@@ -1,10 +1,10 @@
 package net.thevpc.echo.swing.helpers.actions;
 
 import java.awt.event.ActionEvent;
-import net.thevpc.echo.AppEvent;
-import net.thevpc.echo.AppUndoableActionSupplier;
+import net.thevpc.echo.api.AppEvent;
+import net.thevpc.echo.api.AppUndoableActionSupplier;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.UndoableAction;
+import net.thevpc.echo.api.UndoableAction;
 
 public abstract class SwingAppUndoableAction extends SwingAbstractAppAction implements AppUndoableActionSupplier{
 

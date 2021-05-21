@@ -3,7 +3,7 @@
 //
 //import net.thevpc.echo.api.components.AppComponentOptions;
 //import net.thevpc.echo.api.components.AppMenuBar;
-//import net.thevpc.echo.api.tools.AppContainerModel;
+//import net.thevpc.echo.api.model.AppContainerModel;
 //import javafx.scene.control.MenuBar;
 //import net.thevpc.echo.*;
 //

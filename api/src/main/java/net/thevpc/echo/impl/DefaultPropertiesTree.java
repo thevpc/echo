@@ -21,8 +21,8 @@
 
 package net.thevpc.echo.impl;
 
-import net.thevpc.echo.AppPropertiesNodeFolder;
-import net.thevpc.echo.AppPropertiesTree;
+import net.thevpc.echo.api.AppPropertiesNodeFolder;
+import net.thevpc.echo.api.AppPropertiesTree;
 
 /**
  *

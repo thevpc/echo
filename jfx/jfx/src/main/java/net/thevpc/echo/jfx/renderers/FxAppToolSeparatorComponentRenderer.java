@@ -14,7 +14,7 @@
 //import javafx.scene.layout.Region;
 //import javafx.scene.layout.VBox;
 //import net.thevpc.echo.api.components.AppComponent;
-//import net.thevpc.echo.api.tools.AppSeparatorModel;
+//import net.thevpc.echo.api.model.AppSeparatorModel;
 //import net.thevpc.echo.jfx.FxPeer;
 //import net.thevpc.echo.jfx.ToolBarGroup;
 //import net.thevpc.echo.jfx.controls.FxSeparatorControl;

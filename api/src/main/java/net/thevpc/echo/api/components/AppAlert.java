@@ -21,22 +21,21 @@
 
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.AppDialogAction;
-import net.thevpc.echo.AppDialogInputPanel;
-import net.thevpc.echo.AppDialogResult;
-import net.thevpc.echo.AppDimension;
+import net.thevpc.echo.api.AppDialogAction;
+import net.thevpc.echo.api.AppDialogInputPanel;
+import net.thevpc.echo.api.AppDialogResult;
+import net.thevpc.echo.Dimension;
 import net.thevpc.common.i18n.Str;
-import net.thevpc.echo.api.peers.AppAlertPeer;
-import net.thevpc.echo.api.tools.AppAlertModel;
+import net.thevpc.echo.spi.peers.AppAlertPeer;
 
 /**
  * @author vpc
  */
 public interface AppAlert extends AppControl{
 
-    AppDimension getPreferredSize();
+    Dimension getPreferredSize();
 
-    AppAlert setPreferredSize(AppDimension preferredSize);
+    AppAlert setPreferredSize(Dimension preferredSize);
 
     AppAlert setPreferredSize(int width, int height);
 
@@ -78,11 +77,10 @@ public interface AppAlert extends AppControl{
 
     AppAlert setButtonHandler(String s, AppDialogAction r);
 
-    String showDialog();
+    String showDialog(AppComponent owner);
 
-    AppDialogResult showInputDialog();
+    AppDialogResult showInputDialog(AppComponent owner);
     void closeDialog();
-    AppAlertModel model();
     AppAlertPeer peer();
     AppAlertPeer peer(boolean b);
 

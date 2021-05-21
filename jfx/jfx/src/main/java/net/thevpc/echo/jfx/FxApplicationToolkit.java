@@ -9,20 +9,30 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
-import net.thevpc.echo.AppUIPlaf;
+import net.thevpc.echo.Clipboard;
+import net.thevpc.echo.api.AppFont;
+import net.thevpc.echo.api.AppUIPlaf;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.UncheckedException;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.peers.AppColorPeer;
-import net.thevpc.echo.api.peers.AppImagePeer;
+import net.thevpc.echo.jfx.icons.FxIconUtils;
+import net.thevpc.echo.jfx.util.ColorUtils;
+import net.thevpc.echo.spi.peers.AppColorPeer;
+import net.thevpc.echo.spi.peers.AppFontPeer;
+import net.thevpc.echo.spi.peers.AppImagePeer;
 import net.thevpc.echo.iconset.IconTransform;
 import net.thevpc.echo.impl.AbstractApplicationToolkit;
 import net.thevpc.echo.jfx.icons.FxAppColorIconTransform;
 import net.thevpc.echo.jfx.icons.FxAppImage;
+import net.thevpc.echo.spi.peers.AppLabelPeer;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,8 +48,14 @@ public class FxApplicationToolkit extends AbstractApplicationToolkit {
 
     private Map<String, ToggleGroup> buttonGroups = new HashMap<>();
 
-    public FxApplicationToolkit(Application application) {
-        super(application);
+    public FxApplicationToolkit() {
+        super("javafx");
+    }
+
+    @Override
+    public void initialize(Application app) {
+        super.initialize(app);
+        //addPeerFactory(AppLabelPeer.class, FxLabelPeer.class);
     }
 
     public ToggleGroup getButtonGroup(String name) {
@@ -232,7 +248,66 @@ public class FxApplicationToolkit extends AbstractApplicationToolkit {
 //    }
 
     @Override
-    public AppColorPeer createColorPeer(int rgba, boolean hasAlpha) {
-        throw new IllegalArgumentException("not implemented yet");
+    public AppColorPeer createColorPeer(AppColor c) {
+        return new FxColorPeer(c);
+    }
+
+    @Override
+    public AppFontPeer createFontPeer(AppFont font) {
+        return new FxFontPeer(font);
+    }
+
+
+    @Override
+    public AppImagePeer createImagePeer(InputStream source) {
+        return new FxAppImage(
+                new Image(source)
+        );
+    }
+
+    @Override
+    public AppImagePeer createImagePeer(double width, double height, AppColor color) {
+        BufferedImage image=new BufferedImage((int) width,(int) height,BufferedImage.TYPE_INT_ARGB);
+        if(color!=null){
+            Graphics2D g = image.createGraphics();
+            g.setColor((Color) color.peer().toolkitColor());
+            g.fillRect(0,0,(int)width,(int)height);
+        }
+        return new FxAppImage(FxIconUtils.toFxImage(image));
+    }
+
+    @Override
+    public AppUIPlaf getPlaf(String id) {
+        return null;
+    }
+
+    @Override
+    public int parseColor(String colorText) {
+        return ColorUtils.parseColor(colorText).getRGB();
+    }
+
+    @Override
+    public Clipboard systemClipboard() {
+        return new Clipboard() {
+            @Override
+            public String getString() {
+                return null;
+            }
+
+            @Override
+            public String getHtml() {
+                return null;
+            }
+
+            @Override
+            public void putString(String value) {
+
+            }
+
+            @Override
+            public void putHtml(String value) {
+
+            }
+        };
     }
 }

@@ -1,6 +1,6 @@
 package net.thevpc.echo.impl;
 
-import net.thevpc.echo.AppPropertiesNodeItem;
+import net.thevpc.echo.api.AppPropertiesNodeItem;
 import net.thevpc.echo.Application;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.common.props.ObservableValue;

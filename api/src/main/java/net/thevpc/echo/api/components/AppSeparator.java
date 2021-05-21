@@ -1,7 +1,9 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppSeparatorModel;
+import net.thevpc.common.props.WritableDouble;
 
 public interface AppSeparator extends AppControl {
-    AppSeparatorModel model();
+    WritableDouble width();
+
+    WritableDouble height();
 }

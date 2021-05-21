@@ -3,14 +3,18 @@ package net.thevpc.echo;
 import net.thevpc.common.i18n.I18n;
 import net.thevpc.common.props.*;
 import net.thevpc.common.i18n.WritableStr;
+import net.thevpc.echo.api.*;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppContainer;
 import net.thevpc.echo.api.components.AppFrame;
-import net.thevpc.echo.api.tools.AppComponentModel;
 import net.thevpc.echo.iconset.IconSets;
-import net.thevpc.echo.impl.components.AppContainerChildren;
+import net.thevpc.echo.api.AppContainerChildren;
 
 public interface Application extends Property {
+
+    ClipboardManager clipboard();
+
+    ApplicationLoader loader();
 
     WritableStr name();
 
@@ -55,8 +59,8 @@ public interface Application extends Property {
 
     WritableString plaf();
 
-    AppContainer<AppComponentModel, AppComponent> container();
+    AppContainer<AppComponent> container();
 
-    AppContainerChildren<AppComponentModel, AppComponent> components();
+    AppContainerChildren<AppComponent> components();
 
 }

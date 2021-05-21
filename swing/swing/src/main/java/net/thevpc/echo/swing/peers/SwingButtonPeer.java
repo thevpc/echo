@@ -3,14 +3,16 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.peers.AppButtonPeer;
-import net.thevpc.echo.impl.components.AppComponentBase;
+import net.thevpc.echo.spi.peers.AppButtonPeer;
+import net.thevpc.echo.impl.components.ComponentBase;
 import net.thevpc.echo.swing.SwingApplicationUtils;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class SwingButtonPeer implements SwingPeer , AppButtonPeer {
-    private Object peer;
+    private Component swingComponent;
     private AppComponent component;
 
     public SwingButtonPeer() {
@@ -18,7 +20,7 @@ public class SwingButtonPeer implements SwingPeer , AppButtonPeer {
 
     public void install(AppComponent component0) {
         this.component=component0;
-        AppComponentBase ecomp = (AppComponentBase) component;
+        ComponentBase ecomp = (ComponentBase) component;
         Object sParent = component.parent()==null?null:component.parent().peer().toolkitComponent();
         if (
                 sParent instanceof JMenu
@@ -26,28 +28,26 @@ public class SwingButtonPeer implements SwingPeer , AppButtonPeer {
         ||sParent instanceof JDropDownButton
         ||sParent instanceof JDropDownLabel
         ) {
-            if(peer ==null) {
-                this.peer = new JMenuItem();
-                component.app().toolkit().runUI(()->{
-                SwingApplicationUtils.prepareAbstractButton((AbstractButton) peer, ecomp.model(),ecomp.app(),
+            if(swingComponent ==null) {
+                this.swingComponent = new JMenuItem();
+                SwingApplicationUtils.prepareAbstractButton((AbstractButton) swingComponent, ecomp,ecomp.app(),
                         true
-                );});
+                );
             }
         } else {
-            if(peer ==null) {
-                this.peer = new JButton();
-                component.app().toolkit().runUI(()-> {
+            if(swingComponent ==null) {
+                this.swingComponent = new JButton();
 
-                    SwingApplicationUtils.prepareAbstractButton((AbstractButton) peer, ecomp.model(), ecomp.app(),
+                    SwingApplicationUtils.prepareAbstractButton((AbstractButton) swingComponent, ecomp, ecomp.app(),
                             !(sParent instanceof JToolBar)
                     );
-                });
             }
         }
+        SwingHelpers.refreshPanel(swingComponent, 2);
     }
 
     @Override
     public Object toolkitComponent() {
-        return peer;
+        return swingComponent;
     }
 }

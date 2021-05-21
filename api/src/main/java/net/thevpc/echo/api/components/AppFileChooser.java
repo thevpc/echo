@@ -21,15 +21,12 @@
 
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.tools.AppFileChooserModel;
 
 /**
  *
  * @author vpc
  */
-public interface AppFileChooser extends AppControl{
-    AppFileChooserModel model();
-
+public interface AppFileChooser extends AppFileControl{
     boolean showOpenDialog(AppComponent owner);
 
     boolean showSaveDialog(AppComponent owner);

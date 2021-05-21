@@ -1,11 +1,11 @@
 package net.thevpc.echo.api.components;
 
 
-import net.thevpc.echo.AppDimension;
-import net.thevpc.echo.api.peers.AppDesktopPeer;
+import net.thevpc.echo.Dimension;
+import net.thevpc.echo.spi.peers.AppDesktopPeer;
 
 public interface AppDesktop extends AppWindowContainer {
-    AppDimension size();
+    Dimension size();
 
     void tileDesktop(boolean vertical);
 

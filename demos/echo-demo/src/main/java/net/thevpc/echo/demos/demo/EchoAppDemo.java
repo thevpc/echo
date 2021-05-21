@@ -3,17 +3,12 @@ package net.thevpc.echo.demos.demo;
 import net.thevpc.common.i18n.I18nBundle;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.common.props.Path;
-import net.thevpc.echo.AppWindowAnchor;
-import net.thevpc.echo.Application;
+import net.thevpc.echo.*;
+import net.thevpc.echo.api.AppContainerChildren;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppContainer;
-import net.thevpc.echo.api.tools.AppComponentModel;
 import net.thevpc.echo.constraints.Anchor;
-import net.thevpc.echo.impl.components.*;
-import net.thevpc.echo.jfx.FxApplication;
-import net.thevpc.echo.jfx.FxApplicationToolkit;
-import net.thevpc.echo.swing.SwingApplication;
-import net.thevpc.echo.swing.SwingApplicationToolkit;
+import net.thevpc.echo.impl.DefaultApplication;
 
 import javax.swing.*;
 import java.util.Date;
@@ -23,21 +18,16 @@ public class EchoAppDemo {
 
     public static void main(String[] args) {
         if (true) {
-            createApp(new SwingApplication());
+            createApp(new DefaultApplication("swing"));
         }
         if (false) {
-            createApp(new FxApplication());
+            createApp(new DefaultApplication("javafx"));
         }
     }
 
     public static void createApp(Application app) {
-        app.startupConfig().enableAppearance().set(false);
-        app.startupConfig().enableDesktop().set(true);
-        app.startupConfig().enableDocking().set(true);
-        app.startupConfig().enableIcons().set(false);
-        app.startupConfig().enableLocales().set(null);
-        app.startupConfig().enablePlaf().set(false);
-        app.startupConfig().enableQuit().set(false);
+        Frame frame = new Frame(app);
+        app.mainFrame().set(frame);
         //fallback
         app.i18n().bundles().add(0, (I18nBundle) (String name, Locale locale) -> {
             if (name.startsWith("Action.")) {
@@ -52,7 +42,7 @@ public class EchoAppDemo {
             return name;
         });
         app.start();
-        AppContainerChildren<AppComponentModel, AppComponent> mwt = app.components();
+        AppContainerChildren<AppComponent> mwt = app.components();
 //        mwt.addFolder(("/mainFrame/menuBar/File"));
 //        mwt.addFolder(("/mainFrame/menuBar/Edit"));
 //        mwt.addAction("/mainFrame/menuBar/File/Exit").bind(() -> JOptionPane.showMessageDialog(null, "Exit")).tool();
@@ -62,7 +52,7 @@ public class EchoAppDemo {
                     new Alert(app)
                             .setContentText(Str.of("Example Text"))
                             .withButtons("Please", "Never")
-                            .showDialog();
+                            .showDialog(null);
                 }, app),
                 "/mainFrame/toolBar/Default/*");
 
@@ -71,12 +61,12 @@ public class EchoAppDemo {
         }, app), Path.of("/mainFrame/toolBar/File/*"));
         mwt.add(new Button("NewFile", () -> {
         }, app), Path.of("/mainFrame/statusBar/File/*"));
-        for (AppWindowAnchor value : AppWindowAnchor.values()) {
+        for (Anchor value : Anchor.values()) {
             for (int i = 0; i < 2; i++) {
-                AppContainer ws = (AppContainer) app.mainFrame().get().workspace().get();
+                AppContainer ws = (AppContainer) app.mainFrame().get().content().get();
                 ws.children().add(
                         new Window(
-                                "id-"+value.name() + " " + (i + 1),
+                                "id-" + value.name() + " " + (i + 1),
                                 Str.of(value.name() + " " + (i + 1)),
                                 value,
                                 createComponent(app, value.name() + " " + (i + 1)), app
@@ -89,27 +79,27 @@ public class EchoAppDemo {
         mwt.add(new Button("B3", () -> {
         }, app), Path.of("/mainFrame/statusBar/File/*"));
         mwt.addSeparator(Path.of("/mainFrame/menuBar/File/*"));
-        app.components().add(new RadioButton("Radio1", "group1", app), "/mainFrame/menuBar/File/*");
-        app.components().add(new RadioButton("Radio2", "group1", app), "/mainFrame/menuBar/File/*");
-        app.components().add(new RadioButton("Radio3", "group1", app), "/mainFrame/menuBar/File/*");
-        mwt.add(new Spacer(app).expandX(), "/mainFrame/statusBar/Default/*");
-        mwt.add(new Button(app), "/mainFrame/statusBar/Default/*");
+        app.components().add(new RadioButton("Radio1", "group1", app), Path.of("/mainFrame/menuBar/File/*"));
+        app.components().add(new RadioButton("Radio2", "group1", app), Path.of("/mainFrame/menuBar/File/*"));
+        app.components().add(new RadioButton("Radio3", "group1", app), Path.of("/mainFrame/menuBar/File/*"));
+        mwt.add(new Spacer(app).expandX(), Path.of("/mainFrame/statusBar/Default/*"));
+        mwt.add(new Button(app), Path.of("/mainFrame/statusBar/Default/*"));
     }
 
-    protected static AppComponent createComponent(Application a, String text) {
-        return a.toolkit().createComponent(
-                (a.toolkit() instanceof SwingApplicationToolkit)
+    protected static AppComponent createComponent(Application app, String text) {
+        return new UserControl("Custom component", (
+                (app.toolkit().id().equals("swing"))
                         ? new JButton(text)
-                        : (a.toolkit() instanceof FxApplicationToolkit)
+                        : (app.toolkit().id().equals("javafx"))
                         ? new javafx.scene.control.Button(text)
                         : null
-        );
+        ), app);
     }
 
     private static AppComponent createPanel(Application app) {
         Panel panel = new Panel(app);
         Button b = new Button(app);
-        b.constraints().add(Anchor.CENTER);
+        b.anchor().set(Anchor.CENTER);
         panel.children().add(b);
         return panel;
     }

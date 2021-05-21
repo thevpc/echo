@@ -1,5 +1,7 @@
 package net.thevpc.echo.api.components;
 
-public interface AppUserControl extends AppControl{
+import net.thevpc.common.props.WritableValue;
 
+public interface AppUserControl extends AppControl{
+    WritableValue<Object> renderer();
 }

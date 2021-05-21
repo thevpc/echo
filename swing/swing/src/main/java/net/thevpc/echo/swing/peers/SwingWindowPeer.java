@@ -1,13 +1,10 @@
 package net.thevpc.echo.swing.peers;
 
-import net.thevpc.common.swing.frame.JInternalFrameHelper;
-import net.thevpc.common.swing.win.InternalWindowsHelper;
-import net.thevpc.echo.AppBounds;
+import net.thevpc.echo.Bounds;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppDesktop;
 import net.thevpc.echo.api.components.AppWindow;
-import net.thevpc.echo.api.peers.AppWindowPeer;
-import net.thevpc.echo.swing.peers.SwingPeer;
+import net.thevpc.echo.spi.peers.AppWindowPeer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,34 +15,32 @@ public class SwingWindowPeer implements SwingPeer, AppWindowPeer {
 //    private JInternalFrameHelper helper;
 //    private InternalWindowsHelper desktop;
     private AppWindow win;
-    private JComponent jComponent;
+    private JPanel windowPanel;
 
     @Override
     public void install(AppComponent comp) {
         if (this.win == null) {
             this.win = (AppWindow) comp;
-            win.app().toolkit().runUI(() -> {
-                        JPanel pp = new JPanel(new BorderLayout());
-                        pp.setName("SwingWindowPeer.Container");
-                        JComponent cc = (JComponent) win.model().component().getOr(x -> x == null ? null : x.peer().toolkitComponent());
-                        jComponent = pp;
-                        if (cc != null) {
-                            pp.add(cc, BorderLayout.CENTER);
+            windowPanel = new JPanel(new BorderLayout());
+            windowPanel.setName("SwingWindowPeer.Container");
+            JComponent cc = (JComponent) win.component().getOr(x -> x == null ? null : x.peer().toolkitComponent());
+            if (cc != null) {
+                windowPanel.add(cc, BorderLayout.CENTER);
+            }
+            win.component().onChange(x -> {
+                        if (x.newValue() == null) {
+                            windowPanel.removeAll();
+                        } else {
+                            windowPanel.add((JComponent) ((AppComponent) x.newValue()).peer().toolkitComponent(), BorderLayout.CENTER);
                         }
-                        win.model().component().listeners().add(x -> {
-                                    if (x.getNewValue() == null) {
-                                        jComponent.removeAll();
-                                    } else {
-                                        jComponent.add((JComponent) ((AppComponent) x.getNewValue()).peer().toolkitComponent());
-                                    }
-                                }
-                        );
-                    });
-//                AppComponentPeer parentPeer = comp.parent().peer();
+                    }
+            );
+
+            //                AppComponentPeer parentPeer = comp.parent().peer();
 //                if(parentPeer instanceof SwingWorkspacePeer) {
 //                    SwingWorkspacePeer p = (SwingWorkspacePeer) parentPeer;
-//                    AppWindowAnchor anchor = win.model().anchor().get();
-//                    if (anchor == AppWindowAnchor.DESKTOP) {
+//                    WindowAnchor anchor = win.anchor().get();
+//                    if (anchor == WindowAnchor.DESKTOP) {
 //                        this.desktop = p.getDesktop();
 //                        WindowInfo info = new WindowInfo();
 //                        info.setClosable(false);
@@ -54,32 +49,32 @@ public class SwingWindowPeer implements SwingPeer, AppWindowPeer {
 //                        info.setMaximizable(false);
 //                        info.setResizable(false);
 //                        info.setTitle(
-//                                win.model().title().get() == null ? null :
-//                                        win.model().title().get().getValue(comp.app().i18n())
+//                                win.title().get() == null ? null :
+//                                        win.title().get().getValue(comp.app().i18n())
 //                        );
-//                        info.setComponent((Component) win.model().component().get().peer().toolkitComponent());
+//                        info.setComponent((Component) win.component().get().peer().toolkitComponent());
 //                        this.helper = new JInternalFrameHelper(desktop.addFrame(info));
 //
-//                        SwingAppImage aim = (SwingAppImage) win.model().smallIcon().get();
+//                        SwingAppImage aim = (SwingAppImage) win.smallIcon().get();
 //                        info.setFrameIcon(aim == null ? null : aim.getIcon());
 //
 //                        JInternalFrame j = desktop.addFrame(info);
 //                        helper = new JInternalFrameHelper(j);
-//                        win.model().title().listeners().add(x -> {
+//                        win.title().onChange(x -> {
 //                            helper.getFrame().setTitle(
-//                                    win.model().title().get() == null ? null :
-//                                            win.model().title().get().getValue(comp.app().i18n())
+//                                    win.title().get() == null ? null :
+//                                            win.title().get().getValue(comp.app().i18n())
 //                            );
 //                        });
-//                        win.model().smallIcon().listeners().add(x -> {
-//                            SwingAppImage aim2 = (SwingAppImage) win.model().smallIcon().get();
+//                        win.smallIcon().onChange(x -> {
+//                            SwingAppImage aim2 = (SwingAppImage) win.smallIcon().get();
 //                            helper.getFrame().setFrameIcon(aim2 == null ? null : aim2.getIcon());
 //                        });
 //                    } else {
-////                        p.getWorkspacePanel().add(win.model().id(),
-////                                (JComponent) win.model().component().getOr(x -> x == null ? null : x.peer().toolkitComponent()),
-////                                win.model().title().getOr(x -> x == null ? null : x.getValue(comp.app().i18n())),
-////                                (Icon) win.model().smallIcon().getOr(x -> (x == null ? null : x.peer().toolkitImage())),
+////                        p.getWorkspacePanel().add(win.id(),
+////                                (JComponent) win.component().getOr(x -> x == null ? null : x.peer().toolkitComponent()),
+////                                win.title().getOr(x -> x == null ? null : x.getValue(comp.app().i18n())),
+////                                (Icon) win.smallIcon().getOr(x -> (x == null ? null : x.peer().toolkitImage())),
 ////                                false,
 ////                                SwingWorkspacePeer.toDocAnchor(anchor)
 ////                        );
@@ -92,7 +87,7 @@ public class SwingWindowPeer implements SwingPeer, AppWindowPeer {
 
     @Override
     public Object toolkitComponent() {
-        return jComponent;
+        return windowPanel;
     }
 
     @Override
@@ -108,7 +103,7 @@ public class SwingWindowPeer implements SwingPeer, AppWindowPeer {
                 JInternalFrame f = Arrays.stream(desk.getAllFrames())
                         .filter(inf ->
                                 inf.getContentPane().getComponentCount() == 1
-                                        && inf.getContentPane().getComponent(0) == jComponent
+                                        && inf.getContentPane().getComponent(0) == windowPanel
                         ).findFirst().orElse(null);
                 if(f!=null) {
                     desk.getDesktopManager().beginDraggingFrame(f);
@@ -120,9 +115,9 @@ public class SwingWindowPeer implements SwingPeer, AppWindowPeer {
     }
 
     @Override
-    public AppBounds bounds() {
-        Rectangle r = jComponent.getBounds();
-        return new AppBounds(
+    public Bounds bounds() {
+        Rectangle r = windowPanel.getBounds();
+        return new Bounds(
                 r.getX(),
                 r.getY(),
                 r.getWidth(),

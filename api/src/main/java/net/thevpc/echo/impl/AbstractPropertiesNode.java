@@ -24,9 +24,9 @@ package net.thevpc.echo.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.thevpc.echo.AppPropertiesNode;
-import net.thevpc.echo.AppPropertiesNodeFolder;
-import net.thevpc.echo.AppPropertiesTree;
+import net.thevpc.echo.api.AppPropertiesNode;
+import net.thevpc.echo.api.AppPropertiesNodeFolder;
+import net.thevpc.echo.api.AppPropertiesTree;
 
 /**
  *

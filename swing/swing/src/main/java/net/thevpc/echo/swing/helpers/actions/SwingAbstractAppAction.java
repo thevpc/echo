@@ -36,10 +36,10 @@ public abstract class SwingAbstractAppAction extends AbstractAction {
         putValue(SHORT_DESCRIPTION, description);
         putValue("SmallIconId", iconId);
         putValue(SMALL_ICON, application.iconSets().icon(iconId).get());
-        application.iconSets().icon(iconId).listeners().add(new PropertyListener() {
+        application.iconSets().icon(iconId).onChange(new PropertyListener() {
             @Override
             public void propertyUpdated(PropertyEvent event) {
-                putValue(SMALL_ICON, event.getNewValue());
+                putValue(SMALL_ICON, event.newValue());
             }
         });
     }

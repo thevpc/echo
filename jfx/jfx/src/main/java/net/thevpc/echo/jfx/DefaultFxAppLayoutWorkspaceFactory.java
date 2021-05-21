@@ -8,7 +8,7 @@
 //import net.thevpc.echo.*;
 //import net.thevpc.echo.api.components.AppFrame;
 //import net.thevpc.echo.api.components.AppWorkspaceOptions;
-//import net.thevpc.echo.api.tools.AppContainerModel;
+//import net.thevpc.echo.api.model.AppContainerModel;
 //import net.thevpc.echo.jfx.containers.ws.DefaultFxAppWorkspace;
 //
 ///**
