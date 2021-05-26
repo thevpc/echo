@@ -18,7 +18,7 @@ public class DefaultAppEvent implements AppEvent {
     }
 
     @Override
-    public Object getSource() {
+    public Object source() {
         return source;
     }
 }

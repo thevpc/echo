@@ -4,6 +4,7 @@ import net.thevpc.echo.Application;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppFileChooser;
 import net.thevpc.echo.api.AppFileFilter;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppFileChooserPeer;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class SwingAppFileChooserPeer implements AppFileChooserPeer {
+public class SwingAppFileChooserPeer implements AppFileChooserPeer,SwingPeer {
     private AppFileChooser chooser;
     private Application application;
     private JFileChooser swingComponent;
@@ -173,7 +174,7 @@ public class SwingAppFileChooserPeer implements AppFileChooserPeer {
 
         @Override
         public String getDescription() {
-            return filter.getDescription().value(application.i18n());
+            return Applications.rawString(filter.getDescription(),chooser);
         }
     }
 }

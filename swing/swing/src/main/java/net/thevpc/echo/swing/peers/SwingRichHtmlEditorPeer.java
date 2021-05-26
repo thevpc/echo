@@ -4,12 +4,15 @@ import net.thevpc.common.i18n.Str;
 import net.thevpc.common.swing.SwingComponentUtils;
 import net.thevpc.echo.UncheckedException;
 import net.thevpc.echo.api.AppColor;
-import net.thevpc.echo.api.AppRichHtmlEditor;
 import net.thevpc.echo.api.TextAlignment;
 import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.components.AppRichHtmlEditor;
 import net.thevpc.echo.spi.peers.AppRichHtmlEditorPeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 import net.thevpc.jeep.editor.ColorResource;
 import net.thevpc.jeep.editor.JEditorPaneBuilder;
+import net.thevpc.more.shef.BlocEnum;
 import net.thevpc.more.shef.ShefHelper;
 
 import javax.swing.*;
@@ -17,9 +20,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Highlighter;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseWheelEvent;
@@ -33,7 +34,7 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
 
     //    private JInternalFrameHelper helper;
 //    private InternalWindowsHelper desktop;
-    private AppRichHtmlEditor editor;
+    private AppRichHtmlEditor appComponent;
     private JEditorPaneBuilder editorBuilder;
     DocumentListener documentListener = new DocumentListener() {
 
@@ -53,36 +54,33 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
         }
 
         public void anyChange(DocumentEvent e) {
-            editor.text().set(Str.of(editorBuilder.editor().getText()));
+            appComponent.text().set(Str.of(editorBuilder.editor().getText()));
         }
     };
 
     @Override
     public void install(AppComponent comp) {
-        if (this.editor == null) {
-            this.editor = (AppRichHtmlEditor) comp;
+        if (this.appComponent == null) {
+            this.appComponent = (AppRichHtmlEditor) comp;
             editorBuilder = new JEditorPaneBuilder().setEditor(ShefHelper.installMin(new JEditorPane("text/html", "")));
+            final JEditorPane editor = editorBuilder.editor();
+            for (BlocEnum e: new BlocEnum[]{
+                    BlocEnum.H1,BlocEnum.H2,BlocEnum.H3,BlocEnum.H4,BlocEnum.H5,BlocEnum.H6,
+                    BlocEnum.PRE,BlocEnum.DIV,BlocEnum.P,BlocEnum.BLOCKQUOTE,BlocEnum.OL,BlocEnum.UL
+            }) {
+                registerAction("insert-"+(e.name().toLowerCase()),()->ShefHelper.runInsertBloc(editor, e));
+            }
 
+            SwingPeerHelper.installTextComponent(appComponent, editor);
+            SwingPeerHelper.installComponent(appComponent, editor);
 
-            this.editorBuilder.editor().getDocument().addDocumentListener(documentListener);
-            this.editorBuilder.editor().addPropertyChangeListener("document", e -> {
-                Document o = (Document) e.getOldValue();
-                Document n = (Document) e.getNewValue();
-                if (o != null) {
-                    o.removeDocumentListener(documentListener);
-                }
-                if (n != null) {
-                    n.addDocumentListener(documentListener);
-                }
-            });
-
-            editorBuilder.editor().addCaretListener(new CaretListener() {
+            editor.addCaretListener(new CaretListener() {
                 public void caretUpdate(CaretEvent evt) {
-                    editor.caretPosition().set(evt.getDot());
+                    appComponent.caretPosition().set(evt.getDot());
                     if (evt.getDot() == evt.getMark()) {
                         return;
                     }
-                    if(editor.highlightSelectionDuplicates().get()) {
+                    if (appComponent.highlightSelectionDuplicates().get()) {
 
                         JEditorPane txtPane = (JEditorPane) evt.getSource();
                         Highlighter highlighter = txtPane.getHighlighter();
@@ -103,7 +101,7 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
                             }
                             if (all.size() > 1) {
                                 removeAllHighlights("duplicates");
-                                AppColor cc=editor.highlightSelectionDuplicatesColor().get();
+                                AppColor cc = appComponent.highlightSelectionDuplicatesColor().get();
 
                                 for (int[] is : all) {
                                     highlight(is[0], is[1], cc, "duplicates");
@@ -113,37 +111,27 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
                     }
                 }
             });
-            editorBuilder.editor().addMouseWheelListener(new MouseWheelListener() {
+            editor.addMouseWheelListener(new MouseWheelListener() {
                 @Override
                 public void mouseWheelMoved(MouseWheelEvent e) {
-                    if(editor.zoomOnMouseWheel().get()) {
-                        SwingComponentUtils.evalZoomTextOnMouseWheel(e, editorBuilder.editor());
+                    if (appComponent.zoomOnMouseWheel().get()) {
+                        SwingComponentUtils.evalZoomTextOnMouseWheel(e, editor);
                     }
                 }
             });
         }
-        editor.onChange(e -> editorBuilder.editor().setText(
-                editor.text().getOr(x -> x == null ? "" : x.toString())
-        ));
     }
 
-//    public void setCaretPosition(int pos){
-//        editorBuilder.editor().setCaretPosition(pos);
-//    }
     @Override
-    public void removeAllHighlights(Object userObjectKey) {
-        editorBuilder.editor().getHighlighter().removeAllHighlights();
-    }
-
-    public void highlight(int from, int to, AppColor c, Object userObjectKey) {
-        highlight(from,to,c==null?null:new Color(c.rgba()), userObjectKey);
+    public Object toolkitComponent() {
+        return editorBuilder.component();
     }
 
     public void highlight(int from, int to, Color c, Object Object) {
         try {
-            if(c==null){
-                    c= ColorResource.of(
-                            "Button.default.focusColor;OptionPane.questionDialog.titlePane.background;OptionPane.questionDialog.titlePane.background;#green").get();
+            if (c == null) {
+                c = ColorResource.of(
+                        "Button.default.focusColor;OptionPane.questionDialog.titlePane.background;OptionPane.questionDialog.titlePane.background;#green").get();
             }
             javax.swing.text.DefaultHighlighter.DefaultHighlightPainter highlightPainter
                     = new javax.swing.text.DefaultHighlighter.DefaultHighlightPainter(c);
@@ -151,11 +139,6 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
         } catch (BadLocationException ex) {
             Logger.getLogger(SwingRichHtmlEditorPeer.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    @Override
-    public Object toolkitComponent() {
-        return editorBuilder.component();
     }
 
     @Override
@@ -170,17 +153,12 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
 
     @Override
     public void runTextUnderline() {
-        runAction("underline");
+        runAction("font-underline");
     }
 
     @Override
     public void runTextStrikeThrough() {
-        runAction("strike-through");
-    }
-
-    @Override
-    public void runSelectLine() {
-        runAction("select-line");
+        runAction("custom-strike");
     }
 
     @Override
@@ -205,6 +183,23 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
         }
     }
 
+    //    public void setCaretPosition(int pos){
+//        editorBuilder.editor().setCaretPosition(pos);
+//    }
+    @Override
+    public void removeAllHighlights(Object userObjectKey) {
+        editorBuilder.editor().getHighlighter().removeAllHighlights();
+    }
+
+    public void highlight(int from, int to, AppColor c, Object userObjectKey) {
+        highlight(from, to, c == null ? null : new Color(c.rgba()), userObjectKey);
+    }
+
+    @Override
+    public void runSelectLine() {
+        runAction("select-line");
+    }
+
     @Override
     public void runTextDuplicate() {
         JEditorPane editor = editorBuilder.editor();
@@ -225,33 +220,35 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
         }
     }
 
-    @Override
-    public void registerAccelerator(String actionId, String accelerator, Runnable action) {
-        editorBuilder.editor().getActionMap().put("custom-"+actionId, new AbstractAction() {
+    public void registerAction(String actionId, Runnable action) {
+        editorBuilder.editor().getActionMap().put(actionId, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 action.run();
             }
         });
-        editorBuilder.editor().getInputMap().put(KeyStroke.getKeyStroke(accelerator), "custom-"+actionId);
+    }
+
+    public void registerAccelerator(String actionId, String accelerator, Runnable action) {
+        registerAction("custom-" + actionId,action);
+        editorBuilder.editor().getInputMap().put(KeyStroke.getKeyStroke(accelerator), "custom-" + actionId);
 
     }
 
-    public void runAction(String action) {
-        Action a = editorBuilder.editor().getActionMap().get("action");
+    @Override
+    public boolean runAction(String action) {
+        Action a = editorBuilder.editor().getActionMap().get(action);
         if (a != null) {
             a.actionPerformed(newEvent(action));
+            return true;
         }
-    }
-
-    private ActionEvent newEvent(String action) {
-        return new ActionEvent(this, 0, action);
+        return false;
     }
 
     @Override
     public String getText(int from, int to) {
         try {
-            return editorBuilder.editor().getDocument().getText(from,to-from);
+            return editorBuilder.editor().getDocument().getText(from, to - from);
         } catch (BadLocationException e) {
             throw UncheckedException.wrap(e);
         }
@@ -259,6 +256,35 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
 
     @Override
     public int getTextLength() {
-        return  editorBuilder.editor().getDocument().getLength();
+        return editorBuilder.editor().getDocument().getLength();
     }
+
+    @Override
+    public void replaceSelection(String newValue) {
+        editorBuilder.editor().replaceSelection(newValue);
+    }
+
+    @Override
+    public void runTextForegroundColor(AppColor color) {
+        MutableAttributeSet attr = new SimpleAttributeSet();
+        StyleConstants.setForeground(attr, SwingHelpers.toAwtColor(color));
+        SwingComponentUtils.setCharacterAttributes(editorBuilder.editor(), attr, false);
+    }
+
+    @Override
+    public void runTextBackgroundColor(AppColor color) {
+        MutableAttributeSet attr = new SimpleAttributeSet();
+        StyleConstants.setBackground(attr, SwingHelpers.toAwtColor(color));
+        SwingComponentUtils.setCharacterAttributes(editorBuilder.editor(), attr, false);
+    }
+
+    private ActionEvent newEvent(String action) {
+        return new ActionEvent(this, 0, action);
+    }
+
+    @Override
+    public void requestFocus() {
+        editorBuilder.editor().requestFocus();
+    }
+    
 }

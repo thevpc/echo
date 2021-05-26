@@ -40,6 +40,7 @@ public interface IconSets extends WritableLiMap<String,IconSet>{
     WritableString id();
 
     ObservableValue<AppImage> icon(String id);
+    AppImage icon(String id,String iconSet);
 
     WritableValue<AppIconResolver> resolver();
 

@@ -5,7 +5,7 @@
  * Echo is a simple Desktop Application Framework witj productivity in mind.
  * Currently Echo has two ports : swing and javafx
  * <br>
- *
+ * <p>
  * Copyright [2021] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -16,44 +16,42 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-
-
-
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.api.AppDialogAction;
-import net.thevpc.echo.api.AppDialogInputPanel;
-import net.thevpc.echo.api.AppDialogResult;
-import net.thevpc.echo.Dimension;
 import net.thevpc.common.i18n.Str;
+import net.thevpc.common.i18n.WritableStr;
+import net.thevpc.common.props.WritableString;
+import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.api.AppDialogAction;
+import net.thevpc.echo.api.AppDialogInputPane;
+import net.thevpc.echo.api.AppDialogResult;
+import net.thevpc.echo.iconset.WritableImage;
 import net.thevpc.echo.spi.peers.AppAlertPeer;
 
 /**
  * @author vpc
  */
-public interface AppAlert extends AppControl{
+public interface AppAlert extends AppControl {
 
-    Dimension getPreferredSize();
+    WritableStr headerText();
 
-    AppAlert setPreferredSize(Dimension preferredSize);
+    WritableImage headerIcon();
 
-    AppAlert setPreferredSize(int width, int height);
+    WritableString defaultButton();
 
-    AppAlert setTitle(Str titleId, Object... params);
+    AppAlert setInputTextFieldContent(Str msg, Str initialValue);
 
-    AppAlert setInputTextFieldContent(Str headerId, Str initialValue);
+    AppAlert setInputTextAreaContent(Str msg, Str initialValue);
 
-    AppAlert setInputTextAreaContent(Str headerId, Str initialValue);
+    AppAlert setInputContent(AppDialogInputPane inputPanel);
 
-    AppAlert setInputContent(AppDialogInputPanel inputPanel);
-
-    AppComponent getContent();
-
-    AppAlert setContentText(Str labelId);
+    WritableValue<AppComponent> content();
 
     AppAlert setContent(AppComponent mainComponent);
 
     AppAlert setContent(Object mainComponent);
+
+    AppAlert setContentText(Str msg);
 
     AppAlert withOkOnlyButton();
 
@@ -73,16 +71,15 @@ public interface AppAlert extends AppControl{
 
     AppAlert withButtons(String... buttonIds);
 
-    AppAlert setDefaultId(String defaultId);
-
+    AppAlert setDefaultButton(String s);
     AppAlert setButtonHandler(String s, AppDialogAction r);
 
     String showDialog(AppComponent owner);
 
     AppDialogResult showInputDialog(AppComponent owner);
-    void closeDialog();
-    AppAlertPeer peer();
-    AppAlertPeer peer(boolean b);
 
+    void closeDialog();
+
+    AppAlertPeer peer();
 
 }

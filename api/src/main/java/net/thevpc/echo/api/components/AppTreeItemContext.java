@@ -1,12 +1,15 @@
 package net.thevpc.echo.api.components;
 
-import net.thevpc.echo.Color;
+import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.constraints.Anchor;
 
 public interface AppTreeItemContext<T> {
+
+    Application getApplication();
+
     boolean isExpanded();
 
     boolean isLeaf();

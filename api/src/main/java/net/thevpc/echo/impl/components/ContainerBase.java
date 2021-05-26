@@ -34,7 +34,7 @@ public abstract class ContainerBase<C extends AppComponent>
     ) {
         super(id,app,componentType,peerType);
         this.childComponentType=childComponentType;
-        path().set(Path.of("/"));
+        //path().set(Path.of("/"));
         if(initChildren) {
             children = new AppContainerChildrenImpl<C>("children", childComponentType, this);
         }

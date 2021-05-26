@@ -1,12 +1,16 @@
 package net.thevpc.echo.api.components;
 
+import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.constraints.Anchor;
 
-public interface AppChoiceItemContext<T>{
+public interface AppChoiceItemContext<T> {
+
     AppChoiceControl<T> getChoice();
+
+    Application getApplication();
 
     int getIndex();
 

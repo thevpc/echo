@@ -5,7 +5,6 @@ import net.thevpc.echo.Application;
 import net.thevpc.echo.Button;
 import net.thevpc.echo.Panel;
 import net.thevpc.echo.VerticalPane;
-import net.thevpc.echo.constraints.Layout;
 import net.thevpc.echo.impl.DefaultApplication;
 
 import javax.swing.*;

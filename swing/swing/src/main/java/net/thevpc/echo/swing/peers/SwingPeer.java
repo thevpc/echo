@@ -14,7 +14,7 @@ import net.thevpc.echo.spi.peers.AppComponentPeer;
  *
  * @author vpc
  */
-public interface SwingPeer extends AppComponentPeer{
+public interface SwingPeer extends AppComponentPeer {
 
     static Component gcompOf(AppComponent c) {
         SwingPeer a = of(c);
@@ -38,9 +38,9 @@ public interface SwingPeer extends AppComponentPeer{
     }
 
     static SwingPeer of(Component component) {
-        if(component instanceof JComponent){
-            SwingPeer e =(SwingPeer) ((JComponent) component).getClientProperty(SwingPeer.class.getName());
-            if(e!=null){
+        if (component instanceof JComponent) {
+            SwingPeer e = (SwingPeer) ((JComponent) component).getClientProperty(SwingPeer.class.getName());
+            if (e != null) {
                 return e;
             }
         }
@@ -55,4 +55,10 @@ public interface SwingPeer extends AppComponentPeer{
         return (JComponent) awtComponent();
     }
 
+    default void requestFocus() {
+        Component c = awtComponent();
+        if (c != null) {
+            c.requestFocus();
+        }
+    }
 }

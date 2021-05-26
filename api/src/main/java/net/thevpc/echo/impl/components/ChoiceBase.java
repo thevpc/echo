@@ -97,9 +97,6 @@ public class ChoiceBase<T> extends ControlBase implements AppChoiceControl<T> {
     public WritableValue<AppChoiceItemRenderer<T>> itemRenderer() {
         return itemRenderer;
     }
-    //    public ChoiceBase(Class<T> componentType,Application app) {
-//        super(new ChoiceModel<T>(componentType,app));
-//    }
 
 
     private void revalidateDisabled() {

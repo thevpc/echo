@@ -19,6 +19,7 @@
 
 package net.thevpc.echo.api;
 
+import net.thevpc.common.props.ObservableValue;
 import net.thevpc.echo.Clipboard;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.iconset.IconTransform;
@@ -75,4 +76,6 @@ public interface ApplicationToolkit {
     int parseColor(String colorText);
 
     Clipboard systemClipboard();
+
+    ObservableValue<AppComponent> focusOwner();
 }

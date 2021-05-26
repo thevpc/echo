@@ -38,19 +38,5 @@ public class AppProps {
             return p;
         }
 
-        public WritableImage iconOf(AppImage value) {
-            WritableImage p = new WritableImage(name, app);
-            p.set(value);
-            prepare(p);
-            return p;
-        }
-
-        public WritableImage iconOf(Str value) {
-            WritableImage p = new WritableImage(name, app);
-            p.set(value);
-            prepare(p);
-            return p;
-        }
-
     }
 }

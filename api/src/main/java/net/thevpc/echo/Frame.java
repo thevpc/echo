@@ -5,8 +5,10 @@ import net.thevpc.common.props.*;
 import net.thevpc.echo.api.AppContainerChildren;
 import net.thevpc.echo.api.AppUIPlaf;
 import net.thevpc.echo.api.components.*;
+import net.thevpc.echo.constraints.AllAnchors;
 import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.iconset.IconSet;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.components.ContainerBase;
 import net.thevpc.echo.impl.components.NameBoundPropertyListener;
 import net.thevpc.echo.spi.peers.AppFramePeer;
@@ -32,7 +34,9 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
     private WindowStateSetValue state;
     private WritableBoolean closable;
     private WritableBoolean iconifiable;
-    private DefaultMenusHelper defaultMenusHelper=new DefaultMenusHelper();
+    private WritableBoolean propagateLocale= Props.of("propagateLocale").booleanOf(true);
+    private WritableBoolean propagateIconSet= Props.of("propagateIconSet").booleanOf(true);
+    private DefaultMenusHelper defaultMenusHelper = new DefaultMenusHelper();
 
     public Frame(Application app) {
         this(null, app);
@@ -84,6 +88,24 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
         iconifiable = AppProps.of("iconifiable", app()).booleanOf(true);
         state = new WindowStateSetValue("state");
         propagateEvents(closable, iconifiable, state);
+        locale().onChangeAndInit(() -> {
+            if(propagateLocale().get()) {
+                Applications.setAllLocale(Frame.this, locale().get());
+            }
+        });
+        iconSet().onChangeAndInit(() -> {
+            if(propagateIconSet().get()) {
+                Applications.setAllIconSet(Frame.this, iconSet().get());
+            }
+        });
+    }
+
+    public WritableBoolean propagateLocale() {
+        return propagateLocale;
+    }
+
+    public WritableBoolean propagateIconSet() {
+        return propagateIconSet;
     }
 
     private void runAfterStart(Runnable r) {
@@ -103,9 +125,13 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
             case "menuBar": {
                 return new MenuBar(app());
             }
-            case "statusBar":
             case "toolBar": {
-                return new ToolBarGroup(app());
+                return new ToolBarGroup(app())
+                        .with((ToolBarGroup t) -> t.parentConstraints().add(AllAnchors.LEFT));
+            }
+            case "statusBar": {
+                return new ToolBarGroup(app())
+                        .with((ToolBarGroup t) -> t.parentConstraints().add(AllAnchors.RIGHT));
             }
             case "content": {
                 return new DockPane(app());
@@ -208,6 +234,7 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
             addViewLocaleActions();
             addWindowsActions();
         }
+
         public void addViewAppearanceActions() {
             runAfterStart(() -> {
                 Path path = path().get().append("/menuBar/View/Appearance");
@@ -254,11 +281,14 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 app.components().addSeparator(path.append("/Separator2"));
 
                 CheckBox visibleToolBar = new CheckBox("Toolbar.visible", app);
-                visibleToolBar.visible().bind(app, Frame.this.path().get().append("toolBar/visible"));
+                Path toolBarVisiblePath = Frame.this.path().get().append("toolBar/visible");
+                visibleToolBar.selected().set(true);
+                visibleToolBar.selected().bind(app, toolBarVisiblePath);
                 app.components().add(visibleToolBar, path.append("Toolbar"));
 
                 CheckBox visibleStatusBar = new CheckBox("StatusBar.visible", app);
-                visibleStatusBar.visible().bind(app, Frame.this.path().get().append("statusBar/visible"));
+                visibleStatusBar.selected().set(true);
+                visibleStatusBar.selected().bind(app, Frame.this.path().get().append("statusBar/visible"));
                 app.components().add(visibleStatusBar, path.append("StatusBar"));
             });
         }
@@ -270,12 +300,12 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                     app().components().addFolder(path).smallIcon().set(Str.i18n("locales"));
                     RadioButton toggle = new RadioButton("Locale.System", path.toString(), app());
                     toggle.text().set(Str.i18n(toggle.id()));
-                    toggle.selected().bindEquals(app().i18n().locale(), Locale.getDefault());
+                    toggle.selected().bindEquals(locale(), Locale.getDefault());
                     app().components().add(toggle, path.append("system-locale"));
                     for (Locale locale : app().i18n().locales()) {
                         toggle = new RadioButton("Locale." + locale.toString(), path.toString(), app());
                         toggle.text().set(Str.i18n(toggle.id()));
-                        toggle.selected().bindEquals(app().i18n().locale(), locale);
+                        toggle.selected().bindEquals(locale(), locale);
                         app().components().add(toggle, path.append(locale + "-locale"));
                     }
                 }
@@ -382,7 +412,6 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 if (ws instanceof AppDock) {
                     ObservableList<AppComponent> values = ((AppDock) ws).children();
                     values.onChange(e -> {
-                        System.out.println("tools changed...");
                         if (e.eventType() == PropertyUpdate.ADD) {
                             AppComponent value = e.newValue();
                             if (value.anchor().get() != Anchor.CENTER) {
@@ -467,7 +496,7 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 for (IconSet iconset : app().iconSets().values()) {
                     RadioButton t = new RadioButton("IconSet." + iconset.getId(), path.append("Packs").toString(), app());
                     t.text().set(Str.i18n(t.id()));
-                    t.selected().bindEquals(app().iconSets().id(), iconset.getId());
+                    t.selected().bindEquals(iconSet(), iconset.getId());
                     components.add(t, path.append("Packs").append(iconset.getId()));
                 }
                 if (sizes == null || sizes.length == 0) {
@@ -529,9 +558,10 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                     if (item.isContrast()) {
                         q = "Contrast";
                     }
-                    RadioButton toggle = new RadioButton("Plaf." + id, path.toString(), app());
+                    RadioButton toggle = new RadioButton(".Plaf." + id, path.toString(), app());
                     toggle.text().set(Str.i18n("Plaf." + id));
-                    toggle.smallIcon().set((Str) null);
+//                    toggle.smallIcon().set((Str) null);
+//                    toggle.largeIcon().set((Str) null);
                     toggle.selected().userObjects().put("path", path.append(q).append(pname));
                     toggle.selected().bindEquals(app().plaf(), id);
                     app().components().add(toggle, path.append(q).append(pname));

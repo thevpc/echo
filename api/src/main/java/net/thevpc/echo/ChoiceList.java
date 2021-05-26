@@ -4,6 +4,7 @@ import net.thevpc.echo.api.components.AppChoiceList;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.impl.components.ChoiceBase;
 import net.thevpc.echo.spi.peers.AppChoiceListPeer;
+import net.thevpc.echo.spi.peers.AppComponentPeer;
 
 public class ChoiceList<T> extends ChoiceBase<T> implements AppChoiceList<T> {
 
@@ -16,6 +17,14 @@ public class ChoiceList<T> extends ChoiceBase<T> implements AppChoiceList<T> {
                 (Class<? extends AppComponent>) AppChoiceList.class, AppChoiceListPeer.class);
     }
 
+    @Override
+    public AppChoiceListPeer peer() {
+        return (AppChoiceListPeer) super.peer();
+    }
 
+    @Override
+    public void ensureIndexIsVisible(int index) {
+        peer().ensureIndexIsVisible(index);
+    }
 }
 

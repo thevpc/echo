@@ -4,6 +4,7 @@ import net.thevpc.echo.KeyCode;
 import net.thevpc.echo.api.AppEvent;
 
 public interface AppComponentEvent extends AppEvent {
+
     AppEventType eventType();
 
     KeyCode code();
@@ -35,4 +36,5 @@ public interface AppComponentEvent extends AppEvent {
     boolean isDoubleClick();
 
     int getClickCount();
+    AppComponent source();
 }

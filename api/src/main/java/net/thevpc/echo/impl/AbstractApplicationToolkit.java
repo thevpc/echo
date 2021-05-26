@@ -1,5 +1,8 @@
 package net.thevpc.echo.impl;
 
+import net.thevpc.common.props.ObservableValue;
+import net.thevpc.common.props.Props;
+import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.AppComponentPeerFactory;
 import net.thevpc.echo.api.ApplicationToolkit;
@@ -15,6 +18,7 @@ public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
 
     protected String id;
     protected Application app;
+    private WritableValue<AppComponent> focusOwner= Props.of("focusOwner").valueOf(AppComponent.class);
     /**
      * used to map a peer instance for a given component
      */
@@ -345,5 +349,10 @@ public abstract class AbstractApplicationToolkit implements ApplicationToolkit {
         for (ApplicationToolkitConfigurator cc : psl) {
             cc.configure(this);
         }
+    }
+
+    @Override
+    public ObservableValue<AppComponent> focusOwner() {
+        return focusOwner;
     }
 }

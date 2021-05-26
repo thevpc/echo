@@ -2,6 +2,7 @@ package net.thevpc.echo.swing.peers;
 
 import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.components.AppTextControl;
 import net.thevpc.echo.swing.SwingApplicationUtils;
 
 import java.awt.*;
@@ -11,7 +12,7 @@ public class SwingMenuButtonPeer implements SwingPeer{
     @Override
     public void install(AppComponent comp) {
         jcomponent = new JDropDownButton();
-        SwingApplicationUtils.prepareAbstractButton(jcomponent,comp, comp.app(), false);
+        SwingApplicationUtils.prepareAbstractButton(jcomponent,(AppTextControl) comp, comp.app(), false);
     }
 
     @Override

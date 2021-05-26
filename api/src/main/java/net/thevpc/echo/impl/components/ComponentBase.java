@@ -4,10 +4,7 @@ import net.thevpc.common.i18n.Str;
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.SimpleProperty;
-import net.thevpc.echo.AppProps;
-import net.thevpc.echo.Application;
-import net.thevpc.echo.Dimension;
-import net.thevpc.echo.WritableTextStyle;
+import net.thevpc.echo.*;
 import net.thevpc.echo.api.AppChildConstraints;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
@@ -24,9 +21,11 @@ import net.thevpc.echo.spi.peers.AppComponentPeer;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class ComponentBase extends SimpleProperty implements AppComponent {
+
     private final WritableBoolean focused;
     private final WritableBoolean editing;
     private final WritableBoolean enabled;
@@ -43,30 +42,36 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
     private final WritableValue<AppColor> foregroundColor;
     private final WritableValue<AppColor> backgroundColor;
     private final WritableValue<Dimension> prefSize;
+    private final WritableValue<Bounds> bounds;
+    private final WritableValue<Locale> locale = Props.of("path").valueOf(Locale.class, null);
+    private final WritableValue<String> iconSet = Props.of("path").valueOf(String.class, null);
+    private final WritableBoolean shown;
     private final WritableBoolean opaque;
     protected AppComponent parent;
     protected WritableValue<Path> path = Props.of("path").valueOf(Path.class, Path.of());
-    protected DefaultAppComponentEvents events;
     protected WritableValue<AppContextMenu> contextMenu = Props.of("contextMenu").valueOf(AppContextMenu.class);
     protected AppComponentPeer peer;
     protected Class<? extends AppComponent> itemType;
     protected Class<? extends AppComponentPeer> peerType;
     protected WritableMap<Object, Object> properties = Props.of("properties").mapOf(Object.class, Object.class);
-    protected WritableValue<Anchor> anchor = Props.of("anchor").valueOf(Anchor.class, Anchor.CENTER);
+    protected WritableValue<Anchor> anchor = Props.of("anchor").valueOf(Anchor.class);
     private WritableValue<Integer> order = Props.of("order").valueOf(Integer.class, null);
     private DefaultParentConstraints parentConstraints = new DefaultParentConstraints("parentConstraints");
     private DefaultAppChildConstraints childConstraints = new DefaultAppChildConstraints("childConstraints");
     private WritableTextStyle titleStyle;
-    private String id;
     private Application app;
 
     public ComponentBase(String id, Application app,
                          Class<? extends AppComponent> itemType,
                          Class<? extends AppComponentPeer> peerType) {
-        super(id == null ? UUID.randomUUID().toString() : id);
-        boolean doConfig = id != null;
-        this.id = propertyName();
+        super(id == null ? UUID.randomUUID().toString() : id, new DefaultAppComponentEvents(null));
+        DefaultAppComponentEvents li = (DefaultAppComponentEvents) super.events();
+        li.initSource(this);
+        boolean doConfig = id != null && !id.startsWith(".");
         this.app = app;
+        if (app == null) {
+            throw new NullPointerException();
+        }
         prefSize = AppProps.of("prefSize", app).valueOf(Dimension.class);
         focused = AppProps.of("focused", app).booleanOf(false);
         editing = AppProps.of("editing", app).booleanOf(false);
@@ -74,37 +79,50 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
         active = AppProps.of("active", app).booleanOf(true);
         enabled = AppProps.of("enabled", app).booleanOf(true);
         visible = AppProps.of("visible", app).booleanOf(true);
-        title = AppProps.of("title", app).strOf(id==null?Str.of(""):Str.i18n(id));
+        title = AppProps.of("title", app).strOf(id == null ? Str.of("") : Str.i18n(id));
         this.titleStyle = new WritableTextStyle("titleStyle");
         tooltip = AppProps.of("tooltip", app).strOf(
                 doConfig/*&&model.config().configurableTooltip().get()*/ ? Str.i18n(id + ".tooltip") : null);
-        smallIcon = AppProps.of("smallIcon", app).iconOf(
-                doConfig/*&&model.config().configurableSmallIcon().get()*/ ?
-                        Str.i18n(id + ".icon") : null);
-        largeIcon = AppProps.of("largeIcon", app).iconOf(
-                doConfig/*&&model.config().configurableLargeIcon().get()*/ ?
-                        Str.i18n(id + ".largeIcon") : null
-        );
+        smallIcon = new WritableImage("smallIcon", app, this);
+        smallIcon.set(doConfig/*&&model.config().configurableSmallIcon().get()*/ ? Str.i18n(id + ".icon") : null);
+        largeIcon = new WritableImage("largeIcon", app, this);
+        largeIcon.set(doConfig/*&&model.config().configurableLargeIcon().get()*/ ? Str.i18n(id + ".largeIcon") : null);
         accelerator = AppProps.of("accelerator", app).stringOf(null);
         mnemonic = AppProps.of("mnemonic", app).intOf(0);
         font = AppProps.of("font", app).valueOf(AppFont.class);
         foregroundColor = AppProps.of("foregroundColor", app).valueOf(AppColor.class);
         backgroundColor = AppProps.of("backgroundColor", app).valueOf(AppColor.class);
         opaque = AppProps.of("opaque", app).booleanOf(true);
+        shown = AppProps.of("shown", app).booleanOf(false);
+        bounds = AppProps.of("bounds", app).valueOf(Bounds.class);
         this.itemType = itemType;
         this.peerType = peerType;
         this.path.set(Path.of(id()));
-        events = new DefaultAppComponentEvents();
         propagateEvents(anchor, enabled, visible, editable, active, title, titleStyle,
                 tooltip, smallIcon, largeIcon, accelerator, mnemonic, prefSize,
-                focused, editing
+                focused, editing, bounds, shown, locale, iconSet
         );
         propagateEvents(order, childConstraints);
+        focused.onChange(event -> {
+            if (focused.get()) {
+                ((WritableValue<AppComponent>) app.toolkit().focusOwner()).set(this);
+            }
+        });
+    }
+
+    @Override
+    public WritableValue<AppFont> font() {
+        return font;
+    }
+
+    @Override
+    public WritableValue<AppColor> foregroundColor() {
+        return foregroundColor;
     }
 
     @Override
     public AppComponentEvents events() {
-        return events;
+        return (AppComponentEvents) super.events();
     }
 
     public AppChildConstraints childConstraints() {
@@ -176,19 +194,9 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
         return peerType;
     }
 
-    protected void prepareUnshowing() {
-        if (peer != null) {
-            app().toolkit().runUI(() -> {
-                AppComponentPeer p = peer();
-                p.uninstall();
-//                peer = null;
-            });
-        }
-    }
-
     @Override
     public String id() {
-        return id;
+        return propertyName();
     }
 
     @Override
@@ -277,38 +285,79 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
         return opaque;
     }
 
+    public WritableValue<Bounds> bounds() {
+        return bounds;
+    }
+
     @Override
-    public AppComponent copy(boolean bind){
+    public WritableValue<Locale> locale() {
+        return locale;
+    }
+
+    @Override
+    public WritableValue<String> iconSet() {
+        return iconSet;
+    }
+
+    @Override
+    public WritableBoolean shown() {
+        return shown;
+    }
+
+    @Override
+    public AppComponent copy(boolean bind) {
         return copyDefault();
     }
 
-    protected AppComponent copyDefault(){
+    @Override
+    public void requestFocus() {
+        peer().requestFocus();
+    }
+
+    protected void prepareUnshowing() {
+        if (peer != null) {
+            app().toolkit().runUI(() -> {
+                AppComponentPeer p = peer();
+                p.uninstall();
+//                peer = null;
+            });
+        }
+    }
+
+    protected AppComponent copyDefault() {
         Constructor c = resolveDefaultComponentConstructor(getClass(), Application.class);
         c.setAccessible(true);
         try {
             return (AppComponent) c.newInstance(app());
         } catch (Exception ex) {
-            throw new IllegalArgumentException("invalid constructor "+getClass().getSimpleName()+"(Application)",ex);
+            throw new IllegalArgumentException("invalid constructor " + getClass().getSimpleName() + "(Application)", ex);
         }
     }
-    protected Constructor resolveDefaultComponentConstructor(Class componentType,Class modelClass){
-        List<Constructor> possibilities=new ArrayList<>();
+
+    protected Constructor resolveDefaultComponentConstructor(Class componentType, Class modelClass) {
+        List<Constructor> possibilities = new ArrayList<>();
         for (Constructor cc : componentType.getDeclaredConstructors()) {
-            if(cc.getParameterCount()==1){
+            if (cc.getParameterCount() == 1) {
                 Class t1 = cc.getParameterTypes()[0];
-                if(t1.isAssignableFrom(modelClass)){
+                if (t1.isAssignableFrom(modelClass)) {
                     possibilities.add(cc);
                 }
             }
         }
-        if(possibilities.isEmpty()){
-            throw new IllegalArgumentException("Missing constructor "+componentType.getSimpleName()+"("+modelClass.getSimpleName()+")");
+        if (possibilities.isEmpty()) {
+            throw new IllegalArgumentException("Missing constructor " + componentType.getSimpleName() + "(" + modelClass.getSimpleName() + ")");
         }
-        if(possibilities.size()>1){
-            throw new IllegalArgumentException("Ambiguous constructors "+componentType.getSimpleName()+"("+modelClass.getSimpleName()+") : "+possibilities);
+        if (possibilities.size() > 1) {
+            throw new IllegalArgumentException("Ambiguous constructors " + componentType.getSimpleName() + "(" + modelClass.getSimpleName() + ") : " + possibilities);
         }
         return possibilities.get(0);
     }
 
+    public void setParent(AppComponent other) {
+        this.parent = other;
+    }
 
+    public void setPeer(AppComponentPeer peer) {
+        this.peer = peer;
+    }
 }

@@ -1,8 +1,5 @@
 package net.thevpc.echo.swing.peers;
 
-import net.thevpc.common.i18n.Str;
-import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.swing.SwingComponentUtils;
 import net.thevpc.echo.UncheckedException;
 import net.thevpc.echo.api.AppColor;
@@ -13,91 +10,58 @@ import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.jeep.editor.ColorResource;
 import net.thevpc.jeep.editor.JEditorPaneBuilder;
 import net.thevpc.jeep.editor.JSyntaxStyleManager;
+import net.thevpc.jeep.editorkits.AvailableEditorKits;
 import net.thevpc.more.shef.ShefHelper;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.text.Highlighter;
+import javax.swing.text.EditorKit;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SwingTextAreaPeer implements SwingPeer, AppTextAreaPeer {
 //    private JTextComponent jTextComponent;
+
     private JEditorPaneBuilder editorBuilder;
     private AppTextArea appTextArea;
-    private boolean updatingDocument;
-    DocumentListener documentListener = new DocumentListener() {
-
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            anyChange(e);
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            anyChange(e);
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            anyChange(e);
-        }
-
-        public void anyChange(DocumentEvent e) {
-            if(!updatingDocument) {
-                try{
-                    updatingDocument=true;
-                    appTextArea.text().set(Str.of(editorBuilder.editor().getText()));
-                }finally{
-                    updatingDocument=false;
-                }
-            }
-        }
-    };
 
     public SwingTextAreaPeer() {
     }
 
     public void install(AppComponent component) {
         appTextArea = (AppTextArea) component;
-        String contentType = appTextArea.textContentType().get();
-        if (contentType == null) {
-            contentType = "text/plain";
+        JEditorPane editor = new JEditorPane();
+        for (Map.Entry<String, Supplier<EditorKit>> ee : AvailableEditorKits.getAvailable().entrySet()) {
+            editor.setEditorKitForContentType(ee.getKey(), ee.getValue().get());
         }
-
-        editorBuilder = new JEditorPaneBuilder().setEditor(
-                new JEditorPane(contentType, "")
-        );
+        appTextArea.textContentType().onChangeAndInit(() -> {
+            String contentType = appTextArea.textContentType().get();
+            if (contentType == null) {
+                contentType = "text/plain";
+            }
+            editor.setContentType(contentType);
+        });
+        editorBuilder = new JEditorPaneBuilder().setEditor(editor);
         this.editorBuilder.setNoScroll(true);
         this.editorBuilder.editor().setFont(JSyntaxStyleManager.getDefaultFont());
-        if(appTextArea.rowNumberRuler().get()){
+        if (appTextArea.rowNumberRuler().get()) {
             editorBuilder.addLineNumbers();
         }
-        this.editorBuilder.editor().getDocument().addDocumentListener(documentListener);
+        SwingPeerHelper.installTextComponent(appTextArea, editorBuilder.editor());
 
-        SwingPeerHelper.installComponent(appTextArea,this.editorBuilder.editor());
+        SwingPeerHelper.installComponent(appTextArea, this.editorBuilder.editor());
 
-        this.editorBuilder.editor().addPropertyChangeListener("document", e -> {
-            Document o = (Document) e.getOldValue();
-            Document n = (Document) e.getNewValue();
-            if (o != null) {
-                o.removeDocumentListener(documentListener);
-            }
-            if (n != null) {
-                n.addDocumentListener(documentListener);
-            }
-        });
         editorBuilder.editor().addCaretListener(new CaretListener() {
             public void caretUpdate(CaretEvent evt) {
                 appTextArea.caretPosition().set(evt.getDot());
@@ -142,36 +106,6 @@ public class SwingTextAreaPeer implements SwingPeer, AppTextAreaPeer {
                 }
             }
         });
-
-//        jTextComponent.setText(
-//                appTextArea.text().getOr(x -> x == null ? "" : x.toString())
-//        );
-
-        appTextArea.text().onChange(new PropertyListener() {
-            boolean updating=false;
-            @Override
-            public void propertyUpdated(PropertyEvent e) {
-                if(!updating) {
-                    updating=true;
-                    try {
-                        if(!updatingDocument) {
-                            editorBuilder.editor().setText(
-                                    appTextArea.text().getOr(x -> x == null ? "" : x.toString())
-                            );
-                        }
-                    }finally {
-                        updating=false;
-                    }
-                }
-            }
-        });
-        appTextArea.text().getOr(x -> x == null ? "" : x.toString());
-
-
-        appTextArea.editable().onChange(e->{
-            editorBuilder.editor().setEnabled(appTextArea.editable().get());
-        });
-        editorBuilder.editor().setEnabled(appTextArea.editable().get());
     }
 
     @Override
@@ -182,7 +116,6 @@ public class SwingTextAreaPeer implements SwingPeer, AppTextAreaPeer {
 //    public void setCaretPosition(int pos) {
 //        editorBuilder.editor().setCaretPosition(pos);
 //    }
-
     @Override
     public void removeAllHighlights(Object userObjectKey) {
         editorBuilder.editor().getHighlighter().removeAllHighlights();
@@ -266,5 +199,10 @@ public class SwingTextAreaPeer implements SwingPeer, AppTextAreaPeer {
     @Override
     public void runSelectLine() {
         runAction("select-line");
+    }
+
+    @Override
+    public void replaceSelection(String newValue) {
+        editorBuilder.editor().replaceSelection(newValue);
     }
 }

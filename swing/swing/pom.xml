@@ -84,9 +84,19 @@
         </dependency>
         <dependency>
             <groupId>net.thevpc.jeep</groupId>
-            <artifactId>jeep-editor-swing</artifactId>
+            <artifactId>jeep-swing-editor</artifactId>
             <version>1.2.7</version>
         </dependency>
+        <dependency>
+            <groupId>net.thevpc.jeep</groupId>
+            <artifactId>jeep-swing-editorkits</artifactId>
+            <version>1.2.7</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.lobobrowser</groupId>-->
+<!--            <artifactId>LoboBrowser</artifactId>-->
+<!--            <version>1.0.0</version>-->
+<!--        </dependency>-->
 
 
         <!-- ##############################

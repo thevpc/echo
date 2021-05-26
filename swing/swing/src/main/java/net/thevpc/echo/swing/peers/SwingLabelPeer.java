@@ -4,7 +4,10 @@ import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppLabel;
+import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppLabelPeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.echo.swing.icons.SwingAppImage;
 
 import javax.swing.*;
@@ -29,34 +32,42 @@ public class SwingLabelPeer implements SwingPeer, AppLabelPeer {
             if (label == null) {
                 this.label = new JMenuItem();
                 JMenuItem mLabel = (JMenuItem) this.label;
-                mLabel.setText(
-                        ecomp.text().getOr(tt-> tt== null ? "" :
-                                tt.value(ecomp.app().i18n())
-                        ));
-                ecomp.text().onChange(x -> mLabel.setText(
-                        ecomp.text().getOr(tt-> tt== null ? "" :
-                                tt.value(ecomp.app().i18n())
-                )));
-                ecomp.smallIcon().onChange(x -> mLabel.setIcon(
-                        SwingAppImage.iconOf(ecomp.smallIcon().get())
-                ));
+                SwingPeerHelper.installComponent(component, mLabel);
+                ecomp.text().onChangeAndInit(() -> mLabel.setText(Applications.rawString(ecomp.text(),ecomp)));
+                ecomp.locale().onChange(() -> mLabel.setText(Applications.rawString(ecomp.text(),ecomp)));
+
+                ecomp.smallIcon().onChangeAndInit(() ->
+                        mLabel.setIcon(
+                                SwingAppImage.iconOf(ecomp.smallIcon().get())
+                        )
+                );
             }
         } else {
             if (label == null) {
                 this.label = new JLabel();
                 JLabel mLabel = (JLabel) this.label;
-                mLabel.setText(
-                        ecomp.text().getOr(tt-> tt== null ? "" :
-                                tt.value(ecomp.app().i18n())
-                        ));
-                ecomp.text().onChange(x -> mLabel.setText(
-                        ecomp.text().get() == null ? "" :
-                                ecomp.text().get().value(ecomp.app().i18n())
-                ));
+                SwingPeerHelper.installComponent(component, mLabel);
+                ecomp.text().onChangeAndInit(() -> mLabel.setText(Applications.rawString(ecomp.text(),ecomp)));
+                ecomp.locale().onChange(() -> mLabel.setText(Applications.rawString(ecomp.text(),ecomp)));
+                ecomp.textStyle().align().onChangeAndInit(() -> {
+                    Anchor anchor = ecomp.textStyle().align().get();
+                    if (anchor == null) {
+                        anchor = Anchor.LEFT;
+                    }
+                    mLabel.setHorizontalTextPosition(
+                            anchor == Anchor.LEFT ? SwingConstants.LEFT
+                                    : anchor == Anchor.RIGHT ? SwingConstants.RIGHT
+                                    : anchor == Anchor.CENTER ? SwingConstants.CENTER
+                                    : SwingConstants.LEFT
+                    );
+                });
+                ecomp.smallIcon().onChangeAndInit(() ->
+                        mLabel.setIcon(
+                                SwingAppImage.iconOf(ecomp.smallIcon().get())
+                        )
+                );
 //                etool.title().onChange(x->mLabel.setText(etool.title().get()));
-                ecomp.smallIcon().onChange(x -> mLabel.setIcon(
-                        SwingAppImage.iconOf(ecomp.smallIcon().get())
-                ));
+
             }
         }
     }

@@ -23,7 +23,7 @@ public class AppContainerChildrenImpl<
         super(name, PropertyType.of(componentType));
         this.base = base;
         this.componentType = componentType;
-        base.listeners().addDelegate(this,()-> Path.of(base.propertyName()));
+        base.events().addDelegate(this,()-> Path.of(base.propertyName()));
     }
 
     public Class getComponentType() {
@@ -73,7 +73,8 @@ public class AppContainerChildrenImpl<
     public int indexOf(String pathName){
         for (int i = 0; i < size(); i++) {
             AppComponent child = (AppComponent) base.children().get(i);
-            if (child.path().get().name().equals(pathName)) {
+            String name = child.path().get().name();
+            if (name!=null && name.equals(pathName)) {
                 return i;
             }
         }
@@ -95,6 +96,7 @@ public class AppContainerChildrenImpl<
             if(component==null){
                 removeAt(old);
             }else{
+                component.userObjects().put("preferredName",name);
                 set(old,component);
             }
         }else{
@@ -228,7 +230,6 @@ public class AppContainerChildrenImpl<
             index = u;
         }
         component.userObjects().put("preferredName",name);
-//        System.out.println("add "+name+" (order "+order+") at index "+index+"/"+u);
         add(index,component);
         return component;
     }
@@ -273,7 +274,8 @@ public class AppContainerChildrenImpl<
         }
         for (int i = 0; i < size(); i++) {
             AppComponent child = get(i);
-            if (child.path().propertyName().equals(name)) {
+            String ll = child.path().get().last();
+            if (ll!=null && ll.equals(name)) {
                 return removeAt(i);
             }
         }
@@ -304,7 +306,7 @@ public class AppContainerChildrenImpl<
 //        return add(tool, relativePath, null);
 //    }
 
-    public List<AppComponent> addAll(AppComponent component, Path relativePath, Path... all) {
+    public List<AppComponent> addMulti(AppComponent component, Path relativePath, Path... all) {
         List<AppComponent> a = new ArrayList<>();
         add(component, relativePath);
         for (Path path : all) {
@@ -315,7 +317,7 @@ public class AppContainerChildrenImpl<
         return a;
     }
 
-//    public List<AppComponent> addAll(AppComponentModel tool, Path relativePath, Path... all) {
+//    public List<AppComponent> addMulti(AppComponentModel tool, Path relativePath, Path... all) {
 //        List<AppComponent> a = new ArrayList<>();
 //        a.add(add(tool, relativePath, null));
 //        for (Path path : all) {

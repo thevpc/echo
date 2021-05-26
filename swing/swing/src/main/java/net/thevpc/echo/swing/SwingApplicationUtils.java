@@ -1,23 +1,26 @@
 package net.thevpc.echo.swing;
 
+import net.thevpc.common.i18n.I18nString;
+import net.thevpc.common.i18n.Str;
 import net.thevpc.common.i18n.WritableStr;
-import net.thevpc.common.props.*;
+import net.thevpc.common.props.ObservableValue;
+import net.thevpc.common.props.PropertyEvent;
+import net.thevpc.common.props.PropertyListener;
+import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.common.swing.font.FontUtils;
+import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.api.AppImage;
-import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.impl.Applications;
+import net.thevpc.echo.impl.DefaultActionEvent;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 import net.thevpc.echo.swing.icons.SwingAppImage;
-import net.thevpc.echo.*;
-import net.thevpc.echo.impl.DefaultActionEvent;
-
-import java.awt.Component;
+import net.thevpc.echo.swing.peers.SwingPeer;
 
 import javax.swing.*;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -31,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.thevpc.common.i18n.I18nString;
-import net.thevpc.echo.swing.peers.SwingPeer;
 
 public class SwingApplicationUtils {
 
@@ -93,104 +94,104 @@ public class SwingApplicationUtils {
         }
     }
 
-    public static void prepareAbstractButton(AbstractButton button, AppComponent model, Application app, boolean text) {
-        WritableStr textStr = Applications.resolveTextProperty(model);
-        if(textStr!=null) {
+    public static void prepareAbstractButton(AbstractButton button, AppTextControl appComponent, Application app, boolean text) {
+        SwingPeerHelper.installComponent(appComponent, button);
+        WritableStr textStr = Applications.resolveTextProperty(appComponent);
+
+        if (textStr != null) {
             if (text) {
                 textStr.onChange((PropertyEvent event) -> {
                     button.setText(
-                            Applications.rawString(event.newValue(), app)
+                            Applications.rawString(event.newValue(), app,button.getLocale())
                     );
                 });
-                button.setText(Applications.rawString(textStr.get(), app));
+                button.setText(Applications.rawString(textStr.get(), app,button.getLocale()));
+                appComponent.locale().onChange(() -> button.setText(Applications.rawString(appComponent.text(),appComponent)));
             } else {
                 button.setText(null);
                 textStr.onChange((PropertyEvent event) -> {
-                    button.setToolTipText(Applications.rawString(event.newValue(), app));
+                    button.setToolTipText(Applications.rawString(event.newValue(), app,button.getLocale()));
                 });
-                button.setToolTipText(Applications.rawString(textStr.get(), app));
+                button.setToolTipText(Applications.rawString(textStr.get(), app,button.getLocale()));
             }
         }
-        model.enabled().onChange((PropertyEvent event) -> {
+        appComponent.enabled().onChange((PropertyEvent event) -> {
             button.setEnabled((Boolean) event.newValue());
         });
-        button.setEnabled(model.enabled().get());
-        model.visible().onChange((PropertyEvent event) -> {
+        button.setEnabled(appComponent.enabled().get());
+        appComponent.visible().onChange((PropertyEvent event) -> {
             button.setVisible((Boolean) event.newValue());
         });
-        button.setVisible(model.visible().get());
+        button.setVisible(appComponent.visible().get());
 
-        model.smallIcon().onChange((PropertyEvent event) -> {
+        appComponent.smallIcon().onChange((PropertyEvent event) -> {
             button.setIcon(SwingAppImage.iconOf(event.newValue()));
         });
-//        model.smallIcon().reevalValue();
-        button.setIcon(SwingAppImage.iconOf(model.smallIcon().get()));
+//        appComponent.smallIcon().reevalValue();
+        button.setIcon(SwingAppImage.iconOf(appComponent.smallIcon().get()));
 
-        model.mnemonic().onChange((PropertyEvent event) -> {
+        appComponent.mnemonic().onChange((PropertyEvent event) -> {
             button.setMnemonic((Integer) event.newValue());
         });
-        button.setMnemonic(model.mnemonic().get());
+        button.setMnemonic(appComponent.mnemonic().get());
 
         if (button instanceof JMenuItem && !(button instanceof JMenu)) {
-            model.accelerator().onChange((PropertyEvent event) -> {
+            appComponent.accelerator().onChange((PropertyEvent event) -> {
                 String s = (String) event.newValue();
                 ((JMenuItem) button).setAccelerator(
                         (s == null || s.isEmpty()) ? null : KeyStroke.getKeyStroke(s)
                 );
             });
-            String s = model.accelerator().get();
+            String s = appComponent.accelerator().get();
             ((JMenuItem) button).setAccelerator(
                     (s == null || s.isEmpty()) ? null : KeyStroke.getKeyStroke(s)
             );
         }
 
-        ObservableValue<String> group = null;
-        if (model instanceof AppToggleControl) {
-            AppToggleControl cc = (AppToggleControl) model;
-            group = cc.group();
-            button.setSelected(cc.selected().get());
-        }
-        if (group != null) {
-            String s = group.get();
-            SwingApplicationToolkit tk = (SwingApplicationToolkit) app.toolkit();
-            if (s != null) {
-                tk.getButtonGroup(s).add(button);
-            }
-            group.onChange(new PropertyListener() {
-                @Override
-                public void propertyUpdated(PropertyEvent event) {
-                    if (event.oldValue() != null) {
-                        tk.getButtonGroup((String) event.oldValue()).remove(button);
-                    }
-                    if (event.newValue() != null) {
-                        tk.getButtonGroup((String) event.newValue()).add(button);
-                    }
-                }
-            });
-        }
 
-        if (model instanceof AppButton) {
-            AppButton action = (AppButton) model;
+        if (appComponent instanceof AppButton) {
+            AppButton action = (AppButton) appComponent;
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     net.thevpc.echo.api.Action a = action.action().get();
                     if (a != null) {
-                        a.run(new DefaultActionEvent(app, model, e.getSource(), e));
+                        a.run(new DefaultActionEvent(app, appComponent, e.getSource(), e));
                     }
                 }
             });
         }
 
-        if (model instanceof AppToggleControl) {
+        if (appComponent instanceof AppToggleControl) {
+            ObservableValue<String> group = null;
+            AppToggleControl cc = (AppToggleControl) appComponent;
+            group = cc.group();
+            button.setSelected(cc.selected().get());
+            if (group != null) {
+                String s = group.get();
+                SwingApplicationToolkit tk = (SwingApplicationToolkit) app.toolkit();
+                if (s != null) {
+                    tk.getButtonGroup(s).add(button);
+                }
+                group.onChange(new PropertyListener() {
+                    @Override
+                    public void propertyUpdated(PropertyEvent event) {
+                        if (event.oldValue() != null) {
+                            tk.getButtonGroup((String) event.oldValue()).remove(button);
+                        }
+                        if (event.newValue() != null) {
+                            tk.getButtonGroup((String) event.newValue()).add(button);
+                        }
+                    }
+                });
+            }
             button.addItemListener(new ItemListener() {
                 @Override
                 public void itemStateChanged(ItemEvent e) {
-                    ((AppToggleControl) model).selected().set(e.getStateChange() == ItemEvent.SELECTED);
+                    cc.selected().set(e.getStateChange() == ItemEvent.SELECTED);
                 }
             });
-            button.setSelected(((AppToggleControl) model).selected().get());
-            ((AppToggleControl) model).selected().onChange(new PropertyListener() {
+            cc.selected().onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     button.setSelected(event.newValue());
@@ -199,7 +200,7 @@ public class SwingApplicationUtils {
         }
     }
 
-    public static JComponent createMenuItem(AppComponent b, Application application) {
+    public static JComponent createMenuItem(AppTextControl b, Application application) {
         AppComponent t = b;
         if (t instanceof AppContainer) {
             AppContainer a = (AppContainer) t;
@@ -291,10 +292,10 @@ public class SwingApplicationUtils {
     }
 
     public static void unregisterButton(AbstractButton b, Application app) {
-        app.iconSets().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
+        app.iconSets().events().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
                 && ((ButtonUpdaterPropertyListener) x).b == b
         );
-        app.i18n().locale().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
+        app.i18n().locale().events().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
                 && ((ButtonUpdaterPropertyListener) x).b == b
         );
     }
@@ -317,10 +318,10 @@ public class SwingApplicationUtils {
     }
 
     public static void unregisterString(I18nString b, Application app) {
-        app.iconSets().listeners().removeIf(x -> x instanceof I18nStringUpdaterPropertyListener
+        app.iconSets().events().removeIf(x -> x instanceof I18nStringUpdaterPropertyListener
                 && ((I18nStringUpdaterPropertyListener) x).b == b
         );
-        app.i18n().locale().listeners().removeIf(x -> x instanceof I18nStringUpdaterPropertyListener
+        app.i18n().locale().events().removeIf(x -> x instanceof I18nStringUpdaterPropertyListener
                 && ((I18nStringUpdaterPropertyListener) x).b == b
         );
     }
@@ -349,10 +350,10 @@ public class SwingApplicationUtils {
     }
 
     public static void unregisterAction(javax.swing.Action b, Application app) {
-        app.iconSets().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
+        app.iconSets().events().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
                 && ((ButtonUpdaterPropertyListener) x).b == b
         );
-        app.i18n().locale().listeners().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
+        app.i18n().locale().events().removeIf(x -> x instanceof ButtonUpdaterPropertyListener
                 && ((ButtonUpdaterPropertyListener) x).b == b
         );
     }
@@ -369,7 +370,7 @@ public class SwingApplicationUtils {
             }
         }
         WritableStr writableStr = Applications.resolveTextProperty(subBinding);
-        if(writableStr!=null) {
+        if (writableStr != null) {
             writableStr.set(Str.of(s));
         }
     }
@@ -379,6 +380,165 @@ public class SwingApplicationUtils {
         SwingPeer e = (SwingPeer) jc.getClientProperty(SwingPeer.class.getName());
         if (e == null) {
             jc.putClientProperty(SwingPeer.class.getName(), aa);
+        }
+    }
+
+    public static void setComponentTextStrokeSize(Component component, Integer textStrokeSize) {
+        //
+    }
+
+    public static Font deriveFont(Font initialFont,
+                                  Boolean italic,
+                                  Boolean bold,
+                                  Boolean underline,
+                                  Boolean strike) {
+        boolean i = italic == null ? initialFont.isItalic() : italic;
+        boolean b = bold == null ? initialFont.isBold() : bold;
+        boolean u;
+        if (underline == null) {
+            Map<TextAttribute, ?> a = initialFont.getAttributes();
+            Object au = a.get(TextAttribute.UNDERLINE);
+            u = TextAttribute.UNDERLINE_ON.equals(au);
+        } else {
+            u = underline;
+        }
+        boolean s;
+        if (strike == null) {
+            Map<TextAttribute, ?> a = initialFont.getAttributes();
+            Object au = a.get(TextAttribute.STRIKETHROUGH);
+            s = TextAttribute.STRIKETHROUGH_ON.equals(au);
+        } else {
+            s = strike;
+        }
+        return FontUtils.deriveFont(
+                initialFont, b, i,
+                u, s
+        );
+    }
+
+    public static AppFont getComponentFont(Component component, Application app) {
+        return SwingHelpers.fromAwtFont(component.getFont(), app);
+    }
+
+    public static void setComponentFont(Component component, AppFont initialFont,
+                                        Boolean italic,
+                                        Boolean bold,
+                                        Boolean underline,
+                                        Boolean strike) {
+        Font f = initialFont == null ? null : (Font) initialFont.peer().toolkitFont();
+        setComponentFont(component, f, italic, bold, underline, strike);
+    }
+
+    public static void setComponentFont(Component component, Font initialFont,
+                                        Boolean italic,
+                                        Boolean bold,
+                                        Boolean underline,
+                                        Boolean strike
+    ) {
+        if (initialFont == null) {
+            initialFont = component.getFont();
+        }
+        if (initialFont == null) {
+            return;
+        }
+        component.setFont(deriveFont(initialFont, italic, bold, underline, strike));
+    }
+
+    public static void setLabelTextAlign(JLabel label, Anchor anchor) {
+        switch (anchor) {
+            case TOP: {
+                label.setVerticalTextPosition(SwingConstants.TOP);
+                label.setHorizontalTextPosition(SwingConstants.CENTER);
+                break;
+            }
+            case TOP_LEFT: {
+                label.setVerticalTextPosition(SwingConstants.TOP);
+                label.setHorizontalTextPosition(SwingConstants.LEFT);
+                break;
+            }
+            case LEFT: {
+                label.setVerticalTextPosition(SwingConstants.CENTER);
+                label.setHorizontalTextPosition(SwingConstants.LEFT);
+                break;
+            }
+            case BOTTOM_LEFT: {
+                label.setVerticalTextPosition(SwingConstants.BOTTOM);
+                label.setHorizontalTextPosition(SwingConstants.LEFT);
+                break;
+            }
+            case BOTTOM: {
+                label.setVerticalTextPosition(SwingConstants.BOTTOM);
+                label.setHorizontalTextPosition(SwingConstants.CENTER);
+                break;
+            }
+            case BOTTOM_RIGHT: {
+                label.setVerticalTextPosition(SwingConstants.BOTTOM);
+                label.setHorizontalTextPosition(SwingConstants.RIGHT);
+                break;
+            }
+            case RIGHT: {
+                label.setVerticalTextPosition(SwingConstants.CENTER);
+                label.setHorizontalTextPosition(SwingConstants.RIGHT);
+                break;
+            }
+            case TOP_RIGHT: {
+                label.setVerticalTextPosition(SwingConstants.TOP);
+                label.setHorizontalTextPosition(SwingConstants.RIGHT);
+                break;
+            }
+            case CENTER: {
+                label.setVerticalTextPosition(SwingConstants.CENTER);
+                label.setHorizontalTextPosition(SwingConstants.CENTER);
+            }
+        }
+    }
+
+    public static void setLabelContentAlign(JLabel label, Anchor anchor) {
+        switch (anchor) {
+            case TOP: {
+                label.setVerticalAlignment(SwingConstants.TOP);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                break;
+            }
+            case TOP_LEFT: {
+                label.setVerticalAlignment(SwingConstants.TOP);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+            }
+            case LEFT: {
+                label.setVerticalAlignment(SwingConstants.CENTER);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+            }
+            case BOTTOM_LEFT: {
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+            }
+            case BOTTOM: {
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                break;
+            }
+            case BOTTOM_RIGHT: {
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setHorizontalAlignment(SwingConstants.RIGHT);
+                break;
+            }
+            case RIGHT: {
+                label.setVerticalAlignment(SwingConstants.CENTER);
+                label.setHorizontalAlignment(SwingConstants.RIGHT);
+                break;
+            }
+            case TOP_RIGHT: {
+                label.setVerticalAlignment(SwingConstants.TOP);
+                label.setHorizontalAlignment(SwingConstants.RIGHT);
+                break;
+            }
+            case CENTER: {
+                label.setVerticalAlignment(SwingConstants.CENTER);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+            }
         }
     }
 
@@ -479,174 +639,15 @@ public class SwingApplicationUtils {
         }
 
         public void unregisterAll() {
-            for (Iterator<javax.swing.Action> it = actions.iterator(); it.hasNext();) {
+            for (Iterator<javax.swing.Action> it = actions.iterator(); it.hasNext(); ) {
                 javax.swing.Action action = it.next();
                 SwingApplicationUtils.unregisterAction(action, app);
                 it.remove();
             }
-            for (Iterator<AbstractButton> it = buttons.iterator(); it.hasNext();) {
+            for (Iterator<AbstractButton> it = buttons.iterator(); it.hasNext(); ) {
                 AbstractButton button = it.next();
                 SwingApplicationUtils.unregisterButton(button, app);
                 it.remove();
-            }
-        }
-    }
-
-    public static void setComponentTextStrokeSize(Component component, Integer textStrokeSize){
-        //
-    }
-
-    public static Font deriveFont(Font initialFont,
-                                        Boolean italic,
-                                        Boolean bold,
-                                        Boolean underline,
-                                        Boolean strike){
-        boolean i=italic==null?initialFont.isItalic():italic;
-        boolean b=bold==null?initialFont.isBold():bold;
-        boolean u;
-        if(underline==null){
-            Map<TextAttribute, ?> a = initialFont.getAttributes();
-            Object au = a.get(TextAttribute.UNDERLINE);
-            u=TextAttribute.UNDERLINE_ON.equals(au);
-        }else{
-            u=underline;
-        }
-        boolean s;
-        if(strike==null){
-            Map<TextAttribute, ?> a = initialFont.getAttributes();
-            Object au = a.get(TextAttribute.STRIKETHROUGH);
-            s=TextAttribute.STRIKETHROUGH_ON.equals(au);
-        }else{
-            s=strike;
-        }
-        return FontUtils.deriveFont(
-                initialFont,b,i,
-                u,s
-        );
-    }
-
-    public static AppFont getComponentFont(Component component,Application app){
-        return SwingHelpers.fromAwtFont(component.getFont(),app);
-    }
-
-    public static void setComponentFont(Component component, AppFont initialFont,
-                                        Boolean italic,
-                                        Boolean bold,
-                                        Boolean underline,
-                                        Boolean strike){
-            Font f=initialFont==null?null:(Font) initialFont.peer().toolkitFont();
-        setComponentFont(component, f, italic, bold, underline, strike);
-    }
-
-    public static void setComponentFont(Component component, Font initialFont,
-                                        Boolean italic,
-                                        Boolean bold,
-                                        Boolean underline,
-                                        Boolean strike
-    ){
-        if(initialFont==null){
-            initialFont=component.getFont();
-        }
-        if(initialFont==null){
-            return;
-        }
-        component.setFont(deriveFont(initialFont,italic, bold, underline, strike));
-    }
-
-    public static void setLabelTextAlign(JLabel label, Anchor anchor){
-        switch (anchor){
-            case TOP:{
-                label.setVerticalTextPosition(SwingConstants.TOP);
-                label.setHorizontalTextPosition(SwingConstants.CENTER);
-                break;
-            }
-            case TOP_LEFT:{
-                label.setVerticalTextPosition(SwingConstants.TOP);
-                label.setHorizontalTextPosition(SwingConstants.LEFT);
-                break;
-            }
-            case LEFT:{
-                label.setVerticalTextPosition(SwingConstants.CENTER);
-                label.setHorizontalTextPosition(SwingConstants.LEFT);
-                break;
-            }
-            case BOTTOM_LEFT:{
-                label.setVerticalTextPosition(SwingConstants.BOTTOM);
-                label.setHorizontalTextPosition(SwingConstants.LEFT);
-                break;
-            }
-            case BOTTOM:{
-                label.setVerticalTextPosition(SwingConstants.BOTTOM);
-                label.setHorizontalTextPosition(SwingConstants.CENTER);
-                break;
-            }
-            case BOTTOM_RIGHT:{
-                label.setVerticalTextPosition(SwingConstants.BOTTOM);
-                label.setHorizontalTextPosition(SwingConstants.RIGHT);
-                break;
-            }
-            case RIGHT:{
-                label.setVerticalTextPosition(SwingConstants.CENTER);
-                label.setHorizontalTextPosition(SwingConstants.RIGHT);
-                break;
-            }
-            case TOP_RIGHT:{
-                label.setVerticalTextPosition(SwingConstants.TOP);
-                label.setHorizontalTextPosition(SwingConstants.RIGHT);
-                break;
-            }
-            case CENTER:{
-                label.setVerticalTextPosition(SwingConstants.CENTER);
-                label.setHorizontalTextPosition(SwingConstants.CENTER);
-            }
-        }
-    }
-
-    public static void setLabelContentAlign(JLabel label, Anchor anchor){
-        switch (anchor){
-            case TOP:{
-                label.setVerticalAlignment(SwingConstants.TOP);
-                label.setHorizontalAlignment(SwingConstants.CENTER);
-                break;
-            }
-            case TOP_LEFT:{
-                label.setVerticalAlignment(SwingConstants.TOP);
-                label.setHorizontalAlignment(SwingConstants.LEFT);
-                break;
-            }
-            case LEFT:{
-                label.setVerticalAlignment(SwingConstants.CENTER);
-                label.setHorizontalAlignment(SwingConstants.LEFT);
-                break;
-            }
-            case BOTTOM_LEFT:{
-                label.setVerticalAlignment(SwingConstants.BOTTOM);
-                label.setHorizontalAlignment(SwingConstants.LEFT);
-                break;
-            }
-            case BOTTOM:{
-                label.setVerticalAlignment(SwingConstants.BOTTOM);
-                label.setHorizontalAlignment(SwingConstants.CENTER);
-                break;
-            }
-            case BOTTOM_RIGHT:{
-                label.setVerticalAlignment(SwingConstants.BOTTOM);
-                label.setHorizontalAlignment(SwingConstants.RIGHT);
-                break;
-            }
-            case RIGHT:{
-                label.setVerticalAlignment(SwingConstants.CENTER);
-                label.setHorizontalAlignment(SwingConstants.RIGHT);
-                break;
-            }
-            case TOP_RIGHT:{
-                label.setVerticalAlignment(SwingConstants.TOP);
-                label.setHorizontalAlignment(SwingConstants.RIGHT);
-                break;
-            }
-            case CENTER:{
-                label.setVerticalAlignment(SwingConstants.CENTER);
-                label.setHorizontalAlignment(SwingConstants.CENTER);
             }
         }
     }

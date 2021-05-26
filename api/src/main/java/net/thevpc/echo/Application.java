@@ -10,6 +10,8 @@ import net.thevpc.echo.api.components.AppFrame;
 import net.thevpc.echo.iconset.IconSets;
 import net.thevpc.echo.api.AppContainerChildren;
 
+import java.util.concurrent.ExecutorService;
+
 public interface Application extends Property {
 
     ClipboardManager clipboard();
@@ -25,6 +27,8 @@ public interface Application extends Property {
     Application start();
 
     WritableList<AppShutdownVeto> shutdownVetos();
+
+    WritableValue<ExecutorService> executorService();
 
     Application shutdown();
 

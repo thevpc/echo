@@ -80,7 +80,7 @@ public class FxApplicationUtils {
                 tp.onChange((PropertyEvent event) -> {
                     button.setText((String) event.newValue());
                 });
-                button.setText(tp.getOr(v -> v == null ? null : v.value(app.i18n())));
+                button.setText(Applications.rawString(tp,tool));
             }
         } else {
             button.setText(null);
@@ -101,7 +101,8 @@ public class FxApplicationUtils {
         tool.smallIcon().onChange((PropertyEvent event) -> {
             button.setGraphic(FxAppImage.imageViewOf(event.newValue()));
         });
-//        tool.smallIcon().reevalValue();
+
+        //        tool.smallIcon().reevalValue();
         button.setGraphic(FxAppImage.imageViewOf(tool.smallIcon().get()));
 
         tool.mnemonic().onChange((PropertyEvent event) -> {
@@ -151,7 +152,7 @@ public class FxApplicationUtils {
                 tp.onChange((PropertyEvent event) -> {
                     button.setText((String) event.newValue());
                 });
-                button.setText(tp.getOr(x -> x == null ? null : x.value(app.i18n())));
+                button.setText(Applications.rawString(tp,tool));
             }
         } else {
             button.setText(null);

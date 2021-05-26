@@ -1,4 +1,7 @@
 package net.thevpc.echo.api.components;
 
-public interface AppTextField extends AppTextControl {
+import net.thevpc.echo.spi.peers.AppTextFieldPeer;
+
+public interface AppTextField extends AppEditTextControl {
+    AppTextFieldPeer peer();
 }

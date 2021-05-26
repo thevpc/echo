@@ -8,23 +8,23 @@ package net.thevpc.echo.swing.icons;
 import com.kitfox.svg.SVGCache;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
- *
  * @author vpc
  */
 public class SVGSalamander {
 
     public static Image getFactorScaledSVG(URL url, float width0, float height0) {
         try {
-
-            SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(url.toURI());
+            SVGDiagram diagram = getSvgDiagram(url);
+            if(diagram.getRoot()==null){
+                System.err.println("null root");
+            }
             float dw = diagram.getWidth();
             float dh = diagram.getHeight();
             double wscale = 1;
@@ -75,17 +75,28 @@ public class SVGSalamander {
         }
     }
 
+    private static SVGDiagram getSvgDiagram(URL url) throws URISyntaxException {
+        SVGDiagram diagram=null;
+        synchronized (SVGCache.getSVGUniverse()) {
+            diagram = SVGCache.getSVGUniverse().getDiagram(url.toURI());
+        }
+        return diagram;
+    }
+
     public static Image getFixedSizeSvg(URL url, int width0, int height0) {
         try {
 
-            SVGDiagram diagram = SVGCache.getSVGUniverse().getDiagram(url.toURI());
+            SVGDiagram diagram = getSvgDiagram(url);
+            if (diagram.getRoot() == null) {
+                throw new IllegalArgumentException("invalid svg (null root): " + url);
+            }
             float dw = diagram.getWidth();
             float dh = diagram.getHeight();
-            if(dw==0){
-                dw=16;
+            if (dw == 0) {
+                dw = 16;
             }
-            if(dh==0){
-                dh=16;
+            if (dh == 0) {
+                dh = 16;
             }
             double wscale = 1;
             double hscale = 1;

@@ -13,6 +13,8 @@ public class ComboBox<T> extends ChoiceBase<T> implements AppComboBox<T> {
     public ComboBox(String id, Class<T> itemType, Application app) {
         super(id, itemType, false, app,
                 (Class<? extends AppComponent>) AppComboBox.class, AppComboBoxPeer.class);
+        //defaults to non editable
+        editable().set(false);
     }
 
 

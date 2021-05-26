@@ -17,6 +17,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.thevpc.echo.Application;
 
 public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
     private JList swingComponent;
@@ -76,14 +77,9 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
                     try {
                         int[] selectedIndices = swingComponent.getSelectedIndices();
                         List<Integer> all = Arrays.stream(selectedIndices).boxed().collect(Collectors.toList());
-//                        System.out.println("JLIST:"+e.getValueIsAdjusting()+" : "+all);
-//                        if(!e.getValueIsAdjusting()) {
                         component.selection().indices().setAll(
                                 all.toArray(new Integer[0])
                         );
-//                        System.out.println("ALIST:"+component.selection().indices());
-//                            System.out.println(component.selection().indices());
-//                        }
                     } finally {
                         adjusting = false;
                     }
@@ -102,6 +98,11 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
         return swingComponent;
     }
 
+    @Override
+    public void ensureIndexIsVisible(int index) {
+        swingComponent.ensureIndexIsVisible(index);
+    }
+
     private static class MyDefaultListCellRenderer extends DefaultListCellRenderer {
         SwingChoiceListPeer peer;
         AppColor initialForeground;
@@ -114,7 +115,7 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
             this.peer = peer;
         }
 
-        public Component getListCellRendererComponent0(MyAppChoiceItemContext c) {
+        public Component getListCellRendererComponent0(DefaultChoiceListItemContext c) {
             super.getListCellRendererComponent(c.list, c.text, c.index, c.isSelected, c.cellHasFocus);
             setIcon(c.icon);
             if (c.disabled && !c.isSelected && c.list.hasFocus()) {
@@ -126,7 +127,7 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
 
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             boolean disabled = peer.component.disabledSelection().indices().contains(index);
-            MyAppChoiceItemContext c = new MyAppChoiceItemContext(
+            DefaultChoiceListItemContext c = new DefaultChoiceListItemContext(
                     this, list, index, value, isSelected, cellHasFocus, disabled,
                     value == null ? "" : value.toString(),null
             );
@@ -141,7 +142,7 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
 
     }
 
-    private static class MyAppChoiceItemContext implements AppChoiceItemContext {
+    private static class DefaultChoiceListItemContext implements AppChoiceItemContext {
         private final JList<?> list;
         private final MyDefaultListCellRenderer myDefaultListCellRenderer;
         private int index;
@@ -152,7 +153,7 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
         private boolean disabled;
         private Icon icon;
 
-        public MyAppChoiceItemContext(MyDefaultListCellRenderer myDefaultListCellRenderer, JList<?> list,
+        public DefaultChoiceListItemContext(MyDefaultListCellRenderer myDefaultListCellRenderer, JList<?> list,
                                       int index, Object value, boolean isSelected,
                                       boolean cellHasFocus, boolean disabled, String text,Icon icon) {
             this.list = list;
@@ -169,6 +170,11 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
         @Override
         public AppChoiceControl getChoice() {
             return myDefaultListCellRenderer.peer.component;
+        }
+
+        @Override
+        public Application getApplication() {
+            return myDefaultListCellRenderer.peer.component.app();
         }
 
         @Override

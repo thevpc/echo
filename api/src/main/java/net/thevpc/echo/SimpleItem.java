@@ -6,6 +6,7 @@
 package net.thevpc.echo;
 
 import java.util.Objects;
+import net.thevpc.common.i18n.Str;
 
 /**
  *
@@ -16,15 +17,15 @@ public class SimpleItem {
     boolean group;
     private String id;
     private String icon;
-    private String name;
+    private Str name;
     private int preferredOrder;
 
-    public SimpleItem(String id, String name) {
+    public SimpleItem(String id, Str name) {
         this.id = id;
         this.name = name;
     }
 
-    public SimpleItem(boolean group, String id, String name, String icon, int preferredOrder) {
+    public SimpleItem(boolean group, String id, Str name, String icon, int preferredOrder) {
         this.id = id;
         this.name = name;
         this.group = group;
@@ -48,7 +49,7 @@ public class SimpleItem {
         this.id = id;
     }
 
-    public String getName() {
+    public Str getName() {
         return name;
     }
 
@@ -56,7 +57,7 @@ public class SimpleItem {
         return group;
     }
 
-    public void setName(String name) {
+    public void setName(Str name) {
         this.name = name;
     }
 

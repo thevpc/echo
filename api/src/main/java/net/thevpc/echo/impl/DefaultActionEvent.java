@@ -48,7 +48,7 @@ public class DefaultActionEvent implements ActionEvent {
     }
 
     @Override
-    public Object getSource() {
+    public Object source() {
         return source;
     }
     

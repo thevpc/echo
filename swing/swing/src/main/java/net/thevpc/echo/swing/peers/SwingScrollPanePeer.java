@@ -11,6 +11,7 @@ import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppScrollPane;
 import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.spi.peers.AppScrollPanePeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
@@ -30,10 +31,14 @@ public class SwingScrollPanePeer implements SwingPeer, AppScrollPanePeer {
 
     @Override
     public void install(AppComponent comp) {
-        swingComponent.setPreferredSize(SwingHelpers.toAwtDimension(comp.prefSize().get()));
-        comp.prefSize().onChange(e->{
-            swingComponent.setPreferredSize(SwingHelpers.toAwtDimension(comp.prefSize().get()));
-        });
+        appComponent=(AppScrollPane) comp;
+        SwingPeerHelper.installComponent(appComponent, swingComponent);
+//        appComponent.children().onChange(()->{
+//            AppComponent c = this.appComponent.children().get();
+//            swingComponent.getViewport().setView(
+//                    c==null?null:((Component) c.peer().toolkitComponent())
+//            );
+//        });
     }
 
     @Override
@@ -51,6 +56,9 @@ public class SwingScrollPanePeer implements SwingPeer, AppScrollPanePeer {
         swingComponent.getViewport().setView(
                 null
         );
+        swingComponent.invalidate();
+        swingComponent.revalidate();
+        swingComponent.repaint();
     }
 
     @Override

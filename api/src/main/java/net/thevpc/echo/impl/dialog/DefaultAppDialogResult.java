@@ -1,5 +1,6 @@
 package net.thevpc.echo.impl.dialog;
 
+import net.thevpc.echo.Alert;
 import net.thevpc.echo.api.AppDialogResult;
 import net.thevpc.echo.Application;
 import net.thevpc.common.i18n.Str;
@@ -10,9 +11,11 @@ public class DefaultAppDialogResult implements AppDialogResult {
     private final String a;
     private final Supplier<?> valueEvaluator;
     private final Application app;
+    private final Alert appAlert;
 
-    public DefaultAppDialogResult(String a, Supplier<?> valueEvaluator, Application app) {
+    public DefaultAppDialogResult(String a, Supplier<?> valueEvaluator, Alert appAlert,Application app) {
         this.a = a;
+        this.appAlert = appAlert;
         this.valueEvaluator = valueEvaluator;
         this.app = app;
     }
@@ -43,7 +46,7 @@ public class DefaultAppDialogResult implements AppDialogResult {
             return ((String) o).trim().isEmpty();
         }
         if (o instanceof Str) {
-            return ((Str) o).value(app.i18n()).isEmpty();
+            return ((Str) o).value(app.i18n(),appAlert.locale().get()).isEmpty();
         }
         return false;
     }

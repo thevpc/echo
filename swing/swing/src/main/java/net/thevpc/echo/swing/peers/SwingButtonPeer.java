@@ -3,6 +3,7 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.components.AppTextControl;
 import net.thevpc.echo.spi.peers.AppButtonPeer;
 import net.thevpc.echo.impl.components.ComponentBase;
 import net.thevpc.echo.swing.SwingApplicationUtils;
@@ -20,7 +21,7 @@ public class SwingButtonPeer implements SwingPeer , AppButtonPeer {
 
     public void install(AppComponent component0) {
         this.component=component0;
-        ComponentBase ecomp = (ComponentBase) component;
+        AppTextControl ecomp = (AppTextControl) component;
         Object sParent = component.parent()==null?null:component.parent().peer().toolkitComponent();
         if (
                 sParent instanceof JMenu

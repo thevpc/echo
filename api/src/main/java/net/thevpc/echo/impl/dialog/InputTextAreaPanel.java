@@ -1,27 +1,33 @@
 package net.thevpc.echo.impl.dialog;
 
 import net.thevpc.echo.*;
-import net.thevpc.echo.api.AppDialogInputPanel;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.constraints.Layout;
-import net.thevpc.echo.constraints.ParentMargin;
+import net.thevpc.echo.constraints.AllMargins;
+import net.thevpc.echo.api.AppDialogInputPane;
+import net.thevpc.echo.constraints.AllAnchors;
+import net.thevpc.echo.constraints.AllFill;
+import net.thevpc.echo.constraints.AllGrow;
+import net.thevpc.echo.constraints.Grow;
 
-public class InputTextAreaPanel extends VerticalPane implements AppDialogInputPanel {
+public class InputTextAreaPanel extends GridPane implements AppDialogInputPane {
 
     private Label header;
     private TextArea value;
     private Application app;
 
     public InputTextAreaPanel(Application app, Str headerId, Str initialValue) {
-        super(app);
+        super(1,app);
         this.app = app;
-        parentConstraints().addAll(new ParentMargin(5, 5, 5, 5));
+        parentConstraints().addAll(AllMargins.of(5, 5, 5, 5),AllFill.HORIZONTAL,AllAnchors.LEFT,AllGrow.HORIZONTAL);
         header = new Label(app);
         value = new TextArea(app);
         header.text().set(headerId);
         value.text().set(initialValue);
-        children().addAll(header, value);
+        children().addAll(header, 
+                new ScrollPane(value)
+                    .with(s->s.childConstraints().add(Grow.BOTH))
+        );
     }
 
     @Override
@@ -31,7 +37,7 @@ public class InputTextAreaPanel extends VerticalPane implements AppDialogInputPa
 
     @Override
     public Object getValue() {
-        return value.text().get().value(app.i18n());
+        return value.text().get().value(app.i18n(),locale().get());
     }
 
 }

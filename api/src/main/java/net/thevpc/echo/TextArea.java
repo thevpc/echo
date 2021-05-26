@@ -4,12 +4,11 @@ import net.thevpc.common.i18n.Str;
 import net.thevpc.common.props.*;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.components.AppTextArea;
+import net.thevpc.echo.impl.components.EditTextBase;
 import net.thevpc.echo.impl.components.TextBase;
 import net.thevpc.echo.spi.peers.AppTextAreaPeer;
 
-public class TextArea extends TextBase implements AppTextArea {
-    private WritableString textSelection = Props.of("textSelection").stringOf("");
-    private WritableInt caretPosition = Props.of("caretPosition").intOf(-1);
+public class TextArea extends EditTextBase implements AppTextArea {
     private WritableBoolean zoomOnMouseWheel = Props.of("zoomOnMouseWheel").booleanOf(false);
     private WritableBoolean rowNumberRuler = Props.of("rowNumberRuler").booleanOf(false);
     private WritableBoolean highlightSelectionDuplicates = Props.of("highlightSelectionDuplicates").booleanOf(true);
@@ -25,7 +24,7 @@ public class TextArea extends TextBase implements AppTextArea {
 
     public TextArea(String id, Str str, Application app) {
         super(id, str, app, AppTextArea.class, AppTextAreaPeer.class);
-        propagateEvents(textSelection, caretPosition,
+        propagateEvents(
                 highlightSelectionDuplicates, highlightSelectionDuplicatesColor,
                 zoomOnMouseWheel,
                 rowNumberRuler);
@@ -79,16 +78,6 @@ public class TextArea extends TextBase implements AppTextArea {
     }
 
     @Override
-    public WritableString textSelection() {
-        return textSelection;
-    }
-
-    @Override
-    public WritableInt caretPosition() {
-        return caretPosition;
-    }
-
-    @Override
     public WritableBoolean highlightSelectionDuplicates() {
         return highlightSelectionDuplicates;
     }
@@ -96,5 +85,10 @@ public class TextArea extends TextBase implements AppTextArea {
     @Override
     public WritableValue<AppColor> highlightSelectionDuplicatesColor() {
         return highlightSelectionDuplicatesColor;
+    }
+
+    @Override
+    public void replaceSelection(String newValue) {
+        peer().replaceSelection(newValue);
     }
 }

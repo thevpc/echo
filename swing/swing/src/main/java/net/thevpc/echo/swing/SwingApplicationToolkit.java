@@ -51,7 +51,7 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
     public void initialize(Application app) {
         super.initialize(app);
         addPeerFactory(AppLabelPeer.class, SwingLabelPeer.class);
-        addPeerFactory(AppAlertPeer.class, SwingAppAlertPeer.class);
+        addPeerFactory(AppAlertPeer.class, SwingAlertPeer.class);
         addPeerFactory(AppFileChooserPeer.class, SwingAppFileChooserPeer.class);
         addPeerFactory(AppFramePeer.class, SwingFramePeer.class);
         addPeerFactory(AppButtonPeer.class, SwingButtonPeer.class);
@@ -81,6 +81,7 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
         addPeerFactory(AppTreePeer.class, SwingTreePeer.class);
         addPeerFactory(AppProgressBarPeer.class, SwingProgressBarPeer.class);
         addPeerFactory(AppColorButtonPeer.class, SwingColorButtonPeer.class);
+        addPeerFactory(AppWebViewPeer.class, SwingWebView.class);
 
         UIPlafManager.getCurrentManager().addListener(x -> {
             app.plaf().set(x.getId());

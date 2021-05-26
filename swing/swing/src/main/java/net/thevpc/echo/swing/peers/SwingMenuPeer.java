@@ -1,6 +1,10 @@
 package net.thevpc.echo.swing.peers;
 
+import net.thevpc.common.swing.button.JDropDownButton;
+import net.thevpc.echo.ToolBar;
 import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.components.AppTextControl;
+import net.thevpc.echo.api.components.AppToolBar;
 import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppMenuPeer;
 import net.thevpc.echo.swing.SwingApplicationUtils;
@@ -10,14 +14,20 @@ import javax.swing.*;
 import java.awt.*;
 
 public class SwingMenuPeer implements SwingPeer, AppMenuPeer {
-    private JMenu jcomponent;
-    private AppComponent component;
+    private AbstractButton jcomponent;
+    private AppTextControl  component;
 
     @Override
     public void install(AppComponent comp) {
-        this.component = comp;
-        jcomponent = new JMenu();
-        SwingApplicationUtils.prepareAbstractButton(jcomponent, comp, comp.app(), true);
+        this.component = (AppTextControl) comp;
+        if(comp.parent() instanceof AppToolBar) {
+            jcomponent = new JDropDownButton();
+            ((JDropDownButton)jcomponent).setQuickActionDelay(0);
+            SwingApplicationUtils.prepareAbstractButton(jcomponent, component, comp.app(), false);
+        }else {
+            jcomponent = new JMenu();
+            SwingApplicationUtils.prepareAbstractButton(jcomponent, component, comp.app(), true);
+        }
     }
 
     @Override

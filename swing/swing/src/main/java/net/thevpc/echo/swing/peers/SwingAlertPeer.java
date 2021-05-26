@@ -8,17 +8,21 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.common.swing.SwingUtilities3;
 import net.thevpc.common.swing.dialog.JDialog2;
+import net.thevpc.common.swing.icon.EmptyIcon;
 import net.thevpc.common.swing.layout.GridBagLayoutSupport;
+import net.thevpc.echo.Alert;
+import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppDialogAction;
 import net.thevpc.echo.api.AppDialogContext;
 import net.thevpc.echo.api.AppDialogResult;
-import net.thevpc.echo.Application;
+import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppAlert;
 import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.DefaultAppDialogContext;
-import net.thevpc.echo.Alert;
 import net.thevpc.echo.impl.dialog.DefaultAppDialogResult;
 import net.thevpc.echo.spi.peers.AppAlertPeer;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,31 +36,29 @@ import java.util.Map;
 /**
  * @author vpc
  */
-public class SwingAppAlertPeer implements AppAlertPeer {
+public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
 
     protected Application app;
     protected String selectedButton;
-//    protected String[] buttonIds;
-    protected Alert binding;
+    //    protected String[] buttonIds;
+    protected Alert appAlert;
     JDialog2 currentDialog = null;
     private GenFooter footer;
 //    private Supplier<?> valueEvaluator;
 //    private Component mainComponent;
 
-
-//    public SwingAppAlertPeer(Application app, AppAlert binding, String titleId, JComponent mainComponent, String[] buttonIds, String defaultId, AppDialogAction cons
+    //    public SwingAlertPeer(Application app, AppAlert binding, String titleId, JComponent mainComponent, String[] buttonIds, String defaultId, AppDialogAction cons
 //            , Supplier<?> valueEvaluator
 //            , Object... params) {
 //        this(app, binding,titleId, valueEvaluator,params);
 //        build(mainComponent, buttonIds, defaultId, cons);
 //    }
 //
-//    public SwingAppAlertPeer(Application app, AppAlert binding, String titleId, Supplier<?> valueEvaluator, Object... params) {
+//    public SwingAlertPeer(Application app, AppAlert binding, String titleId, Supplier<?> valueEvaluator, Object... params) {
 //        super((JFrame) app.mainFrame().get().peer().toolkitComponent(),
 //                buildMessage(app, titleId, params), true
 //        );
 //    }
-
     private static String buildMessage(Application app1, String titleId, Object... params) {
         String m = app1.i18n().getString(titleId);
         if (params.length > 0) {
@@ -69,7 +71,7 @@ public class SwingAppAlertPeer implements AppAlertPeer {
     public void install(AppComponent comp) {
         AppAlert alert = (AppAlert) comp;
         this.app = alert.app();
-        this.binding =(Alert) alert;
+        this.appAlert = (Alert) alert;
 //        this.valueEvaluator = ((Alert) alert).getValueEvaluator();
     }
 
@@ -81,21 +83,23 @@ public class SwingAppAlertPeer implements AppAlertPeer {
     public String showDialog(AppComponent owner) {
         this.selectedButton = null;
         JFrame f = (JFrame) app.mainFrame().get().peer().toolkitComponent();
-        JDialog2 dialog2 = new JDialog2(f);dialog2.setModal(true);
+        JDialog2 dialog2 = new JDialog2(f);
+        dialog2.setModal(true);
+
+        dialog2.setTitle(evalTitle());
 //        dialog2.setLocationRelativeTo(f);
-        Component _mainComponent=binding.getContent()==null?null:(Component) binding.getContent().peer().toolkitComponent();
+        Component _mainComponent = appAlert.content().get() == null ? null : (Component) appAlert.content().get().peer().toolkitComponent();
         if (_mainComponent == null) {
             _mainComponent = new JLabel();
         }
-        if (binding.getPreferredSize() != null) {
-            dialog2.setPreferredSize(new Dimension(
-                    (int) binding.getPreferredSize().getWidth(),
-                    (int) binding.getPreferredSize().getHeight()
-            ));
+        if (appAlert.prefSize().get() != null) {
+            dialog2.setPreferredSize(
+                    SwingHelpers.toAwtDimension(appAlert.prefSize().get())
+            );
         }
         build(dialog2, _mainComponent,
-                binding.getButtonIds().toArray(new String[0])
-                , binding.getDefaultId(),binding.getAction()
+                appAlert.getButtonIds().toArray(new String[0]),
+                appAlert.defaultButton().get(), appAlert.getAction()
         );
         currentDialog = dialog2;
         dialog2.setVisible(true);
@@ -103,7 +107,7 @@ public class SwingAppAlertPeer implements AppAlertPeer {
     }
 
     public AppDialogResult showInputDialog(AppComponent owner) {
-        return new DefaultAppDialogResult(showDialog(owner), binding.getValueEvaluator(), app);
+        return new DefaultAppDialogResult(showDialog(owner), appAlert.getValueEvaluator(), appAlert, app);
     }
 
     @Override
@@ -117,39 +121,56 @@ public class SwingAppAlertPeer implements AppAlertPeer {
     public void build(JDialog2 dialog2, Component mainComponent, String[] buttonIds, String defaultId, AppDialogAction action) {
 
         //            Str _titleId = title;
-            java.util.List<String> _buttonIds = buttonIds == null ? new java.util.ArrayList<>() : new java.util.ArrayList<>(
-                    Arrays.asList(buttonIds)
-            );
-            String _defaultId = defaultId;
-            Str _titleId=binding.getTitle();
-            if (_titleId == null) {
-                _titleId = Str.i18n("Message.defaultTitle");
-            }
-            if (_buttonIds.isEmpty()) {
-                _buttonIds.add("ok");
-            }
-            buttonIds = _buttonIds.toArray(new String[0]);
-            Str title = _titleId;
-            if (action == null) {
-                action = new AppDialogAction() {
-                    @Override
-                    public void onAction(AppDialogContext context) {
-                        AppDialogAction a = binding.getAction(context.getButtonId());
-                        if (a != null) {
-                            a.onAction(context);
-                        }
+        java.util.List<String> _buttonIds = buttonIds == null ? new java.util.ArrayList<>() : new java.util.ArrayList<>(
+                Arrays.asList(buttonIds)
+        );
+        String _defaultId = defaultId;
+        if (_buttonIds.isEmpty()) {
+            _buttonIds.add("ok");
+        }
+        buttonIds = _buttonIds.toArray(new String[0]);
+        if (action == null) {
+            action = new AppDialogAction() {
+                @Override
+                public void onAction(AppDialogContext context) {
+                    AppDialogAction a = appAlert.getAction(context.getButtonId());
+                    if (a != null) {
+                        a.onAction(context);
                     }
-                };
-            }
-
-
-
+                }
+            };
+        }
 
         dialog2.getRootPane().setLayout(new BorderLayout());
         footer = new GenFooter(app, action, buttonIds);
         JPanel withBorder = new JPanel(new BorderLayout());
         withBorder.add(mainComponent);
         withBorder.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
+
+        JLabel hh = new JLabel();
+        hh.setBorder(BorderFactory.createEtchedBorder());
+        hh.setText(evalHeader());
+        hh.setHorizontalTextPosition(SwingConstants.RIGHT);
+        hh.setIconTextGap(16);
+        hh.setOpaque(true);
+        hh.setPreferredSize(new Dimension(400, 60));
+        hh.setMinimumSize(new Dimension(400, 60));
+        Icon icon = null;
+        AppImage hi = appAlert.headerIcon().get();
+        if (hi != null) {
+            hi = hi.scaleTo(24, 24);
+        }
+        icon = SwingHelpers.toAwtIcon(hi);
+        if (icon == null) {
+            icon = new EmptyIcon(24, 24);
+        }
+        hh.setIcon(icon);
+//        hh.setIcon(new RectColorIcon(Color.RED, 32));
+
+        hh.setBackground(Color.WHITE);
+        hh.setFont(hh.getFont().deriveFont(Font.BOLD, (int) (hh.getFont().getSize() * 1.2)));
+
+        dialog2.getRootPane().add(hh, BorderLayout.NORTH);
         dialog2.getRootPane().add(withBorder, BorderLayout.CENTER);
         dialog2.getRootPane().add(footer, BorderLayout.SOUTH);
         SwingUtilities3.addEscapeBindings(dialog2);
@@ -157,9 +178,24 @@ public class SwingAppAlertPeer implements AppAlertPeer {
             dialog2.getRootPane().setDefaultButton(footer.getButton(defaultId));
         }
         JFrame f = (JFrame) app.mainFrame().get().peer().toolkitComponent();
-        dialog2.setLocationRelativeTo(f);
-//        dialog2.setLocationRelativeTo(dialog2.getOwner());
         dialog2.pack();
+        dialog2.setLocationRelativeTo(f);
+    }
+
+    public String evalHeader() {
+        Str s = appAlert.headerText().get();
+        if (s == null) {
+            s = Str.i18n("Message.defaultHeader");
+        }
+        return Applications.rawString(s, appAlert);
+    }
+
+    public String evalTitle() {
+        Str s = appAlert.title().get();
+        if (s == null) {
+            s = Str.i18n("Message.defaultTitle");
+        }
+        return Applications.rawString(s, appAlert);
     }
 
     public static class ActionInfo {
@@ -219,7 +255,7 @@ public class SwingAppAlertPeer implements AppAlertPeer {
         public void actionPerformed(ActionEvent e) {
             ActionInfo ci = (ActionInfo) ((JButton) e.getSource()).getClientProperty("ActionInfo");
             selectedButton = ci.id;
-            cons.onAction(new DefaultAppDialogContext(binding, ci.id, ci.index));
+            cons.onAction(new DefaultAppDialogContext(appAlert, ci.id, ci.index));
         }
     }
 

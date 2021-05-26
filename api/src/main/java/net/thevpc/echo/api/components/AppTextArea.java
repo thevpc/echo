@@ -3,7 +3,7 @@ package net.thevpc.echo.api.components;
 import net.thevpc.common.props.*;
 import net.thevpc.echo.api.AppColor;
 
-public interface AppTextArea extends AppTextControl {
+public interface AppTextArea extends AppEditTextControl {
     WritableString textSelection();
 
     WritableInt caretPosition();

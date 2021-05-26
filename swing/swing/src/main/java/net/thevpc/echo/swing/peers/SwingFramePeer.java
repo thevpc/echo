@@ -1,9 +1,6 @@
 package net.thevpc.echo.swing.peers;
 
 import net.thevpc.common.msg.StringMessage;
-import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.common.props.PropertyListener;
-import net.thevpc.common.props.PropertyVeto;
 import net.thevpc.echo.FrameDisplayMode;
 import net.thevpc.echo.WindowState;
 import net.thevpc.echo.WindowStateSet;
@@ -36,16 +33,26 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
         this.appComponent = (AppFrame) component0;
         this.frame = new JFrame();
         contentPanel = new JPanel(new BorderLayout());
+        if (appComponent.prefSize().get() != null) {
+            this.frame.setPreferredSize(SwingHelpers.toAwtDimension(appComponent.prefSize().get()));
+        }
         //title binding...
-        this.appComponent.title().listeners().addInstall(() -> {
+        this.appComponent.title().onChangeAndInit(() -> {
             appComponent.app().runUI(() -> {
                 frame.setTitle(
-                        appComponent.title().getOr(x -> x == null ? "" : x.value(appComponent.app().i18n()))
+                        appComponent.title().getOr(x -> x == null ? "" : x.value(appComponent.app().i18n(),appComponent.locale().get()))
                 );
             });
         });
-        this.appComponent.smallIcon().listeners().addInstall(() ->
-                appComponent.app().runUI(() -> {
+        this.appComponent.locale().onChangeAndInit(() -> {
+            appComponent.app().runUI(() -> {
+                frame.setTitle(
+                        appComponent.title().getOr(x -> x == null ? "" : x.value(appComponent.app().i18n(),appComponent.locale().get()))
+                );
+            });
+        });
+        this.appComponent.smallIcon().onChangeAndInit(()
+                -> appComponent.app().runUI(() -> {
                     frame.setIconImage(
                             SwingHelpers.toAwtImage(this.appComponent.smallIcon().get())
                     );
@@ -63,7 +70,7 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
 //                throw new IllegalArgumentException("Already BoundMenu");
 //            }
 //        });
-        appComponent.menuBar().listeners().addInstall(() -> {
+        appComponent.menuBar().onChangeAndInit(() -> {
             appComponent.app().runUI(() -> {
                 AppMenuBar v = appComponent.menuBar().get();
                 if (v == null) {
@@ -86,7 +93,7 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
 //                throw new IllegalArgumentException("Already Bound Toolbar");
 //            }
 //        });
-        appComponent.toolBar().listeners().addInstall(() -> {
+        appComponent.toolBar().onChangeAndInit(() -> {
             appComponent.app().runUI(() -> {
                 AppToolBarGroup v = appComponent.toolBar().get();
                 setComponentByConstraint(v, BorderLayout.PAGE_START);
@@ -95,7 +102,7 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
                 frame.repaint();
             });
         });
-        appComponent.statusBar().listeners().addInstall(() -> {
+        appComponent.statusBar().onChangeAndInit(() -> {
             appComponent.app().runUI(() -> {
                 AppToolBarGroup v = appComponent.statusBar().get();
                 setComponentByConstraint(v, BorderLayout.PAGE_END);
@@ -104,7 +111,7 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
                 frame.repaint();
             });
         });
-        appComponent.content().listeners().addInstall(() -> {
+        appComponent.content().onChangeAndInit(() -> {
             appComponent.app().runUI(() -> {
                 AppComponent v = appComponent.content().get();
                 setComponentByConstraint(v, BorderLayout.CENTER);
@@ -144,7 +151,7 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
 //            AppComponent v = event.newValue();
 //            setComponentByConstraint(v, BorderLayout.CENTER);
 //        });
-        appComponent.displayMode().listeners().addInstall(() -> applyDisplayMode());
+        appComponent.displayMode().onChangeAndInit(() -> applyDisplayMode());
         appComponent.app().toolkit().runUI(() -> {
 
             frame.getContentPane().setLayout(new BorderLayout());
@@ -187,63 +194,63 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
                 }
             });
             frame.addWindowListener(new WindowListener() {
-                                        @Override
-                                        public void windowOpened(WindowEvent e) {
-                                            appComponent.state().add(WindowState.OPENED);
-                                        }
+                @Override
+                public void windowOpened(WindowEvent e) {
+                    appComponent.state().add(WindowState.OPENED);
+                }
 
-                                        @Override
-                                        public void windowClosing(WindowEvent e) {
-                                            if (!_in_windowClosing) {
-                                                try {
-                                                    _in_windowClosing = true;
-                                                    try {
-                                                        appComponent.state().add(WindowState.CLOSING);
-                                                    } catch (Exception ex) {
-                                                        appComponent.app().logs().add(new StringMessage(Level.WARNING, "Closing Window canceled : " + ex.getMessage()));
-                                                    }
-                                                } finally {
-                                                    _in_windowClosing = false;
-                                                }
-                                            }
-                                        }
+                @Override
+                public void windowClosing(WindowEvent e) {
+                    if (!_in_windowClosing) {
+                        try {
+                            _in_windowClosing = true;
+                            try {
+                                appComponent.state().add(WindowState.CLOSING);
+                            } catch (Exception ex) {
+                                appComponent.app().logs().add(new StringMessage(Level.WARNING, "Closing Window canceled : " + ex.getMessage()));
+                            }
+                        } finally {
+                            _in_windowClosing = false;
+                        }
+                    }
+                }
 
-                                        @Override
-                                        public void windowClosed(WindowEvent e) {
-                                            if (!_in_windowClosed) {
-                                                try {
-                                                    _in_windowClosed = true;
-                                                    try {
-                                                        appComponent.state().add(WindowState.CLOSED);
-                                                    } catch (Exception ex) {
-                                                        appComponent.app().logs().add(new StringMessage(Level.WARNING, "Closing Window canceled : " + ex.getMessage()));
-                                                    }
-                                                } finally {
-                                                    _in_windowClosed = false;
-                                                }
-                                            }
-                                        }
+                @Override
+                public void windowClosed(WindowEvent e) {
+                    if (!_in_windowClosed) {
+                        try {
+                            _in_windowClosed = true;
+                            try {
+                                appComponent.state().add(WindowState.CLOSED);
+                            } catch (Exception ex) {
+                                appComponent.app().logs().add(new StringMessage(Level.WARNING, "Closing Window canceled : " + ex.getMessage()));
+                            }
+                        } finally {
+                            _in_windowClosed = false;
+                        }
+                    }
+                }
 
-                                        @Override
-                                        public void windowIconified(WindowEvent e) {
-                                            appComponent.state().add(WindowState.ICONIFIED);
-                                        }
+                @Override
+                public void windowIconified(WindowEvent e) {
+                    appComponent.state().add(WindowState.ICONIFIED);
+                }
 
-                                        @Override
-                                        public void windowDeiconified(WindowEvent e) {
-                                            appComponent.state().add(WindowState.DEICONIFIED);
-                                        }
+                @Override
+                public void windowDeiconified(WindowEvent e) {
+                    appComponent.state().add(WindowState.DEICONIFIED);
+                }
 
-                                        @Override
-                                        public void windowActivated(WindowEvent e) {
-                                            appComponent.state().add(WindowState.ACTIVATED);
-                                        }
+                @Override
+                public void windowActivated(WindowEvent e) {
+                    appComponent.state().add(WindowState.ACTIVATED);
+                }
 
-                                        @Override
-                                        public void windowDeactivated(WindowEvent e) {
-                                            appComponent.state().add(WindowState.DEACTIVATED);
-                                        }
-                                    }
+                @Override
+                public void windowDeactivated(WindowEvent e) {
+                    appComponent.state().add(WindowState.DEACTIVATED);
+                }
+            }
             );
             applyDisplayMode();
             frame.setLocationRelativeTo(null);
@@ -254,6 +261,9 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
     public void addChild(AppComponent other, int index) {
         appComponent.app().toolkit().runUI(() -> {
             String pn = other.path().get().last();
+            if(pn==null){
+                pn="";
+            }
             Component a = (Component) other.peer().toolkitComponent();
             switch (pn) {
                 case "content": {
@@ -361,7 +371,6 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
 //            frame.dispose();
 //        }
 //    }
-
     private void applyDisplayMode() {
         appComponent.app().toolkit().runUI(() -> {
 
@@ -403,9 +412,9 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
             int sheight = gd.getDisplayMode().getHeight();
             frame.setLocation(
                     sb.x
-                            + swidth / 2 - frame.getSize().width / 2,
+                    + swidth / 2 - frame.getSize().width / 2,
                     sb.x
-                            + sheight / 2 - frame.getSize().height / 2);
+                    + sheight / 2 - frame.getSize().height / 2);
         }
     }
 }

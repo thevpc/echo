@@ -75,7 +75,7 @@ public class TreeBase<T> extends ControlBase implements AppTree<T> {
             tNode=nf.createNode(value);
         }
         if(tNode==null){
-            tNode=new TreeNode<>(PropertyType.of(itemType()), value, app());
+            tNode=new TreeNode<>(PropertyType.of(itemType()), value, this);
         }
         if(cf!=null){
             List<T> children = cf.getChildren(value);

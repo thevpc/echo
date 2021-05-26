@@ -1,6 +1,9 @@
 package net.thevpc.echo;
 
-import net.thevpc.common.props.*;
+import net.thevpc.common.props.Props;
+import net.thevpc.common.props.WritableBoolean;
+import net.thevpc.common.props.WritableInt;
+import net.thevpc.common.props.WritableValue;
 import net.thevpc.common.props.impl.SimpleProperty;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
@@ -10,7 +13,8 @@ import java.util.Objects;
 
 public class WritableTextStyle extends SimpleProperty {
     private WritableValue<AppFont> font = Props.of("font").valueOf(AppFont.class);
-    private WritableValue<AppColor> color = Props.of("color").valueOf(AppColor.class);
+    private WritableValue<AppColor> foregroundColor = Props.of("foregroundColor").valueOf(AppColor.class);
+    private WritableValue<AppColor> backgroundColor = Props.of("backgroundColor").valueOf(AppColor.class);
     private WritableBoolean underline = Props.of("underline").booleanOf(false);
     private WritableBoolean strikethrough = Props.of("strikethrough").booleanOf(false);
     private WritableInt strokeSize = Props.of("strokeSize").intOf(1);
@@ -18,7 +22,7 @@ public class WritableTextStyle extends SimpleProperty {
 
     public WritableTextStyle(String name) {
         super(name);
-        this.propagateEvents(font, color, underline, strikethrough, strokeSize);
+        this.propagateEvents(font, foregroundColor, backgroundColor, underline, strikethrough, strokeSize);
     }
 
     public WritableValue<AppFont> font() {
@@ -29,8 +33,12 @@ public class WritableTextStyle extends SimpleProperty {
         return align;
     }
 
-    public WritableValue<AppColor> color() {
-        return color;
+    public WritableValue<AppColor> foregroundColor() {
+        return foregroundColor;
+    }
+
+    public WritableValue<AppColor> backgroundColor() {
+        return backgroundColor;
     }
 
     public WritableBoolean underline() {
@@ -46,20 +54,20 @@ public class WritableTextStyle extends SimpleProperty {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(font, foregroundColor, underline, strikethrough, strokeSize, align);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WritableTextStyle that = (WritableTextStyle) o;
         return Objects.equals(font.get(), that.font.get())
-                && Objects.equals(color.get(), that.color.get())
+                && Objects.equals(foregroundColor.get(), that.foregroundColor.get())
                 && Objects.equals(underline.get(), that.underline.get())
                 && Objects.equals(strikethrough.get(), that.strikethrough.get())
                 && Objects.equals(strokeSize, that.strokeSize)
                 && Objects.equals(align.get(), that.align);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(font, color, underline, strikethrough, strokeSize, align);
     }
 }

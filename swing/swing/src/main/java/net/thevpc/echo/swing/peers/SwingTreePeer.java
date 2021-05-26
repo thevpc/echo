@@ -10,6 +10,7 @@ import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.impl.TreeNode;
 import net.thevpc.echo.spi.peers.AppTreePeer;
 import net.thevpc.echo.swing.SwingApplicationUtils;
+import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 import net.thevpc.echo.swing.raw.TreeItemTreeModel;
 
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.thevpc.echo.Application;
 
 public class SwingTreePeer implements SwingPeer, AppTreePeer {
     private JTree swingComponent;
@@ -34,9 +36,8 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
     public void install(AppComponent component0) {
         appTree = (AppTree<?>) component0;
-        swingComponent = new JTree(
-
-        );
+        swingComponent = new JTree(new DefaultTreeModel(new DefaultMutableTreeNode("root")));
+        SwingPeerHelper.installComponent(appTree, swingComponent);
         m = new TreeItemTreeModel<>(
                 appTree, swingComponent
         );
@@ -59,7 +60,6 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
             List<Object> onodes = Arrays.stream(spaths)
                     .map(p -> ((TreeNode) p.getLastPathComponent()).get())
                     .collect(Collectors.toList());
-//            System.out.println("[SWING-TREE] "+onodes);
             appTree.selection().setAll(nodes.toArray(new AppTreeNode[0]));
         });
         appTree.selection().onChange(e -> {
@@ -134,7 +134,12 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
 //        toolkitComponent.setRowHeight(15);
         swingComponent.setCellRenderer(new MyDefaultTreeCellRenderer(this));
-//        System.out.println(swingComponent.getRowBounds(0));
+        appTree.locale().onChange(()->{
+            swingComponent.setCellRenderer(new MyDefaultTreeCellRenderer(this));
+        });
+        appTree.iconSet().onChange(()->{
+            swingComponent.setCellRenderer(new MyDefaultTreeCellRenderer(this));
+        });
     }
 
     protected static TreeModel getDefaultTreeModel() {
@@ -163,6 +168,30 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
         parent.add(new DefaultMutableTreeNode("bananas"));
         return new DefaultTreeModel(root);
     }
+    public static Object[] toTreePath2Arr(AppTreeNode note) {
+        List<AppTreeNode> elems = new ArrayList<>();
+        while (note != null) {
+            elems.add(0, note);
+            note = (AppTreeNode) note.parent().get();
+        }
+        if(elems.size()>1){
+            elems.remove(0);
+        }
+        return elems.toArray();
+    }
+
+    public static TreePath toTreePath2(AppTreeNode note) {
+        List<AppTreeNode> elems = new ArrayList<>();
+        while (note != null) {
+            elems.add(0, note);
+            note = (AppTreeNode) note.parent().get();
+        }
+        if(elems.size()>0){
+            elems.remove(0);
+        }
+        return new TreePath(elems.toArray());
+    }
+
     @Override
     public Object toolkitComponent() {
         return swingComponent;
@@ -287,6 +316,12 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
         public AppTree<T> getTree() {
             return (AppTree<T>) myDefaultTreeCellRenderer.peer.appTree;
         }
+
+        @Override
+        public Application getApplication() {
+            return myDefaultTreeCellRenderer.peer.appTree.app();
+        }
+        
 
 
         @Override

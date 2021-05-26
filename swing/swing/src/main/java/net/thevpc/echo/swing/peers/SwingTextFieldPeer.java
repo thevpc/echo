@@ -20,36 +20,17 @@ public class SwingTextFieldPeer implements SwingPeer, AppTextFieldPeer {
     public void install(AppComponent component) {
         appTextField=(AppTextField) component;
         jTextField=new JTextField();
-        jTextField.setText(
-                appTextField.text().getOr(x->x==null?"":x.toString())
-        );
+        SwingPeerHelper.installTextComponent(appTextField,jTextField);
         SwingPeerHelper.installComponent(appTextField,this.jTextField);
-        jTextField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                update();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                update();
-            }
-            protected void update(){
-                appTextField.text().set(Str.of(jTextField.getText()));
-            }
-        });
-        appTextField.onChange(e->jTextField.setText(
-                appTextField.text().getOr(x->x==null?"":x.toString())
-        ));
     }
 
     @Override
     public Object toolkitComponent() {
         return jTextField;
+    }
+
+    @Override
+    public void replaceSelection(String newValue) {
+        jTextField.replaceSelection(newValue);
     }
 }

@@ -27,7 +27,7 @@ import net.thevpc.echo.api.components.AppComponent;
  *
  * @author vpc
  */
-public interface AppDialogInputPanel {
+public interface AppDialogInputPane {
 
     AppComponent getComponent();
     Object getValue();

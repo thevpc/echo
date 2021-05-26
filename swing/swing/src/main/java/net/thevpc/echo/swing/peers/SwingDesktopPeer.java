@@ -13,6 +13,7 @@ import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppDesktop;
 import net.thevpc.echo.api.components.AppWindow;
 import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppDesktopPeer;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 
@@ -49,21 +50,16 @@ public class SwingDesktopPeer implements SwingPeer, AppDesktopPeer {
         info.setIconifiable(false);
         info.setMaximizable(false);
         info.setResizable(false);
-        info.setTitle(
-                win.title().get() == null ? null :
-                        win.title().get().value(win.app().i18n())
-        );
         info.setComponent((Component) win.component().get().peer().toolkitComponent());
         JInternalFrame frame = desktop.addFrame(info);
         frame.putClientProperty(AppWindow.class.getName(), win);
-        win.title().onChange(
-                v -> win.title().withValue(
-                        x -> frame.setTitle(x == null ? null : x.value(win.app().i18n()))));
-        win.smallIcon().onChange(
-                v -> win.smallIcon().withValue(
+        win.title().onChangeAndInit(() -> info.setTitle(Applications.rawString(win.title(),win)));
+        win.locale().onChangeAndInit(() -> info.setTitle(Applications.rawString(win.title(),win)));
+        win.smallIcon().onChangeAndInit(
+                () -> win.smallIcon().withValue(
                         x -> frame.setFrameIcon(SwingHelpers.toAwtIcon(x))));
-        win.closable().onChange(
-                v -> win.closable().withValue(
+        win.closable().onChangeAndInit(
+                () -> win.closable().withValue(
                         x -> frame.setClosable(x)));
 //        win.anchor().onChange(
 //                v -> win.anchor().withValue(

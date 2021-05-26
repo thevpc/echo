@@ -6,6 +6,10 @@ public class Pos implements AppChildConstraint {
     private int x;
     private int y;
 
+    public static Pos of(int x, int y){
+        return new Pos(x, y);
+    }
+    
     public Pos(int x, int y) {
         this.x = x;
         this.y = y;

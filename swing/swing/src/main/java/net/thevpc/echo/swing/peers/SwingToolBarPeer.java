@@ -6,14 +6,15 @@ import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 import java.awt.*;
+import net.thevpc.echo.swing.SwingPeerHelper;
 
 public class SwingToolBarPeer implements SwingPeer, AppToolBarPeer {
     private JToolBar jcomponent;
     @Override
     public void install(AppComponent comp) {
-        JToolBar jcomponent = new JToolBar();
+        jcomponent = new JToolBar();
         jcomponent.setFloatable(false);
-        this.jcomponent = jcomponent;
+        SwingPeerHelper.installComponent(comp, jcomponent);
     }
 
     @Override

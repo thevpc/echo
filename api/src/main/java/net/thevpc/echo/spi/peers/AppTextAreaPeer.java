@@ -16,4 +16,6 @@ public interface AppTextAreaPeer extends AppComponentPeer{
     String getText(int from, int to);
 
     int getTextLength() ;
+
+    void replaceSelection(String newValue);
 }

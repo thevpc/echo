@@ -26,6 +26,12 @@ import net.thevpc.common.props.impl.WritableValueImpl;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.Application;
 import net.thevpc.common.i18n.Str;
+import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.impl.Applications;
+
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,16 +41,18 @@ public class WritableImage extends WritableValueImpl<AppImage> {
 
     private Str id;
     private Application app;
+    private AppComponent component;
 
-    public WritableImage(String name, Application app) {
+    public WritableImage(String name, Application app,AppComponent component) {
         super(name, PropertyType.of(String.class), null);
         this.app = app;
-        app.iconSets().onChange(e -> {
-            reevalValue();
+        this.component = component;
+        component.iconSet().onChange(e -> {
+            reEvalValue();
         });
     }
 
-    public void reevalValue() {
+    public void reEvalValue() {
         if (id != null) {
             Str iconId = this.id;
             String iconId0=null;
@@ -52,7 +60,11 @@ public class WritableImage extends WritableValueImpl<AppImage> {
                 superSet(null);
                 return;
             }else if (iconId.is18n()) {
-                String id2 = app.i18n().getString(iconId.value(), x -> null);
+                Locale loc=null;
+                if(component!=null){
+                    loc = component.locale().get();
+                }
+                String id2 = app.i18n().locale(loc).getString(iconId.value(), x -> null);
                 if (id2 != null) {
                     iconId0 = id2.trim();
                     if (iconId0.isEmpty()) {
@@ -60,13 +72,20 @@ public class WritableImage extends WritableValueImpl<AppImage> {
                         return;
                     }
                 } else {
+                    Logger.getLogger(WritableImage.class.getName()).log(
+                            Level.FINE,"icon locale missing : "+iconId.value()
+                    );
                     superSet(null);
                     return;
                 }
             }else{
                 iconId0=iconId.value();
             }
-            superSet(app.iconSets().icon(iconId0).get());
+            IconSet iconSet = app.iconSets().get(component.iconSet().get());
+            if(iconSet==null){
+                iconSet=app.iconSets().iconSet();
+            }
+            superSet(iconSet.getIcon(iconId0,app.iconSets().config().get()));
         }
     }
 
@@ -74,12 +93,34 @@ public class WritableImage extends WritableValueImpl<AppImage> {
         return id;
     }
 
+    public Application app() {
+        return app;
+    }
+
+    public void load(String url) {
+        app().executorService().get().submit(
+                () -> {
+                    try {
+                        final AppImage image = Applications.loadIcon(url, -1, -1, app());
+                        app().runUI(() -> {
+                            superSet(image);
+                        });
+                    } catch (Exception ex) {
+                        app().runUI(() -> {
+                            superSet(null);
+                        });
+                    }
+                }
+        );
+    }
+
     public void set(Str id) {
         this.id = id;
         if (id != null) {
-            reevalValue();
+            reEvalValue();
         }
     }
+
 
     private void superSet(AppImage image) {
         super.set(image);

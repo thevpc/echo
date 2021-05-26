@@ -6,6 +6,7 @@ import net.thevpc.echo.api.components.AppLabel;
 import net.thevpc.echo.Label;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,16 +15,17 @@ public class ExtraControls {
 
     public static AppLabel createDateLabel(Application app, String format) {
         AppLabel label = new Label(app);
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern(format==null?"yyyy-MM-dd HH:mm:ss":format);
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 app.toolkit().runUI(
                         () -> label.text().set(
-                                Str.of(LocalDateTime.now().toString())
+                                Str.of(fmt.format(LocalDateTime.now()))
                         )
                 );
             }
-        }, 1000);
+        },0, 1000);
         return label;
     }
 
@@ -36,13 +38,13 @@ public class ExtraControls {
                 app.toolkit().runUI(
                         () -> label.text().set(
                                 Str.of(
-                                        Runtime.getRuntime().freeMemory()
-                                                / 1024 / 1024
+                                        (Runtime.getRuntime().freeMemory()
+                                                / 1024 / 1024)+"M"
                                 )
                         )
                 );
             }
-        }, 1000);
+        },0, 1000);
         return label;
     }
 }

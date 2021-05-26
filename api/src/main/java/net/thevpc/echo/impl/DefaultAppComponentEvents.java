@@ -9,9 +9,15 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import net.thevpc.common.props.impl.DefaultPropertyListeners;
 
-public class DefaultAppComponentEvents implements AppComponentEvents {
+public class DefaultAppComponentEvents extends DefaultPropertyListeners implements AppComponentEvents {
+
     private final Map<AppEventType, Set<AppComponentEventListener>> listeners = new HashMap<>();
+
+    public DefaultAppComponentEvents(Object source) {
+        super(source);
+    }
 
     public void add(AppComponentEventListener listener, AppEventType eventType, AppEventType... handles) {
         if (eventType == null) {
@@ -60,8 +66,8 @@ public class DefaultAppComponentEvents implements AppComponentEvents {
         return listeners.computeIfAbsent(eventType, k -> new LinkedHashSet<>());
     }
 
-    public void fire(AppEventType eventType, AppComponentEvent event) {
-        for (AppComponentEventListener li : getAll(eventType)) {
+    public void fire(AppComponentEvent event) {
+        for (AppComponentEventListener li : getAll(event.eventType())) {
             li.onEvent(event);
         }
     }

@@ -3,15 +3,14 @@ package net.thevpc.echo;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.common.props.*;
 import net.thevpc.echo.api.AppColor;
-import net.thevpc.echo.api.AppRichHtmlEditor;
+import net.thevpc.echo.api.components.AppRichHtmlEditor;
 import net.thevpc.echo.api.TextAlignment;
+import net.thevpc.echo.impl.components.EditTextBase;
 import net.thevpc.echo.impl.components.TextBase;
 import net.thevpc.echo.spi.peers.AppRichHtmlEditorPeer;
 
-public class RichHtmlEditor extends TextBase implements AppRichHtmlEditor {
+public class RichHtmlEditor extends EditTextBase implements AppRichHtmlEditor {
 
-    private WritableString textSelection = Props.of("textSelection").stringOf("");
-    private WritableInt caretPosition = Props.of("caretPosition").intOf(-1);
     private WritableBoolean zoomOnMouseWheel = Props.of("zoomOnMouseWheel").booleanOf(false);
     private WritableBoolean highlightSelectionDuplicates = Props.of("highlightSelectionDuplicates").booleanOf(true);
     private WritableValue<AppColor> highlightSelectionDuplicatesColor = Props.of("highlightSelectionDuplicatesColor").valueOf(AppColor.class);
@@ -23,7 +22,7 @@ public class RichHtmlEditor extends TextBase implements AppRichHtmlEditor {
 
     public RichHtmlEditor(String id, String str, Application app) {
         super(id, Str.of(str), app, AppRichHtmlEditor.class, AppRichHtmlEditorPeer.class);
-        propagateEvents(textSelection, caretPosition, highlightSelectionDuplicates, highlightSelectionDuplicatesColor, zoomOnMouseWheel);
+        propagateEvents(highlightSelectionDuplicates, highlightSelectionDuplicatesColor, zoomOnMouseWheel);
     }
 
     public RichHtmlEditor(Application app) {
@@ -59,6 +58,18 @@ public class RichHtmlEditor extends TextBase implements AppRichHtmlEditor {
         peer().runTextBold();
     }
 
+    public void runTextSup() {
+        peer().runAction("text-sup");
+    }
+
+    public void runTextSub() {
+        peer().runAction("text-sub");
+    }
+
+    public void runTextInsertTag(String type) {
+        peer().runAction("insert-"+type.toLowerCase());
+    }
+
     public void runTextItalic() {
         peer().runTextItalic();
     }
@@ -83,18 +94,16 @@ public class RichHtmlEditor extends TextBase implements AppRichHtmlEditor {
         peer().runTextDuplicate();
     }
 
+    public void runTextForegroundColor(AppColor color){
+        peer().runTextForegroundColor(color);
+    }
+
+    public void runTextBackgroundColor(AppColor color){
+        peer().runTextBackgroundColor(color);
+    }
+
     public void registerAccelerator(String actionId, String accelerator, Runnable action) {
         peer().registerAccelerator(actionId, accelerator, action);
-    }
-
-    @Override
-    public WritableString textSelection() {
-        return textSelection;
-    }
-
-    @Override
-    public WritableInt caretPosition() {
-        return caretPosition;
     }
 
     @Override
@@ -122,4 +131,8 @@ public class RichHtmlEditor extends TextBase implements AppRichHtmlEditor {
         return peer().getTextLength();
     }
 
+    @Override
+    public void replaceSelection(String newValue) {
+        peer().replaceSelection(newValue);
+    }
 }

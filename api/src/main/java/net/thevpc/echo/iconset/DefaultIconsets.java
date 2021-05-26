@@ -70,7 +70,6 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
                     int iw = (int) i.getHeight();
                     int cw = cnf.getWidth();
                     if (iw != cw) {
-//                        System.out.println("problem detected");
                         i = s.getIcon(entry.getKey(), cnf);
                     }
                 }
@@ -78,7 +77,7 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
             }
 
         }
-        ((DefaultPropertyListeners) this.listeners()).firePropertyUpdated(
+        ((DefaultPropertyListeners) this.events()).firePropertyUpdated(
                 new PropertyEvent(this, -1, false, true,
                         Path.of(propertyName()), PropertyUpdate.UPDATE, "activeIconSetChanged",
                         true
@@ -104,6 +103,18 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
             icons.put(id, i);
         }
         return i;
+    }
+
+    @Override
+    public AppImage icon(String id, String iconSet) {
+        IconSet i = get(iconSet);
+        if(i==null){
+            i=iconSet();
+        }
+        if(i==null){
+            return null;
+        }
+        return i.getIcon(id,config().get());
     }
 
     @Override

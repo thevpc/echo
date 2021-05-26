@@ -13,6 +13,14 @@ public class Bounds {
         this.height = height;
     }
 
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
     public double getWidth() {
         return width;
     }

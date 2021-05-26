@@ -1,61 +1,66 @@
 package net.thevpc.echo;
 
 import net.thevpc.common.i18n.Str;
+import net.thevpc.common.i18n.WritableStr;
+import net.thevpc.common.props.Props;
+import net.thevpc.common.props.WritableString;
+import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.api.AppDialogAction;
-import net.thevpc.echo.api.AppDialogInputPanel;
+import net.thevpc.echo.api.AppDialogInputPane;
 import net.thevpc.echo.api.AppDialogResult;
 import net.thevpc.echo.api.components.AppAlert;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppLabel;
+import net.thevpc.echo.iconset.WritableImage;
 import net.thevpc.echo.impl.components.ControlBase;
 import net.thevpc.echo.impl.dialog.InputTextAreaPanel;
 import net.thevpc.echo.impl.dialog.InputTextFieldPanel;
 import net.thevpc.echo.spi.peers.AppAlertPeer;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class Alert extends ControlBase implements AppAlert {
-    protected Str title;
-    protected List<Object> titleParameters = new ArrayList<>();
-    protected AppComponent content;
+
+    protected WritableValue<AppComponent> content;
     protected Supplier<Object> valueEvaluator;
     protected List<String> buttonIds;
-    protected String defaultId;
+    protected WritableString defaultButton;
+    protected WritableImage headerIcon;
     protected Map<String, AppDialogAction> consMap = new HashMap<>();
-    protected Dimension preferredSize;
     protected AppDialogAction onClose = c -> c.getDialog().closeDialog();
-    AppDialogAction action = null;
-    AppAlertPeer peer = null;
-
+    protected WritableStr headerText;
+    protected AppDialogAction action = null;
 
     public Alert(Application app) {
         this(null, app);
+        headerText = AppProps.of("headerText", app).strOf(Str.empty());
+        defaultButton = Props.of("defaultButton").stringOf(null);
+        content = Props.of("content").valueOf(AppComponent.class);
+        headerIcon = new WritableImage("headerIcon", app,this);
+        propagateEvents(headerText);
     }
 
     public Alert(String id, Application app) {
         super(id, app, AppAlert.class, AppAlertPeer.class);
     }
 
-    public Dimension getPreferredSize() {
-        return preferredSize;
+    @Override
+    public WritableStr headerText() {
+        return headerText;
     }
 
-    public AppAlert setPreferredSize(Dimension preferredSize) {
-        this.preferredSize = preferredSize;
-        return this;
+    @Override
+    public WritableImage headerIcon() {
+        return headerIcon;
     }
 
-    public AppAlert setPreferredSize(int width, int heigth) {
-        this.preferredSize = new Dimension(width, heigth);
-        return this;
-    }
-
-    public AppAlert setTitle(Str title, Object... params) {
-        this.title = title;
-        this.titleParameters.clear();
-        this.titleParameters.addAll(Arrays.asList(params));
-        return this;
+    @Override
+    public WritableString defaultButton() {
+        return defaultButton;
     }
 
     @Override
@@ -70,7 +75,7 @@ public class Alert extends ControlBase implements AppAlert {
         return this;
     }
 
-    public AppAlert setInputContent(AppDialogInputPanel inputPanel) {
+    public AppAlert setInputContent(AppDialogInputPane inputPanel) {
         AppComponent component = inputPanel.getComponent();
         this.valueEvaluator = inputPanel::getValue;
         setContent(component);
@@ -78,24 +83,26 @@ public class Alert extends ControlBase implements AppAlert {
     }
 
     @Override
-    public AppComponent getContent() {
+    public WritableValue<AppComponent> content() {
         return content;
+    }
+
+    public AppAlert setContent(AppComponent mainComponent) {
+        this.content.set(mainComponent);
+        return this;
+    }
+
+    public AppAlert setContent(Object mainComponent) {
+        this.content.set(
+                mainComponent == null ? null : app().toolkit().createComponent(mainComponent)
+        );
+        return this;
     }
 
     public AppAlert setContentText(Str labelId) {
         AppLabel label = new Label(app());
         label.text().set(labelId);
         return setContent(label);
-    }
-
-    public AppAlert setContent(AppComponent mainComponent) {
-        this.content = mainComponent;
-        return this;
-    }
-
-    public AppAlert setContent(Object mainComponent) {
-        this.content = mainComponent == null ? null : app().toolkit().createComponent(mainComponent);
-        return this;
     }
 
     public AppAlert withOkOnlyButton() {
@@ -105,8 +112,8 @@ public class Alert extends ControlBase implements AppAlert {
     public AppAlert withOkOnlyButton(AppDialogAction ok) {
         buttonIds = Arrays.asList("ok");
         consMap.put("ok", ok);
-        if (defaultId == null) {
-            setDefaultId("ok");
+        if (defaultButton.get() == null) {
+            defaultButton().set("ok");
         }
         return this;
     }
@@ -119,8 +126,8 @@ public class Alert extends ControlBase implements AppAlert {
         buttonIds = Arrays.asList("ok", "cancel");
         consMap.put("ok", ok);
         consMap.put("cancel", cancel);
-        if (defaultId == null) {
-            setDefaultId("ok");
+        if (defaultButton.get() == null) {
+            defaultButton().set("ok");
         }
         return this;
     }
@@ -133,8 +140,8 @@ public class Alert extends ControlBase implements AppAlert {
         buttonIds = Arrays.asList("yes", "no");
         consMap.put("yes", yes);
         consMap.put("no", no);
-        if (defaultId == null) {
-            setDefaultId("yes");
+        if (defaultButton.get() == null) {
+            defaultButton().set("yes");
         }
         return this;
     }
@@ -148,8 +155,8 @@ public class Alert extends ControlBase implements AppAlert {
         consMap.put("yes", yes);
         consMap.put("no", no);
         consMap.put("cancel", cancel);
-        if (defaultId == null) {
-            setDefaultId("yes");
+        if (defaultButton.get() == null) {
+            defaultButton().set("yes");
         }
         return this;
     }
@@ -159,8 +166,8 @@ public class Alert extends ControlBase implements AppAlert {
         return this;
     }
 
-    public AppAlert setDefaultId(String defaultId) {
-        this.defaultId = defaultId;
+    public AppAlert setDefaultButton(String defaultId) {
+        this.defaultButton.set(defaultId);
         return this;
     }
 
@@ -182,7 +189,7 @@ public class Alert extends ControlBase implements AppAlert {
         peer().closeDialog();
     }
 
-//    public AppAlert build() {
+    //    public AppAlert build() {
 //        if (peer == null) {
 //            Str _titleId = title;
 //            List<String> _buttonIds = buttonIds == null ? new ArrayList<>() : new ArrayList<>(buttonIds);
@@ -210,22 +217,12 @@ public class Alert extends ControlBase implements AppAlert {
 //        }
 //        return this;
 //    }
-
-
-    public Str getTitle() {
-        return title;
-    }
-
     public AppDialogAction getAction(String buttonId) {
         return consMap.get(buttonId);
     }
 
     public AppDialogAction getAction() {
         return action;
-    }
-
-    public List<Object> getTitleParameters() {
-        return titleParameters;
     }
 
     public Supplier<Object> getValueEvaluator() {
@@ -236,11 +233,6 @@ public class Alert extends ControlBase implements AppAlert {
         return buttonIds;
     }
 
-    public String getDefaultId() {
-        return defaultId;
-    }
-
-    @Override
     public AppAlertPeer peer() {
         return (AppAlertPeer) super.peer();
     }

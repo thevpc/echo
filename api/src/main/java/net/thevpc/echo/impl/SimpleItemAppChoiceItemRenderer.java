@@ -6,6 +6,7 @@ import net.thevpc.echo.api.components.AppChoiceItemContext;
 import net.thevpc.echo.api.components.AppChoiceItemRenderer;
 
 public class SimpleItemAppChoiceItemRenderer implements AppChoiceItemRenderer<SimpleItem> {
+
     private final Application app;
 
     public SimpleItemAppChoiceItemRenderer(Application app) {
@@ -18,11 +19,11 @@ public class SimpleItemAppChoiceItemRenderer implements AppChoiceItemRenderer<Si
         if (v != null) {
             String icon = v.getIcon();
             context.renderDefault();
-            context.setText(v.getName());
+            context.setText(v.getName().value(context.getApplication().i18n(),context.getChoice().locale().get()));
             context.setIcon(
                     (icon != null && icon.length() > 0) ? app.iconSets().icon(icon).get() : null
             );
-        }else{
+        } else {
             context.renderDefault();
         }
     }

@@ -6,9 +6,12 @@
 package net.thevpc.echo.swing.icons;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import net.thevpc.common.swing.icon.EmptyIcon;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.spi.peers.AppImagePeer;
 
@@ -17,6 +20,8 @@ import net.thevpc.echo.spi.peers.AppImagePeer;
  * @author vpc
  */
 public class SwingAppImage implements AppImagePeer {
+    private static Image EMPTY_IMAGE=new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);
+    private static ImageIcon EMPTY_IMAGE_ICON=new ImageIcon(EMPTY_IMAGE);
 
     public static SwingAppImage of(AppImage a) {
         if (a instanceof SwingAppImage) {
@@ -68,6 +73,10 @@ public class SwingAppImage implements AppImagePeer {
     }
 
     private SwingAppImage(ImageIcon imageIcon,SwingAppImage base,URL baseURL,boolean vector) {
+        if(imageIcon==null){
+            //this happens if the url is valid but its content is not!!
+            imageIcon=EMPTY_IMAGE_ICON;
+        }
         this.imageIcon = imageIcon;
         this.base=base;
         this.baseURL=baseURL;

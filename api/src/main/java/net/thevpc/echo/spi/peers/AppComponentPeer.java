@@ -27,4 +27,6 @@ public interface AppComponentPeer {
     }
 
     Object toolkitComponent();
+    
+    void requestFocus();
 }

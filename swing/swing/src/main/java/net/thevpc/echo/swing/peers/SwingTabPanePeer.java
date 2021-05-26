@@ -7,6 +7,7 @@ package net.thevpc.echo.swing.peers;
 
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppTabPane;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppTabPanePeer;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 
@@ -37,14 +38,22 @@ public class SwingTabPanePeer implements SwingPeer, AppTabPanePeer {
     public void addChild(AppComponent child, int index) {
         JComponent j = (JComponent) child.peer().toolkitComponent();
         tabbedPane.addTab(
-                child.title().getOr(x->x==null?null:x.value(child.app().i18n())),
+                Applications.rawString(child.title(),child),
                 SwingHelpers.toAwtIcon(child.smallIcon().get()),
                 j
         );
-        child.title().onChange(
+        child.title().onChangeAndInit(
                 v->child.title().withValue(
-                        x->tabbedPane.setTitleAt(indexOf(child),x==null?null:x.value(child.app().i18n()))));
-        child.smallIcon().onChange(
+                        x->tabbedPane.setTitleAt(indexOf(child),
+                                Applications.rawString(x,child)
+                        )));
+        child.locale().onChangeAndInit(
+                v->child.title().withValue(
+                        x->tabbedPane.setTitleAt(indexOf(child),
+                                Applications.rawString(x,child)
+                        )));
+
+        child.smallIcon().onChangeAndInit(
                 v->child.smallIcon().withValue(
                         x->tabbedPane.setIconAt(indexOf(child),SwingHelpers.toAwtIcon(x))));
     }

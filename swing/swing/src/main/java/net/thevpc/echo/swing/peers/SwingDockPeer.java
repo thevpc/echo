@@ -11,6 +11,7 @@ import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppDock;
 import net.thevpc.echo.api.components.AppWindow;
 import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppDockPeer;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 
@@ -47,17 +48,15 @@ public class SwingDockPeer implements SwingPeer, AppDockPeer {
         }
         workspacePanel.add(
                 win.id(),
-                j, win.title().getOr(x->x==null?null:x.value(win.app().i18n())),
+                j,
+                Applications.rawString(win.title(),win),
                 SwingHelpers.toAwtIcon(win.smallIcon().get()),
                 closable,
                 toDocAnchor(win.anchor().get())
         );
-        win.title().onChange(
-                v->win.title().withValue(
-                        x->workspacePanel.setWindowTitle(win.id(),x==null?null:x.value(win.app().i18n()))));
-        win.smallIcon().onChange(
-                v->win.smallIcon().withValue(
-                        x->workspacePanel.setWindowIcon(win.id(),SwingHelpers.toAwtIcon(x))));
+        win.title().onChange(v->workspacePanel.setWindowTitle(win.id(),Applications.rawString(win.title(),win)));
+        win.locale().onChange(v->workspacePanel.setWindowTitle(win.id(),Applications.rawString(win.title(),win)));
+        win.smallIcon().onChange(v->workspacePanel.setWindowIcon(win.id(),SwingHelpers.toAwtIcon(win.smallIcon().get())));
         if(win instanceof AppWindow) {
             WritableBoolean cp = ((AppWindow) win).closable();
             cp.onChange(

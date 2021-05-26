@@ -16,22 +16,49 @@ public class TreeItemTreeModel<T> extends AbstractTreeModel {
     private AppTree<T> tree;
     private JTree jtree;
 
-    public TreeItemTreeModel(AppTree<T> tree,JTree jtree) {
-        this.tree=tree;
-        this.jtree=jtree;
-        tree.root().listeners().addPropagated(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
+    public TreeItemTreeModel(AppTree<T> tree0,JTree jtree0) {
+        this.tree=tree0;
+        this.jtree=jtree0;
+        tree.root().events().addPropagated(event -> {
+            if(event.immediate()){
+                fireTreeStructureChanged(jtree, null);
+            }else {
                 Object owner = event.property().userObjects().get("owner");
-                if(event.property().propertyName().equals("children")
-                        && owner instanceof AppTreeNode){
-                    AppTreeNode p=(AppTreeNode) owner;
-                    if(p!=null){
-                        fireTreeStructureChanged(tree,SwingTreePeer.toTreePath(p));
+                if (event.property().propertyName().equals("children")
+                        && owner instanceof AppTreeNode) {
+                    AppTreeNode p = (AppTreeNode) owner;
+                    switch (event.eventType()){
+                        case ADD:{
+//                            fireTreeNodesInserted(jtree, SwingTreePeer.toTreePath(p).getPath(),
+//                                    new int[]{event.index()},
+//                                    new Object[]{event.newValue()}
+//                            );
+//                            jtree.updateUI();
+                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
+                            break;
+                        }
+                        case UPDATE:{
+//                            fireTreeNodesChanged(jtree, SwingTreePeer.toTreePath2Arr(p),
+//                                    new int[]{event.index()},
+//                                    new Object[]{event.newValue()}
+//                            );
+//                            jtree.updateUI();
+                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
+                            break;
+                        }
+                        case REMOVE:{
+//                            fireTreeNodesRemoved(jtree, SwingTreePeer.toTreePath2Arr(p),
+//                                    new int[]{event.index()},
+//                                    new Object[]{event.oldValue()}
+//                                    );
+                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
+//                            jtree.updateUI();
+                            break;
+                        }
                     }
                 }
-                //fireTreeStructureChanged(jtree,null);
             }
+            //fireTreeStructureChanged(jtree,null);
         });
     }
 

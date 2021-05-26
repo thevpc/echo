@@ -7,6 +7,7 @@ import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.spi.peers.AppComboBoxPeer;
 import net.thevpc.echo.swing.SwingApplicationUtils;
+import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
@@ -14,6 +15,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import net.thevpc.echo.Application;
 
 public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
     private JComboBox swingComponent;
@@ -26,16 +28,17 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
         this.appComponent = (AppComboBox) component0;
         DefaultComboBoxModel dataModel = new DefaultComboBoxModel();
         swingComponent = new JComboBox(dataModel);
+        SwingPeerHelper.installComponent(appComponent,swingComponent);
         for (Object value : appComponent.values()) {
             dataModel.addElement(value);
         }
-        appComponent.editable().listeners().addInstall(
+        appComponent.editable().onChangeAndInit(
                 ()->swingComponent.setEditable(appComponent.editable().get())
         );
         appComponent.values().onChange(e -> {
             switch (e.eventType()) {
                 case ADD: {
-                    dataModel.insertElementAt(e.index(), e.newValue());
+                    dataModel.insertElementAt(e.newValue(),e.index());
                     break;
                 }
                 case REMOVE: {
@@ -44,7 +47,7 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
                 }
                 case UPDATE: {
                     dataModel.removeElementAt(e.index());
-                    dataModel.insertElementAt(e.index(), e.newValue());
+                    dataModel.insertElementAt(e.newValue(),e.index());
                     break;
                 }
             }
@@ -69,6 +72,10 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
                 }
             }
         });
+        appComponent.selection().indices().onChange(x->{
+            Integer index = appComponent.selection().indices().get();
+            swingComponent.setSelectedIndex(index == null ? -1 : index);
+        });
         swingComponent.setRenderer(new MyDefaultListCellRenderer(this));
     }
 
@@ -89,13 +96,13 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
             this.peer = peer;
         }
 
-        public void getListCellRendererComponent0(MyAppChoiceItemContext c) {
+        public void getListCellRendererComponent0(DefaultComboBoxItemContext c) {
             super.getListCellRendererComponent(c.list, c.value, c.index, c.isSelected, c.cellHasFocus);
         }
 
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             AppChoiceItemRenderer<?> r = peer.appComponent.itemRenderer().get();
-            MyAppChoiceItemContext context = new MyAppChoiceItemContext(this, list, index, value, isSelected, cellHasFocus);
+            DefaultComboBoxItemContext context = new DefaultComboBoxItemContext(this, list, index, value, isSelected, cellHasFocus);
             if (r != null) {
                 r.render(context);
             } else {
@@ -106,7 +113,7 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
 
     }
 
-    private static class MyAppChoiceItemContext implements AppChoiceItemContext {
+    private static class DefaultComboBoxItemContext implements AppChoiceItemContext {
         private final MyDefaultListCellRenderer myDefaultListCellRenderer;
         private final JList list;
         private final int index;
@@ -114,7 +121,7 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
         private boolean isSelected;
         private boolean cellHasFocus;
 
-        public MyAppChoiceItemContext(MyDefaultListCellRenderer myDefaultListCellRenderer, JList list, int index, Object value, boolean isSelected, boolean cellHasFocus) {
+        public DefaultComboBoxItemContext(MyDefaultListCellRenderer myDefaultListCellRenderer, JList list, int index, Object value, boolean isSelected, boolean cellHasFocus) {
             this.index = index;
             this.value = value;
             this.list = list;
@@ -127,6 +134,12 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
         public AppChoiceControl getChoice() {
             return myDefaultListCellRenderer.peer.appComponent;
         }
+
+        @Override
+        public Application getApplication() {
+            return myDefaultListCellRenderer.peer.appComponent.app();
+        }
+        
 
         @Override
         public int getIndex() {

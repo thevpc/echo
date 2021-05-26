@@ -3,7 +3,7 @@ package net.thevpc.echo.spi.peers;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.TextAlignment;
 
-public interface AppRichHtmlEditorPeer extends AppComponentPeer{
+public interface AppRichHtmlEditorPeer extends AppComponentPeer {
 
     void runTextBold();
 
@@ -25,9 +25,16 @@ public interface AppRichHtmlEditorPeer extends AppComponentPeer{
 
     void registerAccelerator(String actionId, String accelerator, Runnable action);
 
+    boolean runAction(String action);
+
     String getText(int from, int to);
 
-    int getTextLength() ;
+    int getTextLength();
 
+    void replaceSelection(String newValue);
+
+    void runTextForegroundColor(AppColor color);
+
+    void runTextBackgroundColor(AppColor color);
 }
 

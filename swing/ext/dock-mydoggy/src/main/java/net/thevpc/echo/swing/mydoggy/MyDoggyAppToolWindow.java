@@ -12,6 +12,7 @@ import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppWindow;
 import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppWindowPeer;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 import net.thevpc.echo.swing.peers.SwingPeer;
@@ -76,15 +77,14 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
                 ;
 
         this.toolWindow = toolWindowManager.registerToolWindow(
-                win.id(), win.title().get()
-                        .value(app.i18n()), aim,
+                win.id(), Applications.rawString(win.title(),comp), aim,
                 (Component) win.component().get().peer().toolkitComponent()
                 , toMyDoggyAnchor(win.anchor().get()));
         for (ToolWindowType value : ToolWindowType.values()) {
             this.toolWindow.getTypeDescriptor(value).setIdVisibleOnTitleBar(false);
         }
         toolWindow.getRepresentativeAnchorDescriptor().setTitle(
-                win.title().get().value(app.i18n())
+                Applications.rawString(win.title(),comp)
         );
         toolWindow.getRepresentativeAnchorDescriptor().setIcon(aim);
         win.active().set(toolWindow.isActive());
@@ -137,9 +137,9 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
 
     }
 
-    @Override
-    public Bounds bounds() {
-        Rectangle r = toolWindow.getComponent().getBounds();
-        return new Bounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
-    }
+//    @Override
+//    public Bounds bounds() {
+//        Rectangle r = toolWindow.getComponent().getBounds();
+//        return new Bounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
+//    }
 }

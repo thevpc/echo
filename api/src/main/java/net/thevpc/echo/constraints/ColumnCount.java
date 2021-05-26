@@ -2,10 +2,14 @@ package net.thevpc.echo.constraints;
 
 import java.util.Objects;
 
-public class ParentWrapCount implements AppParentConstraint {
+public class ColumnCount implements AppParentConstraint {
     private final int count;
 
-    public ParentWrapCount(int count) {
+    public static ColumnCount of(int count){
+        return new ColumnCount(count);
+    }
+    
+    public ColumnCount(int count) {
         this.count = count;
     }
 
@@ -17,7 +21,7 @@ public class ParentWrapCount implements AppParentConstraint {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ParentWrapCount that = (ParentWrapCount) o;
+        ColumnCount that = (ColumnCount) o;
         return count == that.count;
     }
 

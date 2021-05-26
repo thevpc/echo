@@ -1,10 +1,10 @@
 package net.thevpc.echo.swing.peers;
 
-import net.thevpc.echo.Bounds;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppDesktop;
 import net.thevpc.echo.api.components.AppWindow;
 import net.thevpc.echo.spi.peers.AppWindowPeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +22,7 @@ public class SwingWindowPeer implements SwingPeer, AppWindowPeer {
         if (this.win == null) {
             this.win = (AppWindow) comp;
             windowPanel = new JPanel(new BorderLayout());
+            SwingPeerHelper.installComponent(comp, windowPanel);
             windowPanel.setName("SwingWindowPeer.Container");
             JComponent cc = (JComponent) win.component().getOr(x -> x == null ? null : x.peer().toolkitComponent());
             if (cc != null) {
@@ -112,16 +113,5 @@ public class SwingWindowPeer implements SwingPeer, AppWindowPeer {
                 }
             }
         }
-    }
-
-    @Override
-    public Bounds bounds() {
-        Rectangle r = windowPanel.getBounds();
-        return new Bounds(
-                r.getX(),
-                r.getY(),
-                r.getWidth(),
-                r.getHeight()
-        );
     }
 }

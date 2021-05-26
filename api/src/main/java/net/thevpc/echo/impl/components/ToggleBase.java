@@ -13,16 +13,16 @@ public class ToggleBase extends TextBase implements AppToggleControl {
     private final WritableString group = Props.of("group").stringOf(null);
     private final WritableBoolean selected = Props.of("selected").booleanOf(false);
 
-    public ToggleBase(String id, Str str,String group, Application app,
+    public ToggleBase(String id, Str str, String group, Application app,
                       Class<? extends AppToggleControl> componentType,
                       Class<? extends AppComponentPeer> peerType) {
-        super(id,str,app, componentType, peerType);
-        if (id != null) {
+        super(id, str, app, componentType, peerType);
+        if (id != null && !id.startsWith(".")) {
             String aid = "Action." + id;
-            text().set(str==null?Str.i18n(aid):str);
+            text().set(str == null ? Str.i18n(aid) : str);
             smallIcon().set(Str.i18n(aid + ".icon"));
-        }else{
-            text().set(str==null?Str.of(""):str);
+        } else {
+            text().set(str == null ? Str.of("") : str);
         }
         group().set(group);
         propagateEvents(this.group, selected);

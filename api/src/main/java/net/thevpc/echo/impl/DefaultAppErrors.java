@@ -47,9 +47,9 @@ public class DefaultAppErrors extends WritablePropertyDelegate implements AppErr
     public DefaultAppErrors(Application app) {
         super(Props.of("errors").dispatcherOf(Message.class));
         this.app = app;
-        listeners().add(x -> {
+        events().add(x -> {
+            ExceptionMessage e = x.newValue();
             if (enableErrorStackTrace.get()) {
-                ExceptionMessage e = x.newValue();
                 if (e.getError() instanceof Throwable) {
                     LOGGER.log(Level.SEVERE, e.getText(), e.getError());
                     //e.getError().printStackTrace();
@@ -59,16 +59,17 @@ public class DefaultAppErrors extends WritablePropertyDelegate implements AppErr
                 }
             }
             if(enableErrorDialog.get()){
-                app.errors().onChange(e -> {
-                    net.thevpc.common.msg.Message m = e.newValue();
                     new Alert(app)
-                            .setTitle(Str.i18n("Message.error"))
+                            .with((Alert a)->{
+                                a.title().set(Str.i18n("Message.error.title"));
+                                a.headerText().set(Str.i18n("Message.error.header"));
+                                a.headerIcon().set(Str.of("error"));
+                            })
                             .setContentText(
-                                    Str.of(m.toString())
+                                    Str.of(e.toString())
                             )
                             .withOkOnlyButton(c -> c.getDialog().closeDialog())
                             .showDialog(null);
-                });
             }
         });
     }

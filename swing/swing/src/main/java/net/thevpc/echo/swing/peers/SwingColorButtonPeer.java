@@ -3,9 +3,8 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.swing.color.JButtonColorChooser;
 import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.spi.peers.AppColorButtonPeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
-
-import java.awt.*;
 
 public class SwingColorButtonPeer implements SwingPeer, AppColorButtonPeer {
     private JButtonColorChooser swingComponent;
@@ -18,13 +17,14 @@ public class SwingColorButtonPeer implements SwingPeer, AppColorButtonPeer {
         this.appComponent = (AppColorButton) component0;
 
         swingComponent=new JButtonColorChooser(null,true);
-        appComponent.value().listeners().addInstall(()->{
+        SwingPeerHelper.installComponent(this.appComponent,swingComponent);
+        appComponent.value().onChangeAndInit(()->{
             swingComponent.setValue(SwingHelpers.toAwtColor(appComponent.value().get()));
         });
-        swingComponent.addPropertyChangeListener(JButtonColorChooser.PROPERTY_COLOR_CHANGED,
+        swingComponent.addPropertyChangeListener(JButtonColorChooser.PROPERTY_COLOR_SET,
                 e->{
                     appComponent.value().set(
-                            SwingHelpers.fromAwtColor((Color) e.getNewValue(),appComponent.app())
+                            SwingHelpers.fromAwtColor(swingComponent.getValue(),appComponent.app())
                     );
                 });
     }

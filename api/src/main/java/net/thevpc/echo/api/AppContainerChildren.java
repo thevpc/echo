@@ -28,9 +28,8 @@ public interface AppContainerChildren<C extends AppComponent> extends WritableLi
      * @param all          all other paths
      * @return all components including the first one
      */
-    List<AppComponent> addAll(AppComponent component, Path relativePath, Path... all);
-
-
+    List<AppComponent> addMulti(AppComponent component, Path relativePath, Path... all);
+    
     C add(int index, C component, String name);
 
     AppComponent remove(String name);

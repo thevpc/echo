@@ -5,6 +5,7 @@ import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.WritableIndexedNodeImpl;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.WritableTextStyle;
+import net.thevpc.echo.api.components.AppTree;
 import net.thevpc.echo.api.components.AppTreeNode;
 import net.thevpc.echo.iconset.WritableImage;
 
@@ -22,19 +23,21 @@ public class TreeNode<T> extends WritableIndexedNodeImpl<T>
 
     private WritableImage smallIcon;
     private WritableBoolean expanded = Props.of("expanded").booleanOf(false);
+    private AppTree<T> tree;
 
-    public TreeNode(Class elementType, T value, Application app) {
-        this(PropertyType.of(elementType), value, app);
+    public TreeNode(Class elementType, T value, AppTree<T> tree) {
+        this(PropertyType.of(elementType), value, tree);
     }
 
-    public TreeNode(PropertyType elementType, T value, Application app) {
+    public TreeNode(PropertyType elementType, T value, AppTree<T> tree) {
         super("children", elementType);
+        this.tree=tree;
         // IMPORTANT!!!
         //do not propagate parent events
         parent = Props.of("parent")
                 .valueOf(PropertyType.of(AppTreeNode.class, elementType), null);
 
-        smallIcon = new WritableImage("smallIcon", app);
+        smallIcon = new WritableImage("smallIcon",tree.app(), tree);
         propagateEvents(expanded, text, textStyle, smallIcon);
 
         children().onChange(e -> {
@@ -127,12 +130,13 @@ public class TreeNode<T> extends WritableIndexedNodeImpl<T>
                 && Objects.equals(smallIcon, treeNode.smallIcon)
                 && Objects.equals(expanded, treeNode.expanded)
                 && Objects.equals(get(), treeNode.get())
+                && Objects.equals(children(), treeNode.children())
                 ;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, textStyle, smallIcon, expanded,get());
+        return Objects.hash(text, textStyle, smallIcon, expanded,get(),children());
     }
 
     public T[] computeObjectPath() {

@@ -37,6 +37,7 @@ import net.thevpc.echo.impl.components.ContainerBase;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -64,6 +65,7 @@ public class DefaultApplication extends SimpleProperty implements Application {
     private AppHistory history = new DefaultAppUndoManager(this);
     private WritableString plaf = Props.of("plaf").stringOf(null);
     private WritableValue<AppFrame> mainFrame = Props.of("mainFrame").valueOf(AppFrame.class, null);
+    private WritableValue<ExecutorService> executorService = Props.of("executorService").valueOf(ExecutorService.class, null);
     private WritableValue<AppPropertiesTree> activeProperties = Props.of("activeProperties").valueOf(AppPropertiesTree.class, null);
     private WritableString currentWorkingDirectory = Props.of("currentWorkingDirectory").stringOf(null);
     private List<Semaphore> waitings = new ArrayList<>();
@@ -181,7 +183,7 @@ public class DefaultApplication extends SimpleProperty implements Application {
         mainFrame().onChange(e->{
             AppFrame ov = e.oldValue();
             if(ov!=null){
-                ov.state().listeners().remove(this::closeAppOnCloseFrame);
+                ov.state().events().remove(this::closeAppOnCloseFrame);
                 if(components().contains(ov)){
                     components().remove(ov);
                 }
@@ -440,8 +442,8 @@ public class DefaultApplication extends SimpleProperty implements Application {
 //    }
 //
 //    @Override
-//    public PropertyListeners listeners() {
-//        return support.listeners();
+//    public PropertyListeners events() {
+//        return support.events();
 //    }
 
     @Override
@@ -585,13 +587,19 @@ public class DefaultApplication extends SimpleProperty implements Application {
         public Object toolkitComponent() {
             return null;
         }
+
+        @Override
+        public void requestFocus() {
+            //
+        }
     }
 
     private static class AppRootContainerImpl extends ContainerBase<AppComponent> {
         public AppRootContainerImpl(Application app) {
-            super("<ROOT>", app, AppComponent.class, AppRootContainerPeer.class,
+            super(".<ROOT>", app, AppComponent.class, AppRootContainerPeer.class,
                     AppComponent.class
             );
+            path().set(Path.root());
             peer = new AppRootContainerPeer();
         }
 
@@ -599,5 +607,10 @@ public class DefaultApplication extends SimpleProperty implements Application {
         public AppComponent createPreferredChild(String name, Path absolutePath) {
             return new Frame(name,app());
         }
+    }
+
+    @Override
+    public WritableValue<ExecutorService> executorService() {
+        return executorService;
     }
 }

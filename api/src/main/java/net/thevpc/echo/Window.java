@@ -41,10 +41,6 @@ public class Window extends ContainerBase<AppComponent> implements AppWindow {
         this(null, null, Anchor.CENTER, null, app);
     }
 
-    public Bounds bounds() {
-        return ((AppWindowPeer) peer()).bounds();
-    }
-
     @Override
     public WritableBoolean closable() {
         return closable;
@@ -74,10 +70,12 @@ public class Window extends ContainerBase<AppComponent> implements AppWindow {
         app().toolkit().runUI(() -> {
             if (parent instanceof AppDesktop) {
                 Dimension dsize = ((AppDesktop) parent).size();
-                Bounds wbound = bounds();
-                double x = (dsize.getWidth() - wbound.getWidth()) / 2;
-                double y = (dsize.getHeight() - wbound.getHeight()) / 2;
-                resize(x, y, dsize.getWidth(), dsize.getHeight());
+                Bounds wbound = bounds().get();
+                if(wbound!=null) {
+                    double x = (dsize.getWidth() - wbound.getWidth()) / 2;
+                    double y = (dsize.getHeight() - wbound.getHeight()) / 2;
+                    resize(x, y, dsize.getWidth(), dsize.getHeight());
+                }
             }
         });
     }

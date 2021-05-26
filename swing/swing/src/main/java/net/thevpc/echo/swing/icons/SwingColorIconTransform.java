@@ -35,7 +35,7 @@ public class SwingColorIconTransform implements IconTransform {
     @Override
     public AppImage transformIcon(AppImage image) {
         return new net.thevpc.echo.Image(
-                new SwingAppImage(transformIcon(((SwingAppImage) image).getImage())),app
+                new SwingAppImage(transformIcon(((SwingAppImage) image.peer()).getImage())),app
         );
     }
 

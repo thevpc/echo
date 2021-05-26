@@ -5,5 +5,5 @@ import net.thevpc.echo.Application;
 public interface AppEvent {
 
     Application app();
-    Object getSource();
+    Object source();
 }

@@ -11,6 +11,7 @@ import net.thevpc.echo.Bounds;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppWindow;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppWindowPeer;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 import net.thevpc.echo.swing.peers.SwingPeer;
@@ -41,9 +42,8 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
             toolWindowManager = (MyDoggyToolWindowManager) win.parent().peer().toolkitComponent();
 
             ContentManager contentManager = toolWindowManager.getContentManager();
-            content = contentManager.addContent(win.id(), win.title().get().value(
-                    win.app().i18n()
-            ), getIcon(win.smallIcon().get()),
+            content = contentManager.addContent(win.id(),
+                    Applications.rawString(win.title(),win), getIcon(win.smallIcon().get()),
                     (Component) win.component().get().peer().toolkitComponent()
                     );
 
@@ -91,6 +91,12 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
                     content.setTitle((String) event.newValue());
                 }
             });
+            win.locale().onChange(new PropertyListener() {
+                @Override
+                public void propertyUpdated(PropertyEvent event) {
+                    content.setTitle((String) event.newValue());
+                }
+            });
             win.component().onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
@@ -124,9 +130,9 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
 
     }
 
-    @Override
-    public Bounds bounds() {
-        Rectangle r = content.getComponent().getBounds();
-        return new Bounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
-    }
+//    @Override
+//    public Bounds bounds() {
+//        Rectangle r = content.getComponent().getBounds();
+//        return new Bounds(r.getX(),r.getY(),r.getWidth(),r.getWidth());
+//    }
 }
