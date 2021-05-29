@@ -16,6 +16,8 @@ public class WebView extends TextBase implements AppWebView {
 
     public WebView(String id, Str text, Application app) {
         super(id,text,app, AppWebView.class, AppWebViewPeer.class);
+        editable().set(false);
+        textContentType().set("text/html");
     }
 
     @Override

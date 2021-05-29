@@ -82,7 +82,7 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
 
     public String showDialog(AppComponent owner) {
         this.selectedButton = null;
-        JFrame f = (JFrame) app.mainFrame().get().peer().toolkitComponent();
+        JFrame f = (JFrame) (app.mainFrame().get()==null?null:app.mainFrame().get().peer().toolkitComponent());
         JDialog2 dialog2 = new JDialog2(f);
         dialog2.setModal(true);
 
@@ -182,7 +182,7 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         if (defaultId != null) {
             dialog2.getRootPane().setDefaultButton(footer.getButton(defaultId));
         }
-        JFrame f = (JFrame) app.mainFrame().get().peer().toolkitComponent();
+        JFrame f = (JFrame) (app.mainFrame().get()==null?null:app.mainFrame().get().peer().toolkitComponent());
         dialog2.pack();
         dialog2.setLocationRelativeTo(f);
     }

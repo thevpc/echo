@@ -85,7 +85,9 @@ public class WritableImage extends WritableValueImpl<AppImage> {
             if(iconSet==null){
                 iconSet=app.iconSets().iconSet();
             }
-            superSet(iconSet.getIcon(iconId0,app.iconSets().config().get()));
+            if(iconSet!=null) {
+                superSet(iconSet.getIcon(iconId0, app.iconSets().config().get()));
+            }
         }
     }
 
