@@ -51,10 +51,10 @@ public class SwingFramePeer implements SwingPeer, AppFramePeer {
                 );
             });
         });
-        this.appComponent.smallIcon().onChangeAndInit(()
+        this.appComponent.icon().onChangeAndInit(()
                 -> appComponent.app().runUI(() -> {
                     frame.setIconImage(
-                            SwingHelpers.toAwtImage(this.appComponent.smallIcon().get())
+                            SwingHelpers.toAwtImage(this.appComponent.icon().get())
                     );
                 }));
         appComponent.state().onChange(event -> {

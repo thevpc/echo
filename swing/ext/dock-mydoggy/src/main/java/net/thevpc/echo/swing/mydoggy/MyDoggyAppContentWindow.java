@@ -7,7 +7,6 @@ package net.thevpc.echo.swing.mydoggy;
 
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
-import net.thevpc.echo.Bounds;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppWindow;
@@ -43,7 +42,7 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
 
             ContentManager contentManager = toolWindowManager.getContentManager();
             content = contentManager.addContent(win.id(),
-                    Applications.rawString(win.title(),win), getIcon(win.smallIcon().get()),
+                    Applications.rawString(win.title(),win), getIcon(win.icon().get()),
                     (Component) win.component().get().peer().toolkitComponent()
                     );
 
@@ -77,7 +76,7 @@ public class MyDoggyAppContentWindow implements AppWindowPeer, SwingPeer {
                     content.setSelected((Boolean) event.newValue());
                 }
             });
-            win.smallIcon().onChange(new PropertyListener() {
+            win.icon().onChange(new PropertyListener() {
                 @Override
                 public void propertyUpdated(PropertyEvent event) {
                     content.setIcon(

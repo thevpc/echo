@@ -5,7 +5,6 @@ import net.thevpc.common.props.*;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.components.AppTextArea;
 import net.thevpc.echo.impl.components.EditTextBase;
-import net.thevpc.echo.impl.components.TextBase;
 import net.thevpc.echo.spi.peers.AppTextAreaPeer;
 
 public class TextArea extends EditTextBase implements AppTextArea {

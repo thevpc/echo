@@ -124,7 +124,6 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         java.util.List<String> _buttonIds = buttonIds == null ? new java.util.ArrayList<>() : new java.util.ArrayList<>(
                 Arrays.asList(buttonIds)
         );
-        String _defaultId = defaultId;
         if (_buttonIds.isEmpty()) {
             _buttonIds.add("ok");
         }
@@ -148,7 +147,6 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         withBorder.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
 
         JLabel hh = new JLabel();
-        hh.setBorder(BorderFactory.createEtchedBorder());
         hh.setText(evalHeader());
         hh.setHorizontalTextPosition(SwingConstants.RIGHT);
         hh.setIconTextGap(16);
@@ -167,10 +165,17 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         hh.setIcon(icon);
 //        hh.setIcon(new RectColorIcon(Color.RED, 32));
 
-        hh.setBackground(Color.WHITE);
         hh.setFont(hh.getFont().deriveFont(Font.BOLD, (int) (hh.getFont().getSize() * 1.2)));
+        hh.setOpaque(false);
+        Box hb = Box.createHorizontalBox();
+        hb.add(Box.createHorizontalStrut(10));
+        hb.add(hh);
 
-        dialog2.getRootPane().add(hh, BorderLayout.NORTH);
+        hb.setBackground(Color.WHITE);
+        hb.setOpaque(true);
+        hb.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
+
+        dialog2.getRootPane().add(hb, BorderLayout.NORTH);
         dialog2.getRootPane().add(withBorder, BorderLayout.CENTER);
         dialog2.getRootPane().add(footer, BorderLayout.SOUTH);
         SwingUtilities3.addEscapeBindings(dialog2);

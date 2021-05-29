@@ -9,11 +9,6 @@ import net.thevpc.echo.iconset.WritableImage;
 
 public interface AppTreeNode<T> extends WritableIndexedNode<T> {
     WritableValue<AppTreeNode<T>> parent();
-    WritableStr text();
-
-    WritableTextStyle textStyle();
-
-    WritableImage smallIcon();
 
     WritableBoolean expanded();
 }

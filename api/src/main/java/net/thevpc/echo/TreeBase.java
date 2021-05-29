@@ -1,5 +1,6 @@
 package net.thevpc.echo;
 
+import java.util.Arrays;
 import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.WritableListSelectionImpl;
 import net.thevpc.echo.api.components.AppComponent;
@@ -15,40 +16,40 @@ import java.util.List;
 import java.util.Objects;
 
 public class TreeBase<T> extends ControlBase implements AppTree<T> {
+
     private final WritableValue<AppTreeItemRenderer<T>> itemRenderer;
     private Class itemType;
     private WritableValue<AppTreeNode<T>> root;
-    private WritableBoolean rootVisible=Props.of("rootVisible").booleanOf(true);
+    private WritableBoolean rootVisible = Props.of("rootVisible").booleanOf(true);
     private WritableValue<AppTreeMutator<T>> morph;
     private WritableListSelection<AppTreeNode<T>> selection;
     private WritableValue<TreeNodeChildrenFactory<T>> childrenFactory;
     private WritableValue<TreeNodeFactory<T>> nodeFactory;
 
     public TreeBase(String id, Class itemType, Class<? extends AppComponent> componentType,
-                    Class<? extends AppComponentPeer> peerType,Application app) {
-        super(id,app, componentType, peerType);
-        this.itemType =itemType;
-        itemRenderer= Props.of("itemRenderer").valueOf(
-                PropertyType.of(AppTreeItemRenderer.class,itemType),
+            Class<? extends AppComponentPeer> peerType, Application app) {
+        super(id, app, componentType, peerType);
+        this.itemType = itemType;
+        itemRenderer = Props.of("itemRenderer").valueOf(
+                PropertyType.of(AppTreeItemRenderer.class, itemType),
                 null
         );
-        this.itemType= itemType;
-        morph=Props.of("morph").valueOf(
-                PropertyType.of(AppTreeMutator.class, this.itemType),null
+        this.itemType = itemType;
+        morph = Props.of("morph").valueOf(
+                PropertyType.of(AppTreeMutator.class, this.itemType), null
         );
-        root=Props.of("root").valueOf(
-                PropertyType.of(AppTreeNode.class, this.itemType),null
+        root = Props.of("root").valueOf(
+                PropertyType.of(AppTreeNode.class, this.itemType), null
         );
-        nodeFactory=Props.of("nodeFactory").valueOf(
-                PropertyType.of(TreeNodeFactory.class, this.itemType),null
+        nodeFactory = Props.of("nodeFactory").valueOf(
+                PropertyType.of(TreeNodeFactory.class, this.itemType), null
         );
-        childrenFactory=Props.of("childrenFactory").valueOf(
-                PropertyType.of(TreeNodeChildrenFactory.class, this.itemType),null
+        childrenFactory = Props.of("childrenFactory").valueOf(
+                PropertyType.of(TreeNodeChildrenFactory.class, this.itemType), null
         );
-        selection=new WritableListSelectionImpl<>("selection", PropertyType.of(this.itemType));
-        propagateEvents(root,rootVisible,morph);
+        selection = new WritableListSelectionImpl<>("selection", PropertyType.of(this.itemType));
+        propagateEvents(root, rootVisible, morph);
     }
-
 
     @Override
     public WritableValue<AppTreeItemRenderer<T>> itemRenderer() {
@@ -63,23 +64,25 @@ public class TreeBase<T> extends ControlBase implements AppTree<T> {
         return nodeFactory;
     }
 
-    public TreeNode<T> nodeOf(T value){
+    @Override
+    public TreeNode<T> nodeOf(T value) {
         TreeNodeFactory<T> nf = nodeFactory().get();
         TreeNodeChildrenFactory<T> cf = childrenFactory().get();
-        return nodeOf(value,nf,cf);
+        return nodeOf(value, nf, cf);
     }
 
-    public TreeNode<T> nodeOf(T value,TreeNodeFactory<T> nf,TreeNodeChildrenFactory<T> cf){
-        TreeNode<T> tNode=null;
-        if(nf!=null) {
-            tNode=nf.createNode(value);
+    @Override
+    public TreeNode<T> nodeOf(T value, TreeNodeFactory<T> nf, TreeNodeChildrenFactory<T> cf) {
+        TreeNode<T> tNode = null;
+        if (nf != null) {
+            tNode = nf.createNode(value, this);
         }
-        if(tNode==null){
-            tNode=new TreeNode<>(PropertyType.of(itemType()), value, this);
+        if (tNode == null) {
+            tNode = new TreeNode<>(value, this);
         }
-        if(cf!=null){
+        if (cf != null) {
             List<T> children = cf.getChildren(value);
-            if(children!=null) {
+            if (children != null) {
                 for (T child : children) {
                     tNode.children().add(nodeOf(child, nf, cf));
                 }
@@ -96,15 +99,18 @@ public class TreeBase<T> extends ControlBase implements AppTree<T> {
     @Override
     public AppTreeNode<T> findNode(Object[] path) {
         AppTreeNode<T> curr = root().get();
-        if(curr==null || path==null){
+        if (curr == null || path == null || path.length == 0) {
             return null;
         }
-        return (AppTreeNode<T>) curr.findChild(path);
+        if (!Objects.equals(curr.get(), path[0])) {
+            return null;
+        }
+        return (AppTreeNode<T>) curr.findChild(Arrays.copyOfRange(path, 1, path.length));
     }
 
-    private AppTreeNode<T> findNode(Object child,ObservableList<AppTreeNode<T>> children) {
+    private AppTreeNode<T> findNode(Object child, ObservableList<AppTreeNode<T>> children) {
         return children.stream().filter(
-                (AppTreeNode<T> x)-> Objects.equals(x.get(),child)).findFirst().orElse(null);
+                (AppTreeNode<T> x) -> Objects.equals(x.get(), child)).findFirst().orElse(null);
     }
 
     public Class itemType() {
@@ -124,4 +130,3 @@ public class TreeBase<T> extends ControlBase implements AppTree<T> {
     }
 
 }
-

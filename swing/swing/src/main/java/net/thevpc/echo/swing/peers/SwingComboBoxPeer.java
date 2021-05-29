@@ -2,22 +2,20 @@ package net.thevpc.echo.swing.peers;
 
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
-import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.*;
-import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.spi.peers.AppComboBoxPeer;
-import net.thevpc.echo.swing.SwingApplicationUtils;
 import net.thevpc.echo.swing.SwingPeerHelper;
-import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import net.thevpc.echo.Application;
+import net.thevpc.echo.swing.helpers.SwingAppChoiceItemContext1;
 
 public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
+
     private JComboBox swingComponent;
     private AppComboBox<Object> appComponent;
 
@@ -28,17 +26,17 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
         this.appComponent = (AppComboBox) component0;
         DefaultComboBoxModel dataModel = new DefaultComboBoxModel();
         swingComponent = new JComboBox(dataModel);
-        SwingPeerHelper.installComponent(appComponent,swingComponent);
+        SwingPeerHelper.installComponent(appComponent, swingComponent);
         for (Object value : appComponent.values()) {
             dataModel.addElement(value);
         }
         appComponent.editable().onChangeAndInit(
-                ()->swingComponent.setEditable(appComponent.editable().get())
+                () -> swingComponent.setEditable(appComponent.editable().get())
         );
         appComponent.values().onChange(e -> {
             switch (e.eventType()) {
                 case ADD: {
-                    dataModel.insertElementAt(e.newValue(),e.index());
+                    dataModel.insertElementAt(e.newValue(), e.index());
                     break;
                 }
                 case REMOVE: {
@@ -47,7 +45,7 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
                 }
                 case UPDATE: {
                     dataModel.removeElementAt(e.index());
-                    dataModel.insertElementAt(e.newValue(),e.index());
+                    dataModel.insertElementAt(e.newValue(), e.index());
                     break;
                 }
             }
@@ -72,11 +70,16 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
                 }
             }
         });
-        appComponent.selection().indices().onChange(x->{
+        appComponent.selection().indices().onChange(x -> {
             Integer index = appComponent.selection().indices().get();
             swingComponent.setSelectedIndex(index == null ? -1 : index);
         });
         swingComponent.setRenderer(new MyDefaultListCellRenderer(this));
+        ComboBoxEditor editor = swingComponent.getEditor();
+        Component editorComponent = editor.getEditorComponent();
+        if (editorComponent instanceof JTextComponent) {
+            SwingPeerHelper.installTextComponent(appComponent, (JTextComponent) editorComponent);
+        }
     }
 
     @Override
@@ -84,7 +87,16 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
         return swingComponent;
     }
 
+    @Override
+    public void replaceSelection(String newValue) {
+        Component ed = swingComponent.getEditor().getEditorComponent();
+        if (ed instanceof JTextComponent) {
+            ((JTextComponent) ed).replaceSelection(newValue);
+        }
+    }
+
     private static class MyDefaultListCellRenderer extends BasicComboBoxRenderer {
+
         SwingComboBoxPeer peer;
         AppColor initialForeground;
         AppColor initialBackground;
@@ -97,12 +109,20 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
         }
 
         public void getListCellRendererComponent0(DefaultComboBoxItemContext c) {
-            super.getListCellRendererComponent(c.list, c.value, c.index, c.isSelected, c.cellHasFocus);
+            JList list = c.list;
+            super.getListCellRendererComponent(list, c.getText(), c.getIndex(), c.isSelected(), c.isFocused());
         }
 
+        @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             AppChoiceItemRenderer<?> r = peer.appComponent.itemRenderer().get();
-            DefaultComboBoxItemContext context = new DefaultComboBoxItemContext(this, list, index, value, isSelected, cellHasFocus);
+            DefaultComboBoxItemContext context = new DefaultComboBoxItemContext(
+                    list,
+                    peer.appComponent, this, value,
+                    index, null,
+                    isSelected, cellHasFocus,
+                    false
+            );
             if (r != null) {
                 r.render(context);
             } else {
@@ -113,140 +133,18 @@ public class SwingComboBoxPeer implements SwingPeer, AppComboBoxPeer {
 
     }
 
-    private static class DefaultComboBoxItemContext implements AppChoiceItemContext {
-        private final MyDefaultListCellRenderer myDefaultListCellRenderer;
-        private final JList list;
-        private final int index;
-        private Object value;
-        private boolean isSelected;
-        private boolean cellHasFocus;
+    private static class DefaultComboBoxItemContext<T> extends SwingAppChoiceItemContext1<T> {
 
-        public DefaultComboBoxItemContext(MyDefaultListCellRenderer myDefaultListCellRenderer, JList list, int index, Object value, boolean isSelected, boolean cellHasFocus) {
-            this.index = index;
-            this.value = value;
+        JList list;
+
+        public DefaultComboBoxItemContext(JList list, AppChoiceControl<T> appChoiceControl, MyDefaultListCellRenderer jcomponent, T value, int index, Icon icon, boolean isSelected, boolean cellHasFocus, boolean disabled) {
+            super(appChoiceControl, jcomponent, value, index, icon, isSelected, cellHasFocus, disabled);
             this.list = list;
-            this.isSelected = isSelected;
-            this.cellHasFocus = cellHasFocus;
-            this.myDefaultListCellRenderer = myDefaultListCellRenderer;
-        }
-
-        @Override
-        public AppChoiceControl getChoice() {
-            return myDefaultListCellRenderer.peer.appComponent;
-        }
-
-        @Override
-        public Application getApplication() {
-            return myDefaultListCellRenderer.peer.appComponent.app();
-        }
-        
-
-        @Override
-        public int getIndex() {
-            return index;
-        }
-
-        @Override
-        public Object getValue() {
-            return value;
-        }
-
-        @Override
-        public void setValue(Object value) {
-            this.value = value;
-        }
-
-        @Override
-        public void setText(String text) {
-            myDefaultListCellRenderer.setText(text);
-        }
-
-        @Override
-        public void setOpaque(boolean opaque) {
-            myDefaultListCellRenderer.setOpaque(opaque);
-        }
-
-        @Override
-        public void setTextColor(AppColor color) {
-            myDefaultListCellRenderer.setForeground(
-                    color == null ? null : (Color) color.peer().toolkitColor()
-            );
-        }
-
-        @Override
-        public void setTextFont(AppFont font) {
-            if (font != null) {
-                SwingApplicationUtils.setComponentFont(myDefaultListCellRenderer,
-                        font, null, null, myDefaultListCellRenderer.initialUnderline, myDefaultListCellRenderer.initialStrikeThrough);
-            }
-        }
-
-        @Override
-        public void setTextUnderline(boolean underline) {
-            myDefaultListCellRenderer.initialUnderline = underline;
-            SwingApplicationUtils.setComponentFont(myDefaultListCellRenderer,
-                    (AppFont) null, null, null, myDefaultListCellRenderer.initialUnderline, null);
-        }
-
-        @Override
-        public void setTextStrikeThrough(boolean strikeThrough) {
-            myDefaultListCellRenderer.initialStrikeThrough = strikeThrough;
-            SwingApplicationUtils.setComponentFont(myDefaultListCellRenderer,
-                    (AppFont) null, null, null, null, strikeThrough);
-        }
-
-        @Override
-        public void setTextStrokeSize(int size) {
-            SwingApplicationUtils.setComponentTextStrokeSize(myDefaultListCellRenderer, size);
-        }
-
-        @Override
-        public void setTextAlign(Anchor align) {
-            SwingApplicationUtils.setLabelTextAlign(myDefaultListCellRenderer, align);
-        }
-
-        @Override
-        public void setIcon(AppImage icon) {
-            myDefaultListCellRenderer.setIcon(
-                    SwingHelpers.toAwtIcon(icon)
-            );
-        }
-
-        @Override
-        public boolean isSelected() {
-            return isSelected;
-        }
-
-        @Override
-        public boolean isFocused() {
-            return cellHasFocus;
-        }
-
-        @Override
-        public AppFont getFont() {
-            return null;
-        }
-
-        @Override
-        public AppColor getColor() {
-            return null;
-        }
-
-        @Override
-        public AppColor getBackgroundColor() {
-            return null;
-        }
-
-        @Override
-        public void setBackgroundColor(AppColor color) {
-            myDefaultListCellRenderer.setForeground(
-                    color == null ? null : (Color) color.peer().toolkitColor()
-            );
         }
 
         @Override
         public void renderDefault() {
-            myDefaultListCellRenderer.getListCellRendererComponent0(this);
+            ((MyDefaultListCellRenderer) getJcomponent()).getListCellRendererComponent0(this);
         }
     }
 }

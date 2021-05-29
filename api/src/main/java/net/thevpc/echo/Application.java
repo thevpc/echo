@@ -67,4 +67,5 @@ public interface Application extends Property {
 
     AppContainerChildren<AppComponent> components();
 
+    WritableBoolean hideDisabled();
 }

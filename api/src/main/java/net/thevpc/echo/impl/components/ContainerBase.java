@@ -37,6 +37,7 @@ public abstract class ContainerBase<C extends AppComponent>
         //path().set(Path.of("/"));
         if(initChildren) {
             children = new AppContainerChildrenImpl<C>("children", childComponentType, this);
+            propagateEvents(children);
         }
     }
 

@@ -11,25 +11,29 @@ import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.constraints.Layout;
 import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.components.ChoiceBase;
-import net.thevpc.echo.spi.peers.AppComboBoxPeer;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
-import net.thevpc.echo.spi.peers.AppUserControlPeer;
 
-public class ToggleControlGroup<T> extends ChoiceBase<T>{
+public class ToggleControlGroup<T> extends ChoiceBase<T> {
+
     public static final String VALUE_PROPERTY_NAME = ToggleControlGroup.class.getName() + ":value";
     private Panel container;
     private PropertyListener toggleChangeListener;
+
     public ToggleControlGroup(Class<T> itemType, Application app) {
         this(null, itemType, app);
     }
 
     public ToggleControlGroup(String id, Class<T> itemType, Application app) {
+        this(id, PropertyType.of(itemType), app);
+    }
+
+    public ToggleControlGroup(String id, PropertyType itemType, Application app) {
         super(id, itemType, false, app,
                 (Class<? extends AppComponent>) AppChoiceControl.class, AppComponentPeer.class);
         //defaults to non editable
         editable().set(false);
         container = new Panel(id, Layout.HORIZONTAL, app);
-        container.parentConstraints().addAll(AllMargins.of(2,4,2,4));
+        container.parentConstraints().addAll(AllMargins.of(2, 4, 2, 4));
         Applications.bindContent(this, container);
         values().onChange(event -> valuesChanged(event));
         toggleChangeListener = e -> {
@@ -58,7 +62,7 @@ public class ToggleControlGroup<T> extends ChoiceBase<T>{
             for (AppComponent child : container().children()) {
                 T tt = (T) child.userObjects().get(VALUE_PROPERTY_NAME);
                 boolean selectedValue = selection().contains(tt);
-                ((AppToggleControl)child).selected().set(selectedValue);
+                ((AppToggleControl) child).selected().set(selectedValue);
             }
         });
     }
@@ -70,7 +74,7 @@ public class ToggleControlGroup<T> extends ChoiceBase<T>{
     protected void prepareShowing(AppToggleControl b, int index) {
         AppChoiceItemRenderer<T> r = itemRenderer().get();
         b.selected().onChange(toggleChangeListener);
-        b.selected().userObjects().put("owner",b);
+        b.selected().userObjects().put("owner", b);
         T t = values().get(index);
         b.userObjects().put(ToggleControlGroup.class.getName() + ":value", t);
         if (r == null) {
@@ -111,6 +115,7 @@ public class ToggleControlGroup<T> extends ChoiceBase<T>{
     }
 
     private class SimpleItemContext implements AppChoiceItemContext<T> {
+
         private final int index;
         private final AppToggleControl b;
 
@@ -181,7 +186,12 @@ public class ToggleControlGroup<T> extends ChoiceBase<T>{
 
         @Override
         public void setIcon(AppImage icon) {
-            b.smallIcon().set(icon);
+            b.icon().set(icon);
+        }
+
+        @Override
+        public void setIcon(Str icon) {
+            b.icon().set(icon);
         }
 
         @Override
@@ -223,6 +233,11 @@ public class ToggleControlGroup<T> extends ChoiceBase<T>{
         public void setValue(Object value) {
             setText(String.valueOf(value));
         }
+
+        @Override
+        public boolean isDisabled() {
+            return !b.enabled().get();
+        }
+
     }
 }
-

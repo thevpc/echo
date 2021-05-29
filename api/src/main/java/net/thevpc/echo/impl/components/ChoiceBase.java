@@ -17,38 +17,40 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ChoiceBase<T> extends ControlBase implements AppChoiceControl<T> {
+
     private WritableList<T> values;
     private WritableListIndexSelectionExt<T> selection;
     private WritableListIndexSelection<T> disabledSelection;
     private WritableValue<Predicate<T>> disabledPredicate;
-    private WritableBoolean multipleValues=Props.of("multipleValues").booleanOf(false);
-    private Class<T> itemType;
+    private WritableBoolean multipleValues = Props.of("multipleValues").booleanOf(false);
+    private PropertyType itemType;
     private WritableValue<AppChoiceItemRenderer<T>> itemRenderer;
-    public ChoiceBase(String id, Class<T> itemType,boolean acceptMulti,Application app,
-                      Class<? extends AppComponent> componentType,
-                      Class<? extends AppComponentPeer> peerType
-                  ) {
-        super(id,app,componentType,peerType);
+
+    public ChoiceBase(String id, PropertyType itemType, boolean acceptMulti, Application app,
+            Class<? extends AppComponent> componentType,
+            Class<? extends AppComponentPeer> peerType
+    ) {
+        super(id, app, componentType, peerType);
         this.itemType = itemType;
-        values= Props.of("values").listOf(itemType);
-        disabledPredicate= Props.of("disabledPredicate").valueOf(
-                PropertyType.of(Predicate.class,PropertyType.of(itemType))
-                ,null);
-        selection= new WritableListIndexSelectionImpl<>("selection",PropertyType.of(itemType),values);
-        disabledSelection= new WritableListIndexSelectionImpl<>("disabledSelection",PropertyType.of(itemType),values);
-        disabledPredicate.onChange(e->revalidateDisabled());
+        values = Props.of("values").listOf(itemType);
+        disabledPredicate = Props.of("disabledPredicate").valueOf(
+                PropertyType.of(Predicate.class, itemType),
+                null);
+        selection = new WritableListIndexSelectionImpl<>("selection", itemType, values);
+        disabledSelection = new WritableListIndexSelectionImpl<>("disabledSelection", itemType, values);
+        disabledPredicate.onChange(e -> revalidateDisabled());
         values().onChange(event -> {
             Predicate<T> p = disabledPredicate.get();
-            if(p!=null) {
+            if (p != null) {
                 switch (event.eventType()) {
                     case ADD: {
-                        if(p.test(event.newValue())){
+                        if (p.test(event.newValue())) {
                             disabledSelection.add(event.newValue());
                         }
                         break;
                     }
                     case UPDATE: {
-                        if(p.test(event.newValue())){
+                        if (p.test(event.newValue())) {
                             disabledSelection.add(event.newValue());
                         }
                         break;
@@ -57,7 +59,7 @@ public class ChoiceBase<T> extends ControlBase implements AppChoiceControl<T> {
             }
         });
         multipleValues.set(acceptMulti);
-        propagateEvents(values,selection,disabledSelection,multipleValues);
+        propagateEvents(values, selection, disabledSelection, multipleValues);
 
         Applications.LastIndexTracker lastIndexTracker = new Applications.LastIndexTracker();
         selection().indices().onChange(lastIndexTracker);
@@ -70,23 +72,23 @@ public class ChoiceBase<T> extends ControlBase implements AppChoiceControl<T> {
                     int newIndex = Applications.bestSelectableIndex(values,
                             ChoiceBase.this::isDisabledItem,
                             values.findFirstIndexOf(v), lastIndexTracker.getLastIndex());
-                    if(newIndex>=0) {
+                    if (newIndex >= 0) {
                         context.doInstead(() -> {
                             ChoiceBase.this.selection().add(
                                     ChoiceBase.this.values().get(newIndex)
                             );
                         });
-                    }else{
+                    } else {
                         context.doNothing();
                     }
                 }
             }
         });
-        itemRenderer= Props.of("itemRenderer").valueOf(
-                PropertyType.of(AppChoiceItemRenderer.class,itemType()),
+        itemRenderer = Props.of("itemRenderer").valueOf(
+                PropertyType.of(AppChoiceItemRenderer.class, itemType()),
                 null
         );
-        if(itemType().equals(SimpleItem.class)){
+        if (itemType().equals(PropertyType.of(SimpleItem.class))) {
             itemRenderer().set(
                     (AppChoiceItemRenderer<T>) new SimpleItemAppChoiceItemRenderer(app())
             );
@@ -98,10 +100,9 @@ public class ChoiceBase<T> extends ControlBase implements AppChoiceControl<T> {
         return itemRenderer;
     }
 
-
     private void revalidateDisabled() {
         Predicate<T> v = disabledPredicate.get();
-        if(v!=null) {
+        if (v != null) {
             List<T> d = values().stream().filter(x -> v.test(x)).collect(Collectors.toList());
             disabledSelection.clear();
             for (T t : d) {
@@ -114,7 +115,7 @@ public class ChoiceBase<T> extends ControlBase implements AppChoiceControl<T> {
         return disabledPredicate;
     }
 
-    private boolean isDisabledItem(T o){
+    private boolean isDisabledItem(T o) {
         return disabledSelection.contains(o);
     }
 
@@ -128,18 +129,17 @@ public class ChoiceBase<T> extends ControlBase implements AppChoiceControl<T> {
     }
 
     @Override
-    public WritableList<T> values(){
+    public WritableList<T> values() {
         return values;
     }
 
     @Override
-    public WritableBoolean multipleValues(){
+    public WritableBoolean multipleValues() {
         return multipleValues;
     }
 
     @Override
-    public Class<T> itemType() {
+    public PropertyType itemType() {
         return itemType;
     }
 }
-

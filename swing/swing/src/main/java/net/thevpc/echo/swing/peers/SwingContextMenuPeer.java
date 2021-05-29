@@ -1,17 +1,22 @@
 package net.thevpc.echo.swing.peers;
 
+import net.thevpc.echo.ContextMenu;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
 import net.thevpc.echo.spi.peers.AppContextMenuPeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class SwingContextMenuPeer implements SwingPeer, AppContextMenuPeer {
     private JPopupMenu jcomponent;
+    private ContextMenu appContextMenu;
     @Override
     public void install(AppComponent comp) {
+        this.appContextMenu=(ContextMenu) comp;
         jcomponent = new JPopupMenu();
+        SwingPeerHelper.installComponent(appContextMenu,jcomponent);
     }
 
     @Override

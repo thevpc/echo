@@ -25,7 +25,7 @@ public class DefaultAppDialogResult implements AppDialogResult {
     }
 
     @Override
-    public String buttonId() {
+    public String button() {
         return a;
     }
 

@@ -7,7 +7,6 @@ import net.thevpc.common.props.ObservableValue;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.WritableBoolean;
-import net.thevpc.common.swing.font.FontUtils;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.api.AppImage;
@@ -102,17 +101,17 @@ public class SwingApplicationUtils {
             if (text) {
                 textStr.onChange((PropertyEvent event) -> {
                     button.setText(
-                            Applications.rawString(event.newValue(), app,button.getLocale())
+                            Applications.rawString(event.newValue(), app, button.getLocale())
                     );
                 });
-                button.setText(Applications.rawString(textStr.get(), app,button.getLocale()));
-                appComponent.locale().onChange(() -> button.setText(Applications.rawString(appComponent.text(),appComponent)));
+                button.setText(Applications.rawString(textStr.get(), app, button.getLocale()));
+                appComponent.locale().onChange(() -> button.setText(Applications.rawString(appComponent.text(), appComponent)));
             } else {
                 button.setText(null);
                 textStr.onChange((PropertyEvent event) -> {
-                    button.setToolTipText(Applications.rawString(event.newValue(), app,button.getLocale()));
+                    button.setToolTipText(Applications.rawString(event.newValue(), app, button.getLocale()));
                 });
-                button.setToolTipText(Applications.rawString(textStr.get(), app,button.getLocale()));
+                button.setToolTipText(Applications.rawString(textStr.get(), app, button.getLocale()));
             }
         }
         appComponent.enabled().onChange((PropertyEvent event) -> {
@@ -124,11 +123,11 @@ public class SwingApplicationUtils {
         });
         button.setVisible(appComponent.visible().get());
 
-        appComponent.smallIcon().onChange((PropertyEvent event) -> {
+        appComponent.icon().onChange((PropertyEvent event) -> {
             button.setIcon(SwingAppImage.iconOf(event.newValue()));
         });
 //        appComponent.smallIcon().reevalValue();
-        button.setIcon(SwingAppImage.iconOf(appComponent.smallIcon().get()));
+        button.setIcon(SwingAppImage.iconOf(appComponent.icon().get()));
 
         appComponent.mnemonic().onChange((PropertyEvent event) -> {
             button.setMnemonic((Integer) event.newValue());
@@ -392,28 +391,40 @@ public class SwingApplicationUtils {
                                   Boolean bold,
                                   Boolean underline,
                                   Boolean strike) {
-        boolean i = italic == null ? initialFont.isItalic() : italic;
-        boolean b = bold == null ? initialFont.isBold() : bold;
-        boolean u;
-        if (underline == null) {
-            Map<TextAttribute, ?> a = initialFont.getAttributes();
-            Object au = a.get(TextAttribute.UNDERLINE);
-            u = TextAttribute.UNDERLINE_ON.equals(au);
-        } else {
-            u = underline;
+        Map<TextAttribute, Object> attributes = (Map<TextAttribute, Object>) initialFont.getAttributes();
+        boolean wasI = initialFont.isItalic();
+        boolean wasB = initialFont.isBold();
+        boolean wasU = TextAttribute.UNDERLINE_ON.equals(attributes.get(TextAttribute.UNDERLINE));
+        boolean wasS = TextAttribute.STRIKETHROUGH_ON.equals(attributes.get(TextAttribute.STRIKETHROUGH));
+
+        boolean i = italic == null ? wasI : italic;
+        boolean b = bold == null ? wasB : bold;
+        boolean u = underline == null ? wasU : underline;
+        boolean s = strike == null ? wasS : strike;
+        if (i == wasI && b == wasB && u == wasU && s == wasS) {
+            return null;
         }
-        boolean s;
-        if (strike == null) {
-            Map<TextAttribute, ?> a = initialFont.getAttributes();
-            Object au = a.get(TextAttribute.STRIKETHROUGH);
-            s = TextAttribute.STRIKETHROUGH_ON.equals(au);
-        } else {
-            s = strike;
+        if (i != wasI || b != wasB) {
+            initialFont = initialFont.deriveFont((b ? Font.BOLD : 0) + (b ? Font.ITALIC : 0));
         }
-        return FontUtils.deriveFont(
-                initialFont, b, i,
-                u, s
-        );
+        if (u != wasU || s != wasS) {
+            if (u != wasU) {
+                if (u) {
+                    attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+                } else {
+                    attributes.remove(TextAttribute.UNDERLINE);
+                }
+            }
+            if (s != wasS) {
+                if (u) {
+                    attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+                } else {
+                    attributes.remove(TextAttribute.STRIKETHROUGH);
+                }
+            }
+            initialFont = initialFont.deriveFont(attributes);
+        }
+        return initialFont;
     }
 
     public static AppFont getComponentFont(Component component, Application app) {
@@ -429,6 +440,20 @@ public class SwingApplicationUtils {
         setComponentFont(component, f, italic, bold, underline, strike);
     }
 
+    public static void setComponentForeground(Component component, Color color) {
+        Color f = component.getForeground();
+        if (!colorHashSting(f).equals(colorHashSting(color))) {
+            component.setForeground(color);
+        }
+    }
+
+    public static void setComponentBackground(Component component, Color color) {
+        Color f = component.getForeground();
+        if (!colorHashSting(f).equals(colorHashSting(color))) {
+            component.setBackground(color);
+        }
+    }
+
     public static void setComponentFont(Component component, Font initialFont,
                                         Boolean italic,
                                         Boolean bold,
@@ -441,10 +466,72 @@ public class SwingApplicationUtils {
         if (initialFont == null) {
             return;
         }
-        component.setFont(deriveFont(initialFont, italic, bold, underline, strike));
+
+        Font old = component.getFont();
+        String olds = fontHashSting(old);
+        String ffs = fontHashSting(initialFont);
+        if (!olds.equals(ffs)) {
+            Font f = SwingApplicationUtils.deriveFont(
+                    initialFont,
+                    null, null,
+                    underline,
+                    strike
+            );
+            if (f != null) {
+                component.setFont(f);
+            }
+        }
     }
 
     public static void setLabelTextAlign(JLabel label, Anchor anchor) {
+        switch (anchor) {
+            case TOP: {
+                label.setVerticalTextPosition(SwingConstants.TOP);
+                label.setHorizontalTextPosition(SwingConstants.CENTER);
+                break;
+            }
+            case TOP_LEFT: {
+                label.setVerticalTextPosition(SwingConstants.TOP);
+                label.setHorizontalTextPosition(SwingConstants.LEFT);
+                break;
+            }
+            case LEFT: {
+                label.setVerticalTextPosition(SwingConstants.CENTER);
+                label.setHorizontalTextPosition(SwingConstants.LEFT);
+                break;
+            }
+            case BOTTOM_LEFT: {
+                label.setVerticalTextPosition(SwingConstants.BOTTOM);
+                label.setHorizontalTextPosition(SwingConstants.LEFT);
+                break;
+            }
+            case BOTTOM: {
+                label.setVerticalTextPosition(SwingConstants.BOTTOM);
+                label.setHorizontalTextPosition(SwingConstants.CENTER);
+                break;
+            }
+            case BOTTOM_RIGHT: {
+                label.setVerticalTextPosition(SwingConstants.BOTTOM);
+                label.setHorizontalTextPosition(SwingConstants.RIGHT);
+                break;
+            }
+            case RIGHT: {
+                label.setVerticalTextPosition(SwingConstants.CENTER);
+                label.setHorizontalTextPosition(SwingConstants.RIGHT);
+                break;
+            }
+            case TOP_RIGHT: {
+                label.setVerticalTextPosition(SwingConstants.TOP);
+                label.setHorizontalTextPosition(SwingConstants.RIGHT);
+                break;
+            }
+            case CENTER: {
+                label.setVerticalTextPosition(SwingConstants.CENTER);
+                label.setHorizontalTextPosition(SwingConstants.CENTER);
+            }
+        }
+    }
+    public static void setLabelTextAlign(AbstractButton label, Anchor anchor) {
         switch (anchor) {
             case TOP: {
                 label.setVerticalTextPosition(SwingConstants.TOP);
@@ -540,6 +627,81 @@ public class SwingApplicationUtils {
                 label.setHorizontalAlignment(SwingConstants.CENTER);
             }
         }
+    }
+    public static void setLabelContentAlign(AbstractButton label, Anchor anchor) {
+        switch (anchor) {
+            case TOP: {
+                label.setVerticalAlignment(SwingConstants.TOP);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                break;
+            }
+            case TOP_LEFT: {
+                label.setVerticalAlignment(SwingConstants.TOP);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+            }
+            case LEFT: {
+                label.setVerticalAlignment(SwingConstants.CENTER);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+            }
+            case BOTTOM_LEFT: {
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setHorizontalAlignment(SwingConstants.LEFT);
+                break;
+            }
+            case BOTTOM: {
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+                break;
+            }
+            case BOTTOM_RIGHT: {
+                label.setVerticalAlignment(SwingConstants.BOTTOM);
+                label.setHorizontalAlignment(SwingConstants.RIGHT);
+                break;
+            }
+            case RIGHT: {
+                label.setVerticalAlignment(SwingConstants.CENTER);
+                label.setHorizontalAlignment(SwingConstants.RIGHT);
+                break;
+            }
+            case TOP_RIGHT: {
+                label.setVerticalAlignment(SwingConstants.TOP);
+                label.setHorizontalAlignment(SwingConstants.RIGHT);
+                break;
+            }
+            case CENTER: {
+                label.setVerticalAlignment(SwingConstants.CENTER);
+                label.setHorizontalAlignment(SwingConstants.CENTER);
+            }
+        }
+    }
+
+    public static String colorHashSting(Color f) {
+        return f == null ? "" : String.valueOf(f.getRGB());
+    }
+
+    public static String fontHashSting(Font f) {
+        if (f == null) {
+            return "";
+        }
+        String style = "";
+        if (f.isBold()) {
+            style += "B";
+        }
+        if (f.isItalic()) {
+            style += "I";
+        }
+        Map<TextAttribute, ?> a = f.getAttributes();
+        Object au = a.get(TextAttribute.UNDERLINE);
+        if (TextAttribute.UNDERLINE_ON.equals(au)) {
+            style += "U";
+        }
+        au = a.get(TextAttribute.STRIKETHROUGH);
+        if (TextAttribute.STRIKETHROUGH_ON.equals(au)) {
+            style += "S";
+        }
+        return f.getFamily() + ":" + style;
     }
 
     private static class I18nStringUpdaterPropertyListener implements PropertyListener {

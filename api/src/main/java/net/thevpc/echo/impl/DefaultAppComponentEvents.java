@@ -13,7 +13,7 @@ import net.thevpc.common.props.impl.DefaultPropertyListeners;
 
 public class DefaultAppComponentEvents extends DefaultPropertyListeners implements AppComponentEvents {
 
-    private final Map<AppEventType, Set<AppComponentEventListener>> listeners = new HashMap<>();
+    private final Map<AppEventType, Set<AppComponentEventListener>> componentListeners = new HashMap<>();
 
     public DefaultAppComponentEvents(Object source) {
         super(source);
@@ -28,7 +28,7 @@ public class DefaultAppComponentEvents extends DefaultPropertyListeners implemen
                 throw new IllegalArgumentException("null event type");
             }
         }
-        synchronized (listeners) {
+        synchronized (componentListeners) {
             getAppComponentEventListeners(eventType).add(listener);
             for (AppEventType appEventType : handles) {
                 getAppComponentEventListeners(appEventType).add(listener);
@@ -45,7 +45,7 @@ public class DefaultAppComponentEvents extends DefaultPropertyListeners implemen
                 throw new IllegalArgumentException("null event type");
             }
         }
-        synchronized (listeners) {
+        synchronized (componentListeners) {
             getAppComponentEventListeners(eventType).remove(listener);
             for (AppEventType appEventType : handles) {
                 getAppComponentEventListeners(appEventType).remove(listener);
@@ -57,13 +57,13 @@ public class DefaultAppComponentEvents extends DefaultPropertyListeners implemen
         if (eventType == null) {
             throw new IllegalArgumentException("null event type");
         }
-        synchronized (listeners) {
+        synchronized (componentListeners) {
             return getAppComponentEventListeners(eventType).toArray(new AppComponentEventListener[0]);
         }
     }
 
     private Set<AppComponentEventListener> getAppComponentEventListeners(AppEventType eventType) {
-        return listeners.computeIfAbsent(eventType, k -> new LinkedHashSet<>());
+        return componentListeners.computeIfAbsent(eventType, k -> new LinkedHashSet<>());
     }
 
     public void fire(AppComponentEvent event) {
@@ -71,4 +71,10 @@ public class DefaultAppComponentEvents extends DefaultPropertyListeners implemen
             li.onEvent(event);
         }
     }
+    @Override
+    public void clear() {
+        super.clear();
+        componentListeners.clear();
+    }
+
 }

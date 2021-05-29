@@ -26,7 +26,7 @@ import net.thevpc.common.i18n.Str;
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.msg.StringMessage;
 import net.thevpc.common.props.*;
-import net.thevpc.common.props.impl.SimpleProperty;
+import net.thevpc.common.props.impl.PropertyBase;
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.*;
 import net.thevpc.echo.api.components.*;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 /**
  * @author vpc
  */
-public class DefaultApplication extends SimpleProperty implements Application {
+public class DefaultApplication extends PropertyBase implements Application {
 
     protected WritableValue<AppState> state = Props.of("state").valueOf(AppState.class, AppState.NONE);
     protected DefaultApplicationLoader applicationLoader;
@@ -68,6 +68,7 @@ public class DefaultApplication extends SimpleProperty implements Application {
     private WritableValue<ExecutorService> executorService = Props.of("executorService").valueOf(ExecutorService.class, null);
     private WritableValue<AppPropertiesTree> activeProperties = Props.of("activeProperties").valueOf(AppPropertiesTree.class, null);
     private WritableString currentWorkingDirectory = Props.of("currentWorkingDirectory").stringOf(null);
+    private WritableBoolean hideDisabled = Props.of("hideDisabled").booleanOf(false);
     private List<Semaphore> waitings = new ArrayList<>();
     private ApplicationToolkit toolkit;
 
@@ -613,4 +614,9 @@ public class DefaultApplication extends SimpleProperty implements Application {
     public WritableValue<ExecutorService> executorService() {
         return executorService;
     }
+    @Override
+    public WritableBoolean hideDisabled() {
+        return hideDisabled;
+    }
+
 }

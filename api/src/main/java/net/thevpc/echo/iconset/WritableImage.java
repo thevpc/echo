@@ -114,6 +114,11 @@ public class WritableImage extends WritableValueImpl<AppImage> {
         );
     }
 
+    public void unset() {
+        this.id = null;
+        superSet(null);
+    }
+    
     public void set(Str id) {
         this.id = id;
         if (id != null) {

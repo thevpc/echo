@@ -6,7 +6,6 @@
 package net.thevpc.echo.swing.mydoggy;
 
 import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.echo.Bounds;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppComponent;
@@ -72,8 +71,8 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
         this.win = (AppWindow) comp;
         this.app = win.app();
         toolWindowManager = (MyDoggyToolWindowManager) win.parent().peer().toolkitComponent();
-        Icon aim = win.smallIcon().get()==null?null:
-                SwingHelpers.toAwtIcon(win.smallIcon().get())
+        Icon aim = win.icon().get()==null?null:
+                SwingHelpers.toAwtIcon(win.icon().get())
                 ;
 
         this.toolWindow = toolWindowManager.registerToolWindow(
@@ -110,7 +109,7 @@ public class MyDoggyAppToolWindow  implements AppWindowPeer, SwingPeer{
             toolWindow.setTitle(newValue);
             toolWindow.getRepresentativeAnchorDescriptor().setTitle(newValue);
         });
-        win.smallIcon().onChange((PropertyEvent event) -> {
+        win.icon().onChange((PropertyEvent event) -> {
             AppImage i=event.newValue();
             Icon ii = getIcon(i);
             toolWindow.setIcon(ii);

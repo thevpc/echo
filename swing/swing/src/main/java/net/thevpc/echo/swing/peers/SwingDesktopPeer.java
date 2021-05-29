@@ -55,8 +55,8 @@ public class SwingDesktopPeer implements SwingPeer, AppDesktopPeer {
         frame.putClientProperty(AppWindow.class.getName(), win);
         win.title().onChangeAndInit(() -> info.setTitle(Applications.rawString(win.title(),win)));
         win.locale().onChangeAndInit(() -> info.setTitle(Applications.rawString(win.title(),win)));
-        win.smallIcon().onChangeAndInit(
-                () -> win.smallIcon().withValue(
+        win.icon().onChangeAndInit(
+                () -> win.icon().withValue(
                         x -> frame.setFrameIcon(SwingHelpers.toAwtIcon(x))));
         win.closable().onChangeAndInit(
                 () -> win.closable().withValue(

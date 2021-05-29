@@ -29,14 +29,14 @@ import java.util.Objects;
  */
 public interface AppDialogResult {
 
-     String buttonId();
+     String button();
 
      <T> T value();
 
     boolean isBlankValue() ;
 
      default boolean isButton(String ok) {
-        return Objects.equals(ok, buttonId());
+        return Objects.equals(ok, button());
     }
     
 }

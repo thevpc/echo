@@ -3,7 +3,6 @@ package net.thevpc.echo.impl;
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.WritableIndexedNodeImpl;
-import net.thevpc.echo.Application;
 import net.thevpc.echo.WritableTextStyle;
 import net.thevpc.echo.api.components.AppTree;
 import net.thevpc.echo.api.components.AppTreeNode;
@@ -16,29 +15,27 @@ import java.util.Objects;
 
 public class TreeNode<T> extends WritableIndexedNodeImpl<T>
         implements AppTreeNode<T> {
+
     private WritableValue<AppTreeNode<T>> parent;
-    private WritableStr text = new WritableStr("text");
+//    private WritableStr text = new WritableStr("text");
 
-    private WritableTextStyle textStyle = new WritableTextStyle("textStyle");
-
-    private WritableImage smallIcon;
+//    private WritableTextStyle textStyle = new WritableTextStyle("textStyle");
+//
+//    private WritableImage smallIcon;
     private WritableBoolean expanded = Props.of("expanded").booleanOf(false);
     private AppTree<T> tree;
 
-    public TreeNode(Class elementType, T value, AppTree<T> tree) {
-        this(PropertyType.of(elementType), value, tree);
-    }
-
-    public TreeNode(PropertyType elementType, T value, AppTree<T> tree) {
-        super("children", elementType);
-        this.tree=tree;
+    public TreeNode(T value, AppTree<T> tree) {
+        super("children", PropertyType.of(tree.itemType()));
+        this.tree = tree;
         // IMPORTANT!!!
         //do not propagate parent events
         parent = Props.of("parent")
-                .valueOf(PropertyType.of(AppTreeNode.class, elementType), null);
+                .valueOf(PropertyType.of(AppTreeNode.class, tree.itemType()), null);
 
-        smallIcon = new WritableImage("smallIcon",tree.app(), tree);
-        propagateEvents(expanded, text, textStyle, smallIcon);
+//        smallIcon = new WritableImage("smallIcon", tree.app(), tree);
+        propagateEvents(expanded);
+//        propagateEvents(text, textStyle, smallIcon);
 
         children().onChange(e -> {
             switch (e.eventType()) {
@@ -69,7 +66,7 @@ public class TreeNode<T> extends WritableIndexedNodeImpl<T>
             @Override
             public void propertyUpdated(PropertyEvent e) {
                 TreeNode o = e.oldValue();
-                if(o!=null) {
+                if (o != null) {
                     if (o.children().contains(TreeNode.this)) {
                         o.children().remove(TreeNode.this);
                     }
@@ -85,25 +82,29 @@ public class TreeNode<T> extends WritableIndexedNodeImpl<T>
         set(value);
     }
 
+    public AppTree<T> tree() {
+        return tree;
+    }
+
     @Override
     public WritableValue<AppTreeNode<T>> parent() {
         return parent;
     }
 
-    @Override
-    public WritableStr text() {
-        return text;
-    }
-
-    @Override
-    public WritableTextStyle textStyle() {
-        return textStyle;
-    }
-
-    @Override
-    public WritableImage smallIcon() {
-        return smallIcon;
-    }
+//    @Override
+//    public WritableStr text() {
+//        return text;
+//    }
+//
+//    @Override
+//    public WritableTextStyle textStyle() {
+//        return textStyle;
+//    }
+//
+//    @Override
+//    public WritableImage icon() {
+//        return smallIcon;
+//    }
 
     @Override
     public WritableBoolean expanded() {
@@ -112,8 +113,12 @@ public class TreeNode<T> extends WritableIndexedNodeImpl<T>
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         TreeNode<?> treeNode = (TreeNode<?>) o;
         T[] p1 = computeObjectPath();
         T[] p2 = (T[]) ((TreeNode) o).computeObjectPath();
@@ -125,18 +130,21 @@ public class TreeNode<T> extends WritableIndexedNodeImpl<T>
                 return false;
             }
         }
-        return Objects.equals(text, treeNode.text)
-                && Objects.equals(textStyle, treeNode.textStyle)
-                && Objects.equals(smallIcon, treeNode.smallIcon)
-                && Objects.equals(expanded, treeNode.expanded)
+        return
+//                Objects.equals(text, treeNode.text)
+//                && Objects.equals(textStyle, treeNode.textStyle)
+//                && Objects.equals(smallIcon, treeNode.smallIcon)
+
+                Objects.equals(expanded, treeNode.expanded)
                 && Objects.equals(get(), treeNode.get())
-                && Objects.equals(children(), treeNode.children())
-                ;
+                && Objects.equals(children(), treeNode.children());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, textStyle, smallIcon, expanded,get(),children());
+        return Objects.hash(
+//                text, textStyle, smallIcon,
+                expanded, get(), children());
     }
 
     public T[] computeObjectPath() {

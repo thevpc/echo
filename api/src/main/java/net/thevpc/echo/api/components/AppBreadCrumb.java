@@ -1,5 +1,5 @@
 package net.thevpc.echo.api.components;
 
-
-public interface AppBreadCrumb extends AppButtonContainer {
+public interface AppBreadCrumb<T> extends AppChoiceControl<T> {
+    
 }

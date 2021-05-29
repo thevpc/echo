@@ -3,7 +3,7 @@ package net.thevpc.echo.impl.components;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.*;
-import net.thevpc.common.props.impl.SimpleProperty;
+import net.thevpc.common.props.impl.PropertyBase;
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.AppChildConstraints;
 import net.thevpc.echo.api.AppColor;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public class ComponentBase extends SimpleProperty implements AppComponent {
+public class ComponentBase extends PropertyBase implements AppComponent {
 
     private final WritableBoolean focused;
     private final WritableBoolean editing;
@@ -34,7 +34,7 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
     private final WritableString accelerator;
     private final WritableStr title;
     private final WritableStr tooltip;
-    private final WritableImage smallIcon;
+    private final WritableImage icon;
     private final WritableImage largeIcon;
     private final WritableBoolean editable;
     private final WritableBoolean active;
@@ -64,9 +64,7 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
     public ComponentBase(String id, Application app,
                          Class<? extends AppComponent> itemType,
                          Class<? extends AppComponentPeer> peerType) {
-        super(id == null ? UUID.randomUUID().toString() : id, new DefaultAppComponentEvents(null));
-        DefaultAppComponentEvents li = (DefaultAppComponentEvents) super.events();
-        li.initSource(this);
+        super(id == null ? UUID.randomUUID().toString() : id);
         boolean doConfig = id != null && !id.startsWith(".");
         this.app = app;
         if (app == null) {
@@ -83,8 +81,8 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
         this.titleStyle = new WritableTextStyle("titleStyle");
         tooltip = AppProps.of("tooltip", app).strOf(
                 doConfig/*&&model.config().configurableTooltip().get()*/ ? Str.i18n(id + ".tooltip") : null);
-        smallIcon = new WritableImage("smallIcon", app, this);
-        smallIcon.set(doConfig/*&&model.config().configurableSmallIcon().get()*/ ? Str.i18n(id + ".icon") : null);
+        icon = new WritableImage("icon", app, this);
+        icon.set(doConfig/*&&model.config().configurableSmallIcon().get()*/ ? Str.i18n(id + ".icon") : null);
         largeIcon = new WritableImage("largeIcon", app, this);
         largeIcon.set(doConfig/*&&model.config().configurableLargeIcon().get()*/ ? Str.i18n(id + ".largeIcon") : null);
         accelerator = AppProps.of("accelerator", app).stringOf(null);
@@ -99,15 +97,21 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
         this.peerType = peerType;
         this.path.set(Path.of(id()));
         propagateEvents(anchor, enabled, visible, editable, active, title, titleStyle,
-                tooltip, smallIcon, largeIcon, accelerator, mnemonic, prefSize,
-                focused, editing, bounds, shown, locale, iconSet
+                tooltip, icon, largeIcon, accelerator, mnemonic, prefSize,
+                focused, editing, bounds, shown, locale, iconSet,properties,opaque,
+                foregroundColor,backgroundColor,font,
+                contextMenu,parentConstraints,childConstraints,order
         );
-        propagateEvents(order, childConstraints);
         focused.onChange(event -> {
             if (focused.get()) {
                 ((WritableValue<AppComponent>) app.toolkit().focusOwner()).set(this);
             }
         });
+    }
+
+    @Override
+    protected PropertyListeners createListeners() {
+        return new DefaultAppComponentEvents(this);
     }
 
     @Override
@@ -225,8 +229,8 @@ public class ComponentBase extends SimpleProperty implements AppComponent {
     }
 
     @Override
-    public WritableImage smallIcon() {
-        return smallIcon;
+    public WritableImage icon() {
+        return icon;
     }
 
     @Override

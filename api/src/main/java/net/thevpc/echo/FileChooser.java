@@ -50,7 +50,7 @@ public class FileChooser extends FileBase implements AppFileChooser {
 
     @Override
     public boolean showSaveDialog(AppComponent owner) {
-        return ((AppFileChooserPeer)peer()).showOpenDialog(
+        return ((AppFileChooserPeer)peer()).showSaveDialog(
                 owner==null?null:owner.peer().toolkitComponent()
         );
     }

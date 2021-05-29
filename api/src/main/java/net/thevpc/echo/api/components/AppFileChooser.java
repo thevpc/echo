@@ -27,6 +27,14 @@ package net.thevpc.echo.api.components;
  * @author vpc
  */
 public interface AppFileChooser extends AppFileControl{
+    default boolean showOpenDialog(){
+        return showOpenDialog(null);
+    }
+
+    default boolean showSaveDialog(){
+        return showSaveDialog(null);
+    }
+
     boolean showOpenDialog(AppComponent owner);
 
     boolean showSaveDialog(AppComponent owner);

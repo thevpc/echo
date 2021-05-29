@@ -4,14 +4,14 @@ import net.thevpc.common.props.Props;
 import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.common.props.WritableInt;
 import net.thevpc.common.props.WritableValue;
-import net.thevpc.common.props.impl.SimpleProperty;
+import net.thevpc.common.props.impl.PropertyBase;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.constraints.Anchor;
 
 import java.util.Objects;
 
-public class WritableTextStyle extends SimpleProperty {
+public class WritableTextStyle extends PropertyBase {
     private WritableValue<AppFont> font = Props.of("font").valueOf(AppFont.class);
     private WritableValue<AppColor> foregroundColor = Props.of("foregroundColor").valueOf(AppColor.class);
     private WritableValue<AppColor> backgroundColor = Props.of("backgroundColor").valueOf(AppColor.class);

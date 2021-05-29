@@ -512,4 +512,50 @@ public class Applications {
             return lastIndex;
         }
     }
+
+    public static String loadStreamAsString(URL url) {
+        InputStream is = null;
+        try {
+            try {
+                return new String(loadStreamAsByteArray(is = url.openStream()));
+            } finally {
+                if (is != null) {
+                    is.close();
+                }
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static byte[] loadStreamAsByteArray(InputStream r) {
+        ByteArrayOutputStream out = null;
+        try {
+            try {
+                out = new ByteArrayOutputStream();
+                copy(r, out, 8096);
+                out.flush();
+                return out.toByteArray();
+            } finally {
+                if (out != null) {
+                    out.close();
+                }
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
+    public static void copy(InputStream in, OutputStream out, int bufferSize) {
+        try {
+            byte[] buffer = new byte[bufferSize];
+            int len;
+            while ((len = in.read(buffer)) > 0) {
+                out.write(buffer, 0, len);
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+    }
+
 }

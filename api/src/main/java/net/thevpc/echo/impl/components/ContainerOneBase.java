@@ -17,6 +17,7 @@ public class ContainerOneBase<C extends AppComponent>
         children = new AppContainerChildrenOne<C>(childName,
                 multi,
                 "children", childComponentType, this);
+        propagateEvents(children);
     }
 
     @Override

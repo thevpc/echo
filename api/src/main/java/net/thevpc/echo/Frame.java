@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class Frame extends ContainerBase<AppComponent> implements AppFrame {
@@ -241,7 +242,7 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 Frame thisFrame = Frame.this;
                 Application app = app();
                 AppContainerChildren<AppComponent> components = app.components();
-                components.addFolder(path).smallIcon().set(Str.i18n("appearance"));
+                components.addFolder(path).icon().set(Str.i18n("appearance"));
                 Button a = new Button("Switch", app);
                 a.action().set(() -> {
                     AppFrame w = thisFrame;
@@ -297,7 +298,7 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
             runAfterStart(() -> {
                 if (!app().i18n().locales().isEmpty()) {
                     Path path = path().get().append("menuBar/View/Lang");
-                    app().components().addFolder(path).smallIcon().set(Str.i18n("locales"));
+                    app().components().addFolder(path).icon().set(Str.i18n("locales"));
                     RadioButton toggle = new RadioButton("Locale.System", path.toString(), app());
                     toggle.text().set(Str.i18n(toggle.id()));
                     toggle.selected().bindEquals(locale(), Locale.getDefault());
@@ -407,7 +408,7 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
             runAfterStart(() -> {
                 Path path = path().get().append("menuBar/View/ToolWindows");
                 AppContainerChildren<AppComponent> components = app().components();
-                components.addFolder(path).smallIcon().set(Str.i18n("tool-windows"));
+                components.addFolder(path).icon().set(Str.i18n("tool-windows"));
                 AppComponent ws = Frame.this.content().get();
                 if (ws instanceof AppDock) {
                     ObservableList<AppComponent> values = ((AppDock) ws).children();
@@ -491,7 +492,7 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 Path path = path().get().append("menuBar/View/Icons");
                 int[] sizes = sizes0;
                 AppContainerChildren<AppComponent> components = app().components();
-                components.addFolder(path).smallIcon().set(Str.i18n("icons"));
+                components.addFolder(path).icon().set(Str.i18n("icons"));
                 components.addFolder(path.append("Packs"));
                 for (IconSet iconset : app().iconSets().values()) {
                     RadioButton t = new RadioButton("IconSet." + iconset.getId(), path.append("Packs").toString(), app());
@@ -541,7 +542,7 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 Frame frame = Frame.this;
                 Path path = frame.path().get().append("/menuBar/View/Plaf");
                 AppContainerChildren<AppComponent> components = app().components();
-                components.addFolder(path).smallIcon().set(Str.i18n("themes"));
+                components.addFolder(path).icon().set(Str.i18n("themes"));
                 for (AppUIPlaf item : app().toolkit().loadAvailablePlafs()) {
                     String q = "Other";
                     if (item.isSystem()) {
@@ -570,5 +571,15 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
         }
 
     }
+    public ToolBar findOrCreateToolBar(String name, Consumer<ToolBar> initializer) {
+        ToolBar editToolBar = (ToolBar) toolBar().get().children().get(name);
+        if (editToolBar == null) {
+            editToolBar = new ToolBar(name, Str.of(name), app());
+            toolBar().get().children().add(editToolBar, name);
+            initializer.accept(editToolBar);
+        }
+        return editToolBar;
+    }
+
 }
 

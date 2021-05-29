@@ -12,8 +12,6 @@ import net.thevpc.echo.iconset.IconSetConfig;
 import net.thevpc.echo.impl.Applications;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -216,11 +214,11 @@ public class FolderView extends GridPane {
                         AppImage a = finalT.resolveThumb(file.getPath(), finalFileType, viewer);
                         if (a != null) {
                             app().runUI(() -> {
-                                iconLabel.smallIcon().set(a);
+                                iconLabel.icon().set(a);
                             });
                         }
                     });
-            iconLabel.smallIcon().set(icon);
+            iconLabel.icon().set(icon);
             iconLabel.tooltip().set(Str.of(otherName == null ? file.getName() : file.getPath()));
             iconLabel.anchor().set(Anchor.TOP);
 

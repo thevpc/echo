@@ -98,12 +98,12 @@ public class FxApplicationUtils {
         });
         button.setVisible(tool.visible().get());
 
-        tool.smallIcon().onChange((PropertyEvent event) -> {
+        tool.icon().onChange((PropertyEvent event) -> {
             button.setGraphic(FxAppImage.imageViewOf(event.newValue()));
         });
 
         //        tool.smallIcon().reevalValue();
-        button.setGraphic(FxAppImage.imageViewOf(tool.smallIcon().get()));
+        button.setGraphic(FxAppImage.imageViewOf(tool.icon().get()));
 
         tool.mnemonic().onChange((PropertyEvent event) -> {
             //button.setMnemonicParsing(true);
@@ -170,11 +170,11 @@ public class FxApplicationUtils {
         });
         button.setVisible(tool.visible().get());
 
-        tool.smallIcon().onChange((PropertyEvent event) -> {
+        tool.icon().onChange((PropertyEvent event) -> {
             button.setGraphic(FxAppImage.imageViewOf(event.newValue()));
         });
 //        tool.smallIcon().reevalValue();
-        button.setGraphic(FxAppImage.imageViewOf(tool.smallIcon().get()));
+        button.setGraphic(FxAppImage.imageViewOf(tool.icon().get()));
 
         tool.mnemonic().onChange((PropertyEvent event) -> {
             //button.setMnemonicParsing(true);

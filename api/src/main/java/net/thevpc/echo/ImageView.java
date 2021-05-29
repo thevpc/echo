@@ -32,11 +32,11 @@ public class ImageView extends Label {
                     double cw = newImage.getWidth();
                     float widthFactor = (float) (cw / bw);
                     //enableZoom().get() ? zoomFactor.get() : 1
-                    ImageView.this.smallIcon().set(newImage.scaleBase(widthFactor, widthFactor));
+                    ImageView.this.icon().set(newImage.scaleBase(widthFactor, widthFactor));
                     zoomFactor.set(widthFactor);
                 } else {
                     zoomFactor.set(1);
-                    ImageView.this.smallIcon().set((AppImage) null);
+                    ImageView.this.icon().set((AppImage) null);
                 }
             });
         }
@@ -120,13 +120,13 @@ public class ImageView extends Label {
     }
 
     public void zoom(float zoom) {
-        if (smallIcon().get() == null) {
+        if (icon().get() == null) {
             return;
         }
         if (zoom != 1) {
             if (zoom < 1) {
-                if (zoom * smallIcon().get().getHeight() <= 1
-                        || zoom * smallIcon().get().getWidth() <= 1) {
+                if (zoom * icon().get().getHeight() <= 1
+                        || zoom * icon().get().getWidth() <= 1) {
                     return;
                 }
             } else {

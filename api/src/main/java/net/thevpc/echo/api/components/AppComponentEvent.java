@@ -34,6 +34,7 @@ public interface AppComponentEvent extends AppEvent {
     boolean isSecondaryMouseButton();
 
     boolean isDoubleClick();
+    boolean isSimpleClick();
 
     int getClickCount();
     AppComponent source();

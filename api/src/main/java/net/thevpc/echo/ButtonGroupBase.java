@@ -3,7 +3,6 @@ package net.thevpc.echo;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.ObservableBoolean;
-import net.thevpc.common.props.ObservableValue;
 import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.common.props.WritableString;
 import net.thevpc.echo.api.components.AppButtonContainer;
@@ -29,11 +28,11 @@ public class ButtonGroupBase extends ContainerBase<AppComponent> implements AppB
         if (id != null) {
             String aid = "Action." + id;
             text().set(text==null?Str.i18n(aid):text);
-            smallIcon().set(Str.i18n(aid + ".icon"));
+            icon().set(Str.i18n(aid + ".icon"));
         }else{
             text().set(text == null ? Str.of("") : text);
         }
-        propagateEvents(this.text, textStyle);
+        propagateEvents(this.text, textStyle,textContentType,actionable);
     }
 
     public WritableString textContentType() {

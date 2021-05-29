@@ -50,13 +50,13 @@ public class SwingDockPeer implements SwingPeer, AppDockPeer {
                 win.id(),
                 j,
                 Applications.rawString(win.title(),win),
-                SwingHelpers.toAwtIcon(win.smallIcon().get()),
+                SwingHelpers.toAwtIcon(win.icon().get()),
                 closable,
                 toDocAnchor(win.anchor().get())
         );
         win.title().onChange(v->workspacePanel.setWindowTitle(win.id(),Applications.rawString(win.title(),win)));
         win.locale().onChange(v->workspacePanel.setWindowTitle(win.id(),Applications.rawString(win.title(),win)));
-        win.smallIcon().onChange(v->workspacePanel.setWindowIcon(win.id(),SwingHelpers.toAwtIcon(win.smallIcon().get())));
+        win.icon().onChange(v->workspacePanel.setWindowIcon(win.id(),SwingHelpers.toAwtIcon(win.icon().get())));
         if(win instanceof AppWindow) {
             WritableBoolean cp = ((AppWindow) win).closable();
             cp.onChange(
@@ -75,7 +75,8 @@ public class SwingDockPeer implements SwingPeer, AppDockPeer {
     }
 
     public static JDockPane.DockAnchor toDocAnchor(Anchor anchor) {
-        return JDockPane.DockAnchor.valueOf(anchor.name());
+        return anchor==null? JDockPane.DockAnchor.CENTER :
+                JDockPane.DockAnchor.valueOf(anchor.name());
     }
 
     public JDockPane getWorkspacePanel() {

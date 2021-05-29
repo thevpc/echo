@@ -3,11 +3,8 @@ package net.thevpc.echo.impl.dialog;
 import net.thevpc.echo.*;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.constraints.AllMargins;
+import net.thevpc.echo.constraints.*;
 import net.thevpc.echo.api.AppDialogInputPane;
-import net.thevpc.echo.constraints.AllAnchors;
-import net.thevpc.echo.constraints.AllFill;
-import net.thevpc.echo.constraints.AllGrow;
 
 public class InputTextFieldPanel extends GridPane implements AppDialogInputPane {
 
@@ -18,7 +15,10 @@ public class InputTextFieldPanel extends GridPane implements AppDialogInputPane 
     public InputTextFieldPanel(Application app, Str headerId, Str initialValue) {
         super(1,app);
         this.app = app;
-        parentConstraints().addAll(AllMargins.of(5, 5, 5, 5),AllFill.HORIZONTAL,AllAnchors.LEFT,AllGrow.HORIZONTAL);
+        parentConstraints().addAll(AllMargins.of(5, 5, 5, 5),AllFill.HORIZONTAL,
+                AllAnchors.LEFT,AllGrow.HORIZONTAL,
+                GrowContainer.HORIZONTAL
+                );
         header = new Label(app);
         value = new TextField(app);
         header.text().set(headerId);

@@ -39,7 +39,7 @@ public class SwingTabPanePeer implements SwingPeer, AppTabPanePeer {
         JComponent j = (JComponent) child.peer().toolkitComponent();
         tabbedPane.addTab(
                 Applications.rawString(child.title(),child),
-                SwingHelpers.toAwtIcon(child.smallIcon().get()),
+                SwingHelpers.toAwtIcon(child.icon().get()),
                 j
         );
         child.title().onChangeAndInit(
@@ -53,8 +53,8 @@ public class SwingTabPanePeer implements SwingPeer, AppTabPanePeer {
                                 Applications.rawString(x,child)
                         )));
 
-        child.smallIcon().onChangeAndInit(
-                v->child.smallIcon().withValue(
+        child.icon().onChangeAndInit(
+                v->child.icon().withValue(
                         x->tabbedPane.setIconAt(indexOf(child),SwingHelpers.toAwtIcon(x))));
     }
 

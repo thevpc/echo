@@ -3,8 +3,6 @@ package net.thevpc.echo;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.api.components.AppTextField;
 import net.thevpc.echo.impl.components.EditTextBase;
-import net.thevpc.echo.impl.components.TextBase;
-import net.thevpc.echo.spi.peers.AppTextAreaPeer;
 import net.thevpc.echo.spi.peers.AppTextFieldPeer;
 
 public class TextField extends EditTextBase implements AppTextField {

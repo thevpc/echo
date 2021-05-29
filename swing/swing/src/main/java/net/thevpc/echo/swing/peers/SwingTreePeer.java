@@ -422,9 +422,12 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
         }
 
         @Override
-        public void setBackgroundColor(AppColor color) {
+        public void setBackgroundColor(AppColor c) {
+            if(c==null){
+                c= net.thevpc.echo.Color.WHITE(getApplication());
+            }
             myDefaultTreeCellRenderer.setBackground(
-                    color == null ? null : (Color) color.peer().toolkitColor()
+                    c == null ? null : (Color) c.peer().toolkitColor()
             );
         }
 
@@ -440,6 +443,9 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
         @Override
         public void setBackgroundNonSelectionColor(AppColor c) {
+            if(c==null){
+                c= net.thevpc.echo.Color.BLACK(getApplication());
+            }
             myDefaultTreeCellRenderer.setBackgroundNonSelectionColor(
                     c==null?null:new Color(c.rgba())
             );
@@ -447,6 +453,9 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
         @Override
         public void setBackgroundSelectionColor(AppColor c) {
+            if(c==null){
+                c= net.thevpc.echo.Color.WHITE(getApplication());
+            }
             myDefaultTreeCellRenderer.setBackgroundSelectionColor(
                     c==null?null:new Color(c.rgba())
             );
@@ -454,6 +463,9 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
         @Override
         public void setTextNonSelectionColor(AppColor c) {
+            if(c==null){
+                c= net.thevpc.echo.Color.BLACK(getApplication());
+            }
             myDefaultTreeCellRenderer.setTextNonSelectionColor(
                     c==null?null:new Color(c.rgba())
             );
@@ -461,6 +473,9 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
         @Override
         public void setTextSelectionColor(AppColor c) {
+            if(c==null){
+                c= net.thevpc.echo.Color.BLACK(getApplication());
+            }
             myDefaultTreeCellRenderer.setTextSelectionColor(
                     c==null?null:new Color(c.rgba())
             );

@@ -2,13 +2,9 @@ package net.thevpc.echo.swing.peers;
 
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
-import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.*;
-import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.constraints.Layout;
 import net.thevpc.echo.spi.peers.AppChoiceListPeer;
-import net.thevpc.echo.swing.SwingApplicationUtils;
-import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -17,9 +13,10 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import net.thevpc.echo.Application;
+import net.thevpc.echo.swing.helpers.SwingAppChoiceItemContext1;
 
 public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
+
     private JList swingComponent;
     private AppChoiceList<?> component;
     private DefaultListModel dataModel;
@@ -104,6 +101,7 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
     }
 
     private static class MyDefaultListCellRenderer extends DefaultListCellRenderer {
+
         SwingChoiceListPeer peer;
         AppColor initialForeground;
         AppColor initialBackground;
@@ -116,11 +114,12 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
         }
 
         public Component getListCellRendererComponent0(DefaultChoiceListItemContext c) {
-            super.getListCellRendererComponent(c.list, c.text, c.index, c.isSelected, c.cellHasFocus);
-            setIcon(c.icon);
-            if (c.disabled && !c.isSelected && c.list.hasFocus()) {
-                setForeground(c.list.getSelectionBackground());
-                setBackground(c.list.getSelectionForeground());
+            JList list = c.list;
+            super.getListCellRendererComponent(list, c.getText(), c.getIndex(), c.isSelected(), c.isFocused());
+            setIcon(c.getIcon());
+            if (c.isDisabled() && !c.isSelected() && list.hasFocus()) {
+                setForeground(list.getSelectionBackground());
+                setBackground(list.getSelectionForeground());
             }
             return this;
         }
@@ -128,9 +127,9 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             boolean disabled = peer.component.disabledSelection().indices().contains(index);
             DefaultChoiceListItemContext c = new DefaultChoiceListItemContext(
-                    this, list, index, value, isSelected, cellHasFocus, disabled,
-                    value == null ? "" : value.toString(),null
-            );
+                    list,
+                    peer.component, this, value,
+                    index, null, isSelected, cellHasFocus, disabled);
             AppChoiceItemRenderer<?> r = peer.component.itemRenderer().get();
             if (r != null) {
                 r.render(c);
@@ -142,149 +141,18 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
 
     }
 
-    private static class DefaultChoiceListItemContext implements AppChoiceItemContext {
-        private final JList<?> list;
-        private final MyDefaultListCellRenderer myDefaultListCellRenderer;
-        private int index;
-        private Object value;
-        private String text;
-        private boolean isSelected;
-        private boolean cellHasFocus;
-        private boolean disabled;
-        private Icon icon;
+    private static class DefaultChoiceListItemContext<T> extends SwingAppChoiceItemContext1<T> {
 
-        public DefaultChoiceListItemContext(MyDefaultListCellRenderer myDefaultListCellRenderer, JList<?> list,
-                                      int index, Object value, boolean isSelected,
-                                      boolean cellHasFocus, boolean disabled, String text,Icon icon) {
+        JList<?> list;
+
+        public DefaultChoiceListItemContext(JList<?> list, AppChoiceControl<T> appChoiceControl, MyDefaultListCellRenderer jcomponent, T value, int index, Icon icon, boolean isSelected, boolean cellHasFocus, boolean disabled) {
+            super(appChoiceControl, jcomponent, value, index, icon, isSelected, cellHasFocus, disabled);
             this.list = list;
-            this.index = index;
-            this.value = value;
-            this.isSelected = isSelected;
-            this.cellHasFocus = cellHasFocus;
-            this.disabled = disabled;
-            this.myDefaultListCellRenderer = myDefaultListCellRenderer;
-            this.text = text;
-            this.icon = icon;
-        }
-
-        @Override
-        public AppChoiceControl getChoice() {
-            return myDefaultListCellRenderer.peer.component;
-        }
-
-        @Override
-        public Application getApplication() {
-            return myDefaultListCellRenderer.peer.component.app();
-        }
-
-        @Override
-        public int getIndex() {
-            return index;
-        }
-
-        @Override
-        public Object getValue() {
-            return value;
-        }
-
-        @Override
-        public void setValue(Object value) {
-            this.value = value;
-        }
-
-        @Override
-        public void setText(String text) {
-            this.text = text;
-            myDefaultListCellRenderer.setText(text);
-        }
-
-        @Override
-        public void setOpaque(boolean opaque) {
-            myDefaultListCellRenderer.setOpaque(opaque);
-        }
-
-        @Override
-        public void setTextColor(AppColor color) {
-            myDefaultListCellRenderer.setForeground(
-                    color == null ? null : (Color) color.peer().toolkitColor()
-            );
-        }
-
-        @Override
-        public void setTextFont(AppFont font) {
-            if (font != null) {
-                SwingApplicationUtils.setComponentFont(myDefaultListCellRenderer,
-                        font, null, null, myDefaultListCellRenderer.initialUnderline, myDefaultListCellRenderer.initialStrikeThrough);
-            }
-        }
-
-        @Override
-        public void setTextUnderline(boolean underline) {
-            myDefaultListCellRenderer.initialUnderline = underline;
-            SwingApplicationUtils.setComponentFont(myDefaultListCellRenderer,
-                    (AppFont) null, null, null, myDefaultListCellRenderer.initialUnderline, null);
-        }
-
-        @Override
-        public void setTextStrikeThrough(boolean strikeThrough) {
-            myDefaultListCellRenderer.initialStrikeThrough = strikeThrough;
-            SwingApplicationUtils.setComponentFont(myDefaultListCellRenderer,
-                    (AppFont) null, null, null, null, strikeThrough);
-        }
-
-        @Override
-        public void setTextStrokeSize(int size) {
-            SwingApplicationUtils.setComponentTextStrokeSize(myDefaultListCellRenderer, size);
-        }
-
-        @Override
-        public void setTextAlign(Anchor align) {
-            SwingApplicationUtils.setLabelTextAlign(myDefaultListCellRenderer, align);
-        }
-
-        @Override
-        public void setIcon(AppImage icon) {
-            this.icon=SwingHelpers.toAwtIcon(icon);
-            myDefaultListCellRenderer.setIcon(
-                    this.icon
-            );
-        }
-
-        @Override
-        public boolean isSelected() {
-            return isSelected;
-        }
-
-        @Override
-        public boolean isFocused() {
-            return cellHasFocus;
-        }
-
-        @Override
-        public AppFont getFont() {
-            return null;
-        }
-
-        @Override
-        public AppColor getColor() {
-            return null;
-        }
-
-        @Override
-        public AppColor getBackgroundColor() {
-            return null;
-        }
-
-        @Override
-        public void setBackgroundColor(AppColor color) {
-            myDefaultListCellRenderer.setForeground(
-                    color == null ? null : (Color) color.peer().toolkitColor()
-            );
         }
 
         @Override
         public void renderDefault() {
-            myDefaultListCellRenderer.getListCellRendererComponent0(this);
+            ((MyDefaultListCellRenderer) jcomponent).getListCellRendererComponent0(this);
         }
     }
 }

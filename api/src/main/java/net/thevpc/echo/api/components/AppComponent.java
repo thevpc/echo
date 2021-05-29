@@ -85,7 +85,7 @@ public interface AppComponent extends Property {
 
     WritableValue<Anchor> anchor();
 
-    WritableImage smallIcon();
+    WritableImage icon();
 
     /**
      * used as a title when this component is placed into a container. a good

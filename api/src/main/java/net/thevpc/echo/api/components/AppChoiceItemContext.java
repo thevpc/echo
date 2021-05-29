@@ -1,5 +1,6 @@
 package net.thevpc.echo.api.components;
 
+import net.thevpc.common.i18n.Str;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
@@ -34,9 +35,13 @@ public interface AppChoiceItemContext<T> {
 
     void setIcon(AppImage icon);
 
+    void setIcon(Str icon);
+
     boolean isSelected();
 
     boolean isFocused();
+
+    boolean isDisabled();
 
     AppFont getFont();
 
@@ -48,6 +53,6 @@ public interface AppChoiceItemContext<T> {
 
     void renderDefault();
 
-    void setValue(Object value);
+    void setValue(T value);
 
 }

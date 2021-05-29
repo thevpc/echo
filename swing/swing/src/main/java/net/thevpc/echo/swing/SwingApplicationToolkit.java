@@ -81,7 +81,8 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
         addPeerFactory(AppTreePeer.class, SwingTreePeer.class);
         addPeerFactory(AppProgressBarPeer.class, SwingProgressBarPeer.class);
         addPeerFactory(AppColorButtonPeer.class, SwingColorButtonPeer.class);
-        addPeerFactory(AppWebViewPeer.class, SwingWebView.class);
+        addPeerFactory(AppWebViewPeer.class, SwingWebViewPeer.class);
+        addPeerFactory(AppBreadCrumbPeer.class, SwingBreadCrumbPeer.class);
 
         UIPlafManager.getCurrentManager().addListener(x -> {
             app.plaf().set(x.getId());
@@ -241,7 +242,7 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
 
     @Override
     public int parseColor(String colorText) {
-        if(colorText.contains(",")){
+        if(colorText.contains(";")){
             return ColorResource.of(colorText).get().getRGB();
         }
         return ColorUtils.parseColor(colorText).getRGB();

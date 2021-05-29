@@ -72,7 +72,16 @@ public interface AppAlert extends AppControl {
     AppAlert withButtons(String... buttonIds);
 
     AppAlert setDefaultButton(String s);
+
     AppAlert setButtonHandler(String s, AppDialogAction r);
+
+    default String showDialog() {
+        return showDialog(null);
+    }
+
+    default AppDialogResult showInputDialog() {
+        return showInputDialog(null);
+    }
 
     String showDialog(AppComponent owner);
 

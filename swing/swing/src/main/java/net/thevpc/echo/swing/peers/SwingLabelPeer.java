@@ -36,9 +36,9 @@ public class SwingLabelPeer implements SwingPeer, AppLabelPeer {
                 ecomp.text().onChangeAndInit(() -> mLabel.setText(Applications.rawString(ecomp.text(),ecomp)));
                 ecomp.locale().onChange(() -> mLabel.setText(Applications.rawString(ecomp.text(),ecomp)));
 
-                ecomp.smallIcon().onChangeAndInit(() ->
+                ecomp.icon().onChangeAndInit(() ->
                         mLabel.setIcon(
-                                SwingAppImage.iconOf(ecomp.smallIcon().get())
+                                SwingAppImage.iconOf(ecomp.icon().get())
                         )
                 );
             }
@@ -61,9 +61,9 @@ public class SwingLabelPeer implements SwingPeer, AppLabelPeer {
                                     : SwingConstants.LEFT
                     );
                 });
-                ecomp.smallIcon().onChangeAndInit(() ->
+                ecomp.icon().onChangeAndInit(() ->
                         mLabel.setIcon(
-                                SwingAppImage.iconOf(ecomp.smallIcon().get())
+                                SwingAppImage.iconOf(ecomp.icon().get())
                         )
                 );
 //                etool.title().onChange(x->mLabel.setText(etool.title().get()));

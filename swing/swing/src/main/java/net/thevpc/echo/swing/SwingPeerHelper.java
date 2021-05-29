@@ -1,10 +1,8 @@
 package net.thevpc.echo.swing;
 
 import net.thevpc.common.i18n.Str;
-import net.thevpc.common.props.Property;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
-import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.KeyCode;
 import net.thevpc.echo.api.AppColor;
@@ -24,47 +22,77 @@ import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.font.TextAttribute;
+import java.util.Map;
 
 public class SwingPeerHelper {
-    public static class AppComponentTextStylerApplier implements PropertyListener {
-        AppTextControl appComponent;
-
-        public AppComponentTextStylerApplier(AppTextControl appComponent) {
-            this.appComponent = appComponent;
+    public static final MouseListener FROM_SWING_MOUSE_LISTENER = new MouseListener() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            JComponent swingComponent = (JComponent) e.getComponent();
+            AppComponent appComponent = appComponentOf(swingComponent);
+            DefaultAppComponentEvents events = (DefaultAppComponentEvents) appComponent.events();
+            events.fire(new SwingComponentEvent(AppEventType.MOUSE_CLICKED, e, appComponent));
         }
 
         @Override
-        public void propertyUpdated(PropertyEvent e) {
-            JComponent swingComponent = (JComponent) effectiveSwingComponent(appComponent);
-            AppFont f = appComponent.textStyle().font().get();
-            if (f != null) {
-                Font ff = SwingHelpers.toAwtFont(f);
-                try {
-                    swingComponent.setFont(
-                            SwingApplicationUtils.deriveFont(
-                                    ff,
-                                    null, null,
-                                    appComponent.textStyle().underline().get(),
-                                    appComponent.textStyle().strikethrough().get()
-                            )
-                    );
-                }catch (NullPointerException npe){
-                    swingComponent.setFont(
-                            SwingApplicationUtils.deriveFont(
-                                    ff,
-                                    null, null,
-                                    appComponent.textStyle().underline().get(),
-                                    appComponent.textStyle().strikethrough().get()
-                            )
-                    );
-                }
-            } else {
-                // reset?
-            }
+        public void mousePressed(MouseEvent e) {
+            JComponent swingComponent = (JComponent) e.getComponent();
+            AppComponent appComponent = appComponentOf(swingComponent);
+            DefaultAppComponentEvents events = (DefaultAppComponentEvents) appComponent.events();
+            events.fire(new SwingComponentEvent(AppEventType.MOUSE_PRESSED, e, appComponent));
         }
-    }
 
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            JComponent swingComponent = (JComponent) e.getComponent();
+            AppComponent appComponent = appComponentOf(swingComponent);
+            DefaultAppComponentEvents events = (DefaultAppComponentEvents) appComponent.events();
+            events.fire(new SwingComponentEvent(AppEventType.MOUSE_RELEASED, e, appComponent));
+        }
 
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            JComponent swingComponent = (JComponent) e.getComponent();
+            AppComponent appComponent = appComponentOf(swingComponent);
+            DefaultAppComponentEvents events = (DefaultAppComponentEvents) appComponent.events();
+            events.fire(new SwingComponentEvent(AppEventType.MOUSE_ENTER, e, appComponent));
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            JComponent swingComponent = (JComponent) e.getComponent();
+            AppComponent appComponent = appComponentOf(swingComponent);
+            DefaultAppComponentEvents events = (DefaultAppComponentEvents) appComponent.events();
+            events.fire(new SwingComponentEvent(AppEventType.MOUSE_EXIT, e, appComponent));
+        }
+    };
+    public static final MouseWheelListener FROM_SWING_MOUSE_WHEEL_LISTENER = new MouseWheelListener() {
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            JComponent swingComponent = (JComponent) e.getComponent();
+            AppComponent appComponent = appComponentOf(swingComponent);
+            DefaultAppComponentEvents events = (DefaultAppComponentEvents) appComponent.events();
+            events.fire(new SwingComponentEvent(AppEventType.MOUSE_WHEEL_MOVED, e, appComponent));
+        }
+    };
+    public static final MouseMotionListener FROM_SWING_MOUSE_MOTION_LISTENER = new MouseMotionListener() {
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            JComponent swingComponent = (JComponent) e.getComponent();
+            AppComponent appComponent = appComponentOf(swingComponent);
+            DefaultAppComponentEvents events = (DefaultAppComponentEvents) appComponent.events();
+            events.fire(new SwingComponentEvent(AppEventType.MOUSE_DRAGGED, e, appComponent));
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            JComponent swingComponent = (JComponent) e.getComponent();
+            AppComponent appComponent = appComponentOf(swingComponent);
+            DefaultAppComponentEvents events = (DefaultAppComponentEvents) appComponent.events();
+            events.fire(new SwingComponentEvent(AppEventType.MOUSE_MOVED, e, appComponent));
+        }
+    };
     private static final ComponentListener FROM_SWING_COMPONENT_MAPPER = new ComponentListener() {
         @Override
         public void componentResized(ComponentEvent e) {
@@ -101,21 +129,21 @@ public class SwingPeerHelper {
         public void keyTyped(KeyEvent e) {
             AppComponent appComponent = appComponentOf((JComponent) e.getComponent());
             DefaultAppComponentEvents de = (DefaultAppComponentEvents) appComponent.events();
-            de.fire(new SwingComponentEvent(AppEventType.KEY_TYPED, e,appComponent));
+            de.fire(new SwingComponentEvent(AppEventType.KEY_TYPED, e, appComponent));
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
             AppComponent appComponent = appComponentOf((JComponent) e.getComponent());
             DefaultAppComponentEvents de = (DefaultAppComponentEvents) appComponent.events();
-            de.fire(new SwingComponentEvent(AppEventType.KEY_PRESSED, e,appComponent));
+            de.fire(new SwingComponentEvent(AppEventType.KEY_PRESSED, e, appComponent));
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
             AppComponent appComponent = appComponentOf((JComponent) e.getComponent());
             DefaultAppComponentEvents de = (DefaultAppComponentEvents) appComponent.events();
-            de.fire(new SwingComponentEvent(AppEventType.KEY_RELEASED, e,appComponent));
+            de.fire(new SwingComponentEvent(AppEventType.KEY_RELEASED, e, appComponent));
         }
     };
     private static final FocusListener FROM_SWING_FOCUS_MAPPER = new FocusListener() {
@@ -131,75 +159,8 @@ public class SwingPeerHelper {
             appComponent.focused().set(false);
         }
     };
-    public static final MouseListener FROM_SWING_MOUSE_LISTENER = new MouseListener() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            JComponent swingComponent = (JComponent) e.getComponent();
-            AppComponent appComponent = appComponentOf(swingComponent);
-            DefaultAppComponentEvents events=(DefaultAppComponentEvents) appComponent.events();
-            events.fire(new SwingComponentEvent(AppEventType.MOUSE_CLICKED, e,appComponent));
-        }
 
-        @Override
-        public void mousePressed(MouseEvent e) {
-            JComponent swingComponent = (JComponent) e.getComponent();
-            AppComponent appComponent = appComponentOf(swingComponent);
-            DefaultAppComponentEvents events=(DefaultAppComponentEvents) appComponent.events();
-            events.fire(new SwingComponentEvent(AppEventType.MOUSE_PRESSED, e,appComponent));
-        }
-
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            JComponent swingComponent = (JComponent) e.getComponent();
-            AppComponent appComponent = appComponentOf(swingComponent);
-            DefaultAppComponentEvents events=(DefaultAppComponentEvents) appComponent.events();
-            events.fire(new SwingComponentEvent(AppEventType.MOUSE_RELEASED, e,appComponent));
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-            JComponent swingComponent = (JComponent) e.getComponent();
-            AppComponent appComponent = appComponentOf(swingComponent);
-            DefaultAppComponentEvents events=(DefaultAppComponentEvents) appComponent.events();
-            events.fire(new SwingComponentEvent(AppEventType.MOUSE_ENTER, e,appComponent));
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-            JComponent swingComponent = (JComponent) e.getComponent();
-            AppComponent appComponent = appComponentOf(swingComponent);
-            DefaultAppComponentEvents events=(DefaultAppComponentEvents) appComponent.events();
-            events.fire(new SwingComponentEvent(AppEventType.MOUSE_EXIT, e,appComponent));
-        }
-    };
-    public static final MouseWheelListener FROM_SWING_MOUSE_WHEEL_LISTENER = new MouseWheelListener() {
-        @Override
-        public void mouseWheelMoved(MouseWheelEvent e) {
-            JComponent swingComponent = (JComponent) e.getComponent();
-            AppComponent appComponent = appComponentOf(swingComponent);
-            DefaultAppComponentEvents events=(DefaultAppComponentEvents) appComponent.events();
-            events.fire(new SwingComponentEvent(AppEventType.MOUSE_WHEEL_MOVED, e,appComponent));
-        }
-    };
-    public static final MouseMotionListener FROM_SWING_MOUSE_MOTION_LISTENER = new MouseMotionListener() {
-        @Override
-        public void mouseDragged(MouseEvent e) {
-            JComponent swingComponent = (JComponent) e.getComponent();
-            AppComponent appComponent = appComponentOf(swingComponent);
-            DefaultAppComponentEvents events=(DefaultAppComponentEvents) appComponent.events();
-            events.fire(new SwingComponentEvent(AppEventType.MOUSE_DRAGGED, e,appComponent));
-        }
-
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            JComponent swingComponent = (JComponent) e.getComponent();
-            AppComponent appComponent = appComponentOf(swingComponent);
-            DefaultAppComponentEvents events=(DefaultAppComponentEvents) appComponent.events();
-            events.fire(new SwingComponentEvent(AppEventType.MOUSE_MOVED, e,appComponent));
-        }
-    };
-
-    public static void installTextComponent(AppTextControl appComponent, JTextComponent swingComponent) {
+    public static void installTextComponent(AppEditTextControl appComponent, JTextComponent swingComponent) {
         new InstallTextComponent(appComponent, swingComponent).install();
     }
 
@@ -207,12 +168,12 @@ public class SwingPeerHelper {
         return (AppComponent) swingComponent.getClientProperty(AppComponent.class.getName());
     }
 
-    public static JComponent effectiveSwingComponent(AppComponent component){
-        return (JComponent) component.userObjects().get(AppComponentPeer.class.getName()+":effective");
+    public static JComponent effectiveSwingComponent(AppComponent component) {
+        return (JComponent) component.userObjects().get(AppComponentPeer.class.getName() + ":effective");
     }
 
     public static void installComponent(AppComponent appComponent, JComponent swingComponent) {
-        appComponent.userObjects().put(AppComponentPeer.class.getName()+":effective",swingComponent);
+        appComponent.userObjects().put(AppComponentPeer.class.getName() + ":effective", swingComponent);
         swingComponent.putClientProperty(AppComponent.class.getName(), appComponent);
         swingComponent.addKeyListener(FROM_SWING_KEY_MAPPER);
         swingComponent.addFocusListener(FROM_SWING_FOCUS_MAPPER);
@@ -229,9 +190,38 @@ public class SwingPeerHelper {
         appComponent.opaque().onChangeAndInit(
                 () -> swingComponent.setOpaque(appComponent.opaque().get())
         );
-        appComponent.backgroundColor().onChangeAndInit(
-                () -> swingComponent.setBackground(SwingHelpers.toAwtColor(appComponent.backgroundColor().get()))
+
+        appComponent.backgroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getBackground(), appComponent.app()));
+        appComponent.backgroundColor().onChange(
+                () -> {
+                    Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get());
+                    if(c!=null) {
+                        SwingApplicationUtils.setComponentBackground(swingComponent, c);
+                    }
+                }
         );
+        if(appComponent instanceof AppTextControl) {
+            AppTextControl appTextComponent1 = (AppTextControl) appComponent;
+            appTextComponent1.textStyle().foregroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getForeground(), appComponent.app()));
+            appTextComponent1.textStyle().foregroundColor().onChange(
+                    () -> {
+                        Color c = SwingHelpers.toAwtColor(appTextComponent1.textStyle().foregroundColor().get());
+                        if(c!=null) {
+                            SwingApplicationUtils.setComponentForeground(swingComponent, c);
+                        }
+                    }
+            );
+        }else{
+            appComponent.foregroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getForeground(), appComponent.app()));
+            appComponent.foregroundColor().onChangeAndInit(
+                    () -> {
+                        Color c = SwingHelpers.toAwtColor(appComponent.foregroundColor().get());
+                        if(c!=null) {
+                            SwingApplicationUtils.setComponentForeground(swingComponent, c);
+                        }
+                    }
+            );
+        }
         appComponent.visible().onChangeAndInit(
                 () -> swingComponent.setVisible(appComponent.visible().get())
         );
@@ -240,7 +230,7 @@ public class SwingPeerHelper {
         );
         appComponent.tooltip().onChangeAndInit(
                 () -> swingComponent.setToolTipText(
-                        Applications.rawString(appComponent.tooltip(),appComponent)
+                        Applications.rawString(appComponent.tooltip(), appComponent)
                 )
         );
         appComponent.contextMenu().onChangeAndInit(
@@ -261,46 +251,53 @@ public class SwingPeerHelper {
 //        )
 
 
-        appComponent.backgroundColor().set(
-                SwingHelpers.fromAwtColor(swingComponent.getBackground(), appComponent.app())
-        );
-        appComponent.backgroundColor().onChange(()->{
-            swingComponent.setBackground(
-                    SwingHelpers.toAwtColor(appComponent.backgroundColor().get())
-            );
-        });
-        if(appComponent instanceof AppTextControl){
-            AppTextControl tc=(AppTextControl) appComponent;
-            AppComponentTextStylerApplier appComponentTextStylerApplier=new AppComponentTextStylerApplier(tc);
+
+        if (appComponent instanceof AppTextControl) {
+            AppTextControl tc = (AppTextControl) appComponent;
+            AppComponentTextStylerApplier appComponentTextStylerApplier = new AppComponentTextStylerApplier(tc);
             tc.textStyle().font().set(
                     SwingHelpers.fromAwtFont(swingComponent.getFont(), appComponent.app())
             );
-            tc.textStyle().font().onChangeAndInit(appComponentTextStylerApplier);
+            tc.textStyle().font().onChange(appComponentTextStylerApplier);
             tc.textStyle().strokeSize().onChange(appComponentTextStylerApplier); // no init because already initialize
             tc.textStyle().strikethrough().onChange(appComponentTextStylerApplier);
             tc.textStyle().underline().onChange(appComponentTextStylerApplier);
-            tc.textStyle().foregroundColor().set(
-                    SwingHelpers.fromAwtColor(swingComponent.getForeground(), appComponent.app())
-            );
-            tc.textStyle().foregroundColor().onChangeAndInit(()->{
-                AppColor fg = tc.textStyle().foregroundColor().get();
-                if(fg!=null){
-                    swingComponent.setForeground(SwingHelpers.toAwtColor(fg));
-                }else{
-                    //reset ?
-                }
-            });
         }
     }
 
+    public static class AppComponentTextStylerApplier implements PropertyListener {
+        AppTextControl appComponent;
+
+        public AppComponentTextStylerApplier(AppTextControl appComponent) {
+            this.appComponent = appComponent;
+        }
+
+
+        @Override
+        public void propertyUpdated(PropertyEvent e) {
+            JComponent swingComponent = (JComponent) effectiveSwingComponent(appComponent);
+            AppFont f = appComponent.textStyle().font().get();
+            if (f != null) {
+                SwingApplicationUtils.setComponentFont(
+                        swingComponent, f, null, null,
+                        appComponent.textStyle().underline().get(),
+                        appComponent.textStyle().strikethrough().get()
+                );
+
+
+            } else {
+                // reset?
+            }
+        }
+    }
 
     private static class InstallTextComponent {
 
         private boolean updatingDocument;
-        private AppTextControl appComponent;
+        private AppEditTextControl appComponent;
         private JTextComponent swingComponent;
 
-        public InstallTextComponent(AppTextControl appComponent, JTextComponent swingComponent) {
+        public InstallTextComponent(AppEditTextControl appComponent, JTextComponent swingComponent) {
             this.appComponent = appComponent;
             this.swingComponent = swingComponent;
         }
@@ -395,20 +392,21 @@ public class SwingPeerHelper {
         private AppComponent component;
         private InputEvent e;
 
-        public SwingComponentEvent(AppEventType eventType, KeyEvent e,AppComponent component) {
+        public SwingComponentEvent(AppEventType eventType, KeyEvent e, AppComponent component) {
             this.eventType = eventType;
             this.e = e;
             this.component = component;
             code = KeyCode.of(e.getKeyCode());
         }
 
-        public SwingComponentEvent(AppEventType eventType, MouseEvent e,AppComponent component) {
+        public SwingComponentEvent(AppEventType eventType, MouseEvent e, AppComponent component) {
             this.eventType = eventType;
             this.component = component;
             code = KeyCode.UNKNOWN;
             this.e = e;
         }
-        public SwingComponentEvent(AppEventType eventType, MouseWheelEvent e,AppComponent component) {
+
+        public SwingComponentEvent(AppEventType eventType, MouseWheelEvent e, AppComponent component) {
             this.eventType = eventType;
             this.component = component;
             code = KeyCode.UNKNOWN;
@@ -427,7 +425,7 @@ public class SwingPeerHelper {
 
         @Override
         public int wheelRotation() {
-            if(e instanceof MouseWheelEvent){
+            if (e instanceof MouseWheelEvent) {
                 return ((MouseWheelEvent) e).getWheelRotation();
             }
             return 0;
@@ -470,7 +468,7 @@ public class SwingPeerHelper {
 
         @Override
         public double getMouseX() {
-            if(e instanceof MouseEvent){
+            if (e instanceof MouseEvent) {
                 return ((MouseEvent) e).getX();
             }
             return 0;
@@ -478,7 +476,7 @@ public class SwingPeerHelper {
 
         @Override
         public double getMouseY() {
-            if(e instanceof MouseEvent){
+            if (e instanceof MouseEvent) {
                 return ((MouseEvent) e).getY();
             }
             return 0;
@@ -486,7 +484,7 @@ public class SwingPeerHelper {
 
         @Override
         public boolean isPrimaryMouseButton() {
-            if(e instanceof MouseEvent){
+            if (e instanceof MouseEvent) {
                 return SwingUtilities.isLeftMouseButton(((MouseEvent) e));
             }
             return false;
@@ -494,7 +492,7 @@ public class SwingPeerHelper {
 
         @Override
         public boolean isSecondaryMouseButton() {
-            if(e instanceof MouseEvent){
+            if (e instanceof MouseEvent) {
                 return SwingUtilities.isRightMouseButton(((MouseEvent) e));
             }
             return false;
@@ -502,28 +500,36 @@ public class SwingPeerHelper {
 
         @Override
         public boolean isDoubleClick() {
-            if(e instanceof MouseEvent){
-                return (((MouseEvent) e)).getClickCount()==2;
+            if (e instanceof MouseEvent) {
+                return (((MouseEvent) e)).getClickCount() == 2;
+            }
+            return false;
+        }
+
+        @Override
+        public boolean isSimpleClick() {
+            if (e instanceof MouseEvent) {
+                return (((MouseEvent) e)).getClickCount() == 1;
             }
             return false;
         }
 
         @Override
         public int getClickCount() {
-            if(e instanceof MouseEvent){
+            if (e instanceof MouseEvent) {
                 return (((MouseEvent) e)).getClickCount();
             }
             return 0;
         }
 
         @Override
-        public Application app() {
-            return component.app();
+        public AppComponent source() {
+            return component;
         }
 
         @Override
-        public AppComponent source() {
-            return component;
+        public Application app() {
+            return component.app();
         }
     }
 }

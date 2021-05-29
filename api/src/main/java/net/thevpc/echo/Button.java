@@ -35,7 +35,7 @@ public class Button extends TextBase implements AppButton {
         if (id != null) {
             String aid = "Action." + id;
             text().set(Str.i18n(aid));
-            smallIcon().set(Str.i18n(aid + ".icon"));
+            icon().set(Str.i18n(aid + ".icon"));
         }
         propagateEvents(action);
     }
@@ -50,7 +50,7 @@ public class Button extends TextBase implements AppButton {
         Button c=(Button) super.copy(bind);
         if(bind) {
             text().bindTarget(c.text());
-            smallIcon().bindTarget(c.smallIcon());
+            icon().bindTarget(c.icon());
             action().bindTarget(c.action());
             tooltip().bindTarget(c.tooltip());
         }

@@ -20,7 +20,7 @@ public class ToggleBase extends TextBase implements AppToggleControl {
         if (id != null && !id.startsWith(".")) {
             String aid = "Action." + id;
             text().set(str == null ? Str.i18n(aid) : str);
-            smallIcon().set(Str.i18n(aid + ".icon"));
+            icon().set(Str.i18n(aid + ".icon"));
         } else {
             text().set(str == null ? Str.of("") : str);
         }
