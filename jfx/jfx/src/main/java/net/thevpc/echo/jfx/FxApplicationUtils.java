@@ -101,6 +101,9 @@ public class FxApplicationUtils {
         tool.icon().onChange((PropertyEvent event) -> {
             button.setGraphic(FxAppImage.imageViewOf(event.newValue()));
         });
+        tool.iconConfig().onChange((PropertyEvent event) -> {
+            button.setGraphic(FxAppImage.imageViewOf(event.newValue()));
+        });
 
         //        tool.smallIcon().reevalValue();
         button.setGraphic(FxAppImage.imageViewOf(tool.icon().get()));

@@ -7,6 +7,7 @@ import net.thevpc.echo.api.AppUIPlaf;
 import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.constraints.AllAnchors;
 import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.iconset.IconConfig;
 import net.thevpc.echo.iconset.IconSet;
 import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.components.ContainerBase;
@@ -99,6 +100,12 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 Applications.setAllIconSet(Frame.this, iconSet().get());
             }
         });
+        iconConfig().onChangeAndInit(() -> {
+            if(propagateIconSet().get()) {
+                Applications.setAllIconConfig(Frame.this, iconConfig().get());
+            }
+        });
+
     }
 
     public WritableBoolean propagateLocale() {
@@ -206,10 +213,10 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
     public class DefaultMenusHelper {
         public void addDefaultMenus() {
             runAfterStart(() -> {
-                app().components().addFolder(path().get().append("/menuBar/File"));
-                app().components().addFolder(path().get().append("/menuBar/Edit"));
-                app().components().addFolder(path().get().append("/menuBar/View"));
-                app().components().addFolder(path().get().append("/menuBar/Help"));
+                for (String menuName : new String[]{"File", "Edit", "View", "Help"}) {
+                    AppMenu menu = (AppMenu)app().components().addFolder(path().get().append("/menuBar").append(menuName));
+                    menu.text().set(Str.i18n("/"+menuName));
+                }
             });
 //        if (startupConfig()
 //                .enableQuit().get()) {
@@ -242,7 +249,12 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 Frame thisFrame = Frame.this;
                 Application app = app();
                 AppContainerChildren<AppComponent> components = app.components();
-                components.addFolder(path).icon().set(Str.i18n("appearance"));
+                components.addFolder(path)
+                        .with((AppMenu m)->{
+                            m.icon().set(Str.i18n("appearance"));
+                            m.text().set(Str.i18n("/View/Appearance"));
+                        });
+                ;
                 Button a = new Button("Switch", app);
                 a.action().set(() -> {
                     AppFrame w = thisFrame;
@@ -298,7 +310,12 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
             runAfterStart(() -> {
                 if (!app().i18n().locales().isEmpty()) {
                     Path path = path().get().append("menuBar/View/Lang");
-                    app().components().addFolder(path).icon().set(Str.i18n("locales"));
+                    app().components().addFolder(path)
+                            .with((AppMenu m)->{
+                                icon().set(Str.i18n("locales"));
+                                m.text().set(Str.i18n("/View/Lang"));
+                            });
+                    ;
                     RadioButton toggle = new RadioButton("Locale.System", path.toString(), app());
                     toggle.text().set(Str.i18n(toggle.id()));
                     toggle.selected().bindEquals(locale(), Locale.getDefault());
@@ -492,8 +509,16 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 Path path = path().get().append("menuBar/View/Icons");
                 int[] sizes = sizes0;
                 AppContainerChildren<AppComponent> components = app().components();
-                components.addFolder(path).icon().set(Str.i18n("icons"));
-                components.addFolder(path.append("Packs"));
+                components.addFolder(path)
+                        .with((AppMenu m)->{
+                            m.text().set(Str.i18n("/View/Icons"));
+                            m.icon().set(Str.i18n("icons"));
+                        });
+                components.addFolder(path.append("Packs"))
+                        .with((AppMenu m)->{
+                            m.text().set(Str.i18n("/View/Icons/Packs"));
+                        });
+                ;
                 for (IconSet iconset : app().iconSets().values()) {
                     RadioButton t = new RadioButton("IconSet." + iconset.getId(), path.append("Packs").toString(), app());
                     t.text().set(Str.i18n(t.id()));
@@ -503,7 +528,11 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 if (sizes == null || sizes.length == 0) {
                     sizes = new int[]{8, 16, 24, 32, 48};
                 }
-                components.addFolder(Path.of(path + "/Sizes"));
+                components.addFolder(Path.of(path + "/Sizes"))
+                        .with((AppMenu m)->{
+                            m.text().set(Str.i18n("/View/Icons/Sizes"));
+                        });
+                ;
 //                ToggleModel[] toggles = null;
 //                app.iconSets().config().onChange(new PropertyListener() {
 //                    @Override
@@ -518,16 +547,19 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                     int size = sizes[i];
                     RadioButton toggle = new RadioButton("IconSet.Size." + size, path.append("Sizes").toString(), app());
                     toggle.text().set(Str.i18n(toggle.id()));
-                    toggle.selected().bind(
-                            app().iconSets().config().mapBooleanValue(x -> x.getWidth() == size),
-                            b -> {
-                                if (b) {
-                                    app().iconSets().config().set(
-                                            app().iconSets().config().get().setSize(size)
-                                    );
-                                }
-                            }
-                    );
+                    toggle.selected().onChange(e->{
+                        iconConfig().set(new IconConfig(size));
+                    });
+//                    toggle.selected().bind(
+//                            app().iconSets().config().mapBooleanValue(x -> x.getWidth() == size),
+//                            b -> {
+//                                if (b) {
+//                                    app().iconSets().config().set(
+//                                            app().iconSets().config().get().setSize(size)
+//                                    );
+//                                }
+//                            }
+//                    );
                     app().components().add(toggle, path.append("Sizes").append(String.valueOf(size)));
                 }
             });
@@ -542,7 +574,12 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                 Frame frame = Frame.this;
                 Path path = frame.path().get().append("/menuBar/View/Plaf");
                 AppContainerChildren<AppComponent> components = app().components();
-                components.addFolder(path).icon().set(Str.i18n("themes"));
+                components.addFolder(path)
+                        .with((AppMenu m)->{
+                            m.icon().set(Str.i18n("themes"));
+                            m.text().set(Str.i18n("/View/Plaf"));
+                        });
+                ;
                 for (AppUIPlaf item : app().toolkit().loadAvailablePlafs()) {
                     String q = "Other";
                     if (item.isSystem()) {
@@ -563,6 +600,11 @@ public class Frame extends ContainerBase<AppComponent> implements AppFrame {
                     toggle.text().set(Str.i18n("Plaf." + id));
 //                    toggle.smallIcon().set((Str) null);
 //                    toggle.largeIcon().set((Str) null);
+                    String finalQ = q;
+                    components.addFolder(path.append(q))
+                            .with((AppMenu m)->{
+                                m.text().set(Str.i18n("/View/Plaf/"+ finalQ));
+                            });
                     toggle.selected().userObjects().put("path", path.append(q).append(pname));
                     toggle.selected().bindEquals(app().plaf(), id);
                     app().components().add(toggle, path.append(q).append(pname));

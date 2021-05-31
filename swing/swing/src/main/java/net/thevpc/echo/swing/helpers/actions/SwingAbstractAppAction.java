@@ -8,6 +8,7 @@ import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.echo.Application;
 
+@Deprecated
 public abstract class SwingAbstractAppAction extends AbstractAction {
 
     protected Application application;
@@ -35,13 +36,13 @@ public abstract class SwingAbstractAppAction extends AbstractAction {
         putValue(NAME, name);
         putValue(SHORT_DESCRIPTION, description);
         putValue("SmallIconId", iconId);
-        putValue(SMALL_ICON, application.iconSets().icon(iconId).get());
-        application.iconSets().icon(iconId).onChange(new PropertyListener() {
-            @Override
-            public void propertyUpdated(PropertyEvent event) {
-                putValue(SMALL_ICON, event.newValue());
-            }
-        });
+        putValue(SMALL_ICON, application.iconSets().icon(iconId,null));
+//        application.iconSets().icon(iconId).onChange(new PropertyListener() {
+//            @Override
+//            public void propertyUpdated(PropertyEvent event) {
+//                putValue(SMALL_ICON, event.newValue());
+//            }
+//        });
     }
 
     public String getId() {

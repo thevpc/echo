@@ -59,6 +59,7 @@ public class ToggleControlGroup<T> extends ChoiceBase<T> {
             }
         };
         selection().onChange(() -> {
+            System.out.println(selection().toList());
             for (AppComponent child : container().children()) {
                 T tt = (T) child.userObjects().get(VALUE_PROPERTY_NAME);
                 boolean selectedValue = selection().contains(tt);
@@ -156,7 +157,7 @@ public class ToggleControlGroup<T> extends ChoiceBase<T> {
 
         @Override
         public void setTextColor(AppColor color) {
-            b.textStyle().foregroundColor().set(color);
+            b.foregroundColor().set(color);
         }
 
         @Override
@@ -211,7 +212,7 @@ public class ToggleControlGroup<T> extends ChoiceBase<T> {
 
         @Override
         public AppColor getColor() {
-            return b.textStyle().foregroundColor().get();
+            return b.foregroundColor().get();
         }
 
         @Override

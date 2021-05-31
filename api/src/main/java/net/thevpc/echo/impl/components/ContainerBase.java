@@ -1,10 +1,12 @@
 package net.thevpc.echo.impl.components;
 
 import net.thevpc.common.props.Path;
+import net.thevpc.common.props.PropertyUpdate;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.api.AppContainerChildren;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppContainer;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
 
 /**
@@ -36,9 +38,19 @@ public abstract class ContainerBase<C extends AppComponent>
         this.childComponentType=childComponentType;
         //path().set(Path.of("/"));
         if(initChildren) {
-            children = new AppContainerChildrenImpl<C>("children", childComponentType, this);
-            propagateEvents(children);
+            prepareChildren(new AppContainerChildrenImpl<C>("children", childComponentType, this));
         }
+    }
+
+    protected void prepareChildren(AppContainerChildren<C> children){
+        this.children=children;
+        propagateEvents(children);
+        this.children.onChange(e->{
+            if(e.eventType()== PropertyUpdate.ADD || e.eventType()==PropertyUpdate.UPDATE){
+                AppComponent nv = e.newValue();
+                Applications.copyResources(ContainerBase.this,nv);
+            }
+        });
     }
 
     public AppContainerChildren<C> children() {

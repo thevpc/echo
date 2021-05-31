@@ -17,7 +17,7 @@ public class InputTextAreaPanel extends GridPane implements AppDialogInputPane {
         this.app = app;
         parentConstraints().addAll(AllMargins.of(5, 5, 5, 5),
                 AllFill.HORIZONTAL,AllAnchors.LEFT,AllGrow.HORIZONTAL,
-                GrowContainer.BOTH
+                ContainerGrow.ALL
                 );
         header = new Label(app);
         value = new TextArea(app);

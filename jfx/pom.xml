@@ -6,7 +6,7 @@
     <groupId>net.thevpc.echo</groupId>
     <artifactId>echo-jfx-builder</artifactId>
     <name>net.thevpc.echo.echo-jfx</name>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>pom</packaging>
     <modules>
         <module>jfx</module>

@@ -16,25 +16,36 @@ public class TreeItemTreeModel<T> extends AbstractTreeModel {
     private AppTree<T> tree;
     private JTree jtree;
 
-    public TreeItemTreeModel(AppTree<T> tree0,JTree jtree0) {
+    public TreeItemTreeModel(AppTree<T> tree0) {
         this.tree=tree0;
+    }
+
+    public void bindJTree(JTree jtree0){
         this.jtree=jtree0;
         tree.root().events().addPropagated(event -> {
             if(event.immediate()){
                 fireTreeStructureChanged(jtree, null);
             }else {
-                Object owner = event.property().userObjects().get("owner");
-                if (event.property().propertyName().equals("children")
-                        && owner instanceof AppTreeNode) {
-                    AppTreeNode p = (AppTreeNode) owner;
+                AppTreeNode node = null;
+                if(event.property() instanceof AppTreeNode){
+                    node=event.property();
+                }
+                if(node==null){
+                    Object owner2 = event.property().userObjects().get("owner");
+                    if(event.property().propertyName().equals("children")
+                            && owner2 instanceof AppTreeNode) {
+                        node = (AppTreeNode) owner2;
+                    }
+                }
+                if (node!=null) {
                     switch (event.eventType()){
                         case ADD:{
-//                            fireTreeNodesInserted(jtree, SwingTreePeer.toTreePath(p).getPath(),
-//                                    new int[]{event.index()},
-//                                    new Object[]{event.newValue()}
-//                            );
-//                            jtree.updateUI();
-                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
+                            fireTreeNodesInserted(jtree, SwingTreePeer.toTreePath(node).getPath(),
+                                    new int[]{event.index()},
+                                    new Object[]{event.newValue()}
+                            );
+                            jtree.updateUI();
+//                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
                             break;
                         }
                         case UPDATE:{
@@ -47,12 +58,12 @@ public class TreeItemTreeModel<T> extends AbstractTreeModel {
                             break;
                         }
                         case REMOVE:{
-//                            fireTreeNodesRemoved(jtree, SwingTreePeer.toTreePath2Arr(p),
-//                                    new int[]{event.index()},
-//                                    new Object[]{event.oldValue()}
-//                                    );
-                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
-//                            jtree.updateUI();
+                            fireTreeNodesRemoved(jtree, SwingTreePeer.toTreePath2Arr(node),
+                                    new int[]{event.index()},
+                                    new Object[]{event.oldValue()}
+                                    );
+                            jtree.updateUI();
+//                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
                             break;
                         }
                     }

@@ -27,42 +27,49 @@ import java.util.Objects;
  *
  * @author vpc
  */
-public class IconSetConfig {
+public class IconConfig {
 
-    public static final IconSetConfig DEFAULT = of(-1);
+    public static final IconConfig DEFAULT = of(-1);
 
-    public static IconSetConfig of(int size) {
-        return new IconSetConfig(size, size, null);
+    public static IconConfig of(int size) {
+        return new IconConfig(size, size, null);
     }
 
     private final int width;
     private final int height;
     private final IconTransform transform;
 
-    public IconSetConfig() {
-        this(-1, -1, null);
+    public IconConfig() {
+        this(-1, -1);
     }
 
-    public IconSetConfig(int width, int height, IconTransform transform) {
+    public IconConfig(int size) {
+        this(size,size);
+    }
+
+    public IconConfig(int width, int height) {
+        this(width,height,null);
+    }
+    public IconConfig(int width, int height, IconTransform transform) {
         this.width = width;
         this.height = height;
         this.transform = transform;
     }
 
-    public IconSetConfig setTransform(IconTransform transform) {
-        return new IconSetConfig(width, height, transform);
+    public IconConfig setTransform(IconTransform transform) {
+        return new IconConfig(width, height, transform);
     }
 
-    public IconSetConfig setSize(int size) {
-        return new IconSetConfig(size, size, transform);
+    public IconConfig setSize(int size) {
+        return new IconConfig(size, size, transform);
     }
 
-    public IconSetConfig setWidth(int width) {
-        return new IconSetConfig(width, height, transform);
+    public IconConfig setWidth(int width) {
+        return new IconConfig(width, height, transform);
     }
 
-    public IconSetConfig setHeight(int height) {
-        return new IconSetConfig(width, height, transform);
+    public IconConfig setHeight(int height) {
+        return new IconConfig(width, height, transform);
     }
 
     public int getWidth() {
@@ -97,7 +104,7 @@ public class IconSetConfig {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IconSetConfig other = (IconSetConfig) obj;
+        final IconConfig other = (IconConfig) obj;
         if (this.width != other.width) {
             return false;
         }
@@ -112,7 +119,7 @@ public class IconSetConfig {
 
     @Override
     public String toString() {
-        return "IconSetConfig{" + "width=" + width + ", height=" + height + ", transform=" + transform + '}';
+        return "IconConfig{" + "width=" + width + ", height=" + height + ", transform=" + transform + '}';
     }
 
 }

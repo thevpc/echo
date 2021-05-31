@@ -2,6 +2,7 @@ package net.thevpc.echo.impl;
 
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.*;
+import net.thevpc.common.props.impl.DefaultPropertyListeners;
 import net.thevpc.common.props.impl.WritableIndexedNodeImpl;
 import net.thevpc.echo.WritableTextStyle;
 import net.thevpc.echo.api.components.AppTree;
@@ -142,9 +143,11 @@ public class TreeNode<T> extends WritableIndexedNodeImpl<T>
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-//                text, textStyle, smallIcon,
-                expanded, get(), children());
+        // TreeNode is used as key and as such its hashCode should not be mutated
+        return System.identityHashCode(this);
+//                Objects.hash(
+////                text, textStyle, smallIcon,
+//                expanded, get(), children());
     }
 
     public T[] computeObjectPath() {
@@ -166,5 +169,16 @@ public class TreeNode<T> extends WritableIndexedNodeImpl<T>
             t = t.parent().get();
         }
         return all.toArray(new AppTreeNode[0]);
+    }
+
+    public void fireContentUpdated(){
+        ((DefaultPropertyListeners)events()).firePropertyUpdated(
+                new PropertyEvent(
+                        this,null,
+                        this,this,
+                        Path.of(propertyName()),
+                        PropertyUpdate.UPDATE,true
+                )
+        );
     }
 }

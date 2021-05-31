@@ -181,7 +181,7 @@ public abstract class SwingAppChoiceItemContext1<T> implements AppChoiceItemCont
         if (icon != null) {
             String s = icon.value(getApplication().i18n(), getChoice().locale().get());
             if (s != null) {
-                image = getChoice().app().iconSets().icon(s, getChoice().iconSet().get());
+                image = getChoice().app().iconSets().icon(s, getChoice());
             }
         }
         setIcon(image);

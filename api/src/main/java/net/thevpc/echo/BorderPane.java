@@ -1,5 +1,6 @@
 package net.thevpc.echo;
 
+import net.thevpc.echo.constraints.ContainerGrow;
 import net.thevpc.echo.constraints.Layout;
 
 public class BorderPane extends Panel{

@@ -169,6 +169,9 @@ public class SwingAppFileChooserPeer implements AppFileChooserPeer,SwingPeer {
 
         @Override
         public boolean accept(File f) {
+            if(f.isDirectory()){
+                return true;
+            }
             return p!=null && p.matcher(f.getName()).matches();
         }
 

@@ -22,10 +22,10 @@ public class StarsField<T extends Number> extends NumberBase<T> implements AppNu
         public AppImage createImage(StarRendererContext context) {
             if (context.getFill() <= 0.5) {
                 return context.getApplication().iconSets().icon("star-disabled",
-                        context.getStarsField().iconSet().get());
+                        context.getStarsField());
             }
             return context.getApplication().iconSets().icon("star-enabled",
-                    context.getStarsField().iconSet().get());
+                    context.getStarsField());
         }
     };
     private Panel container;
@@ -49,6 +49,7 @@ public class StarsField<T extends Number> extends NumberBase<T> implements AppNu
             revalidateValue();
         });
         value().onChange(this::revalidateValue);
+
     }
 
     public StarsField(Class<T> numberType,

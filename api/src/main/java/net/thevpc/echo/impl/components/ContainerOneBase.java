@@ -14,9 +14,9 @@ public class ContainerOneBase<C extends AppComponent>
                             Class<? extends AppComponentPeer> peerType,
                             Class<? extends C> childComponentType) {
         super(id,app, componentType, peerType, childComponentType,false);
-        children = new AppContainerChildrenOne<C>(childName,
+        prepareChildren(new AppContainerChildrenOne<C>(childName,
                 multi,
-                "children", childComponentType, this);
+                "children", childComponentType, this));
         propagateEvents(children);
     }
 

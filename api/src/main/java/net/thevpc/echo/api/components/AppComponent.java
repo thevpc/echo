@@ -29,6 +29,8 @@ import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.api.AppParentConstraints;
 import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.iconset.IconConfig;
+import net.thevpc.echo.iconset.IconSetAware;
 import net.thevpc.echo.iconset.WritableImage;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
 
@@ -39,9 +41,7 @@ import java.util.Locale;
  *
  * @author vpc
  */
-public interface AppComponent extends Property {
-
-    WritableValue<AppFont> font();
+public interface AppComponent extends Property, IconSetAware {
 
     WritableValue<AppColor> foregroundColor();
 
@@ -122,6 +122,8 @@ public interface AppComponent extends Property {
     WritableValue<Locale> locale();
 
     WritableValue<String> iconSet();
+
+    WritableValue<IconConfig> iconConfig();
 
     WritableBoolean shown();
 

@@ -20,10 +20,7 @@ import net.thevpc.echo.swing.peers.SwingPeer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.awt.font.TextAttribute;
 import java.beans.PropertyChangeEvent;
 import java.lang.reflect.InvocationTargetException;
@@ -36,6 +33,67 @@ import java.util.logging.Logger;
 
 public class SwingApplicationUtils {
 
+    public static final MouseListener DISPATCH_PARENT_MOUSE_LISTENER = new MouseListener() {
+        public void dispatchParent(MouseEvent e) {
+            Object s = e.getSource();
+            if (s instanceof Component) {
+                Component c = (Component) s;
+                Container p = c.getParent();
+                if (p != null) {
+
+                    Point loc = c.getLocation();
+                    int x = e.getX() + loc.x;
+                    int y = e.getY() + loc.y;
+                    MouseEvent e2 = new MouseEvent(
+                            p,
+                            e.getID(),
+                            e.getWhen(),
+                            e.getModifiers(),
+                            x,
+                            y,
+                            e.getClickCount(),
+                            e.isPopupTrigger(),
+                            e.getButton()
+                    );
+                    p.dispatchEvent(e2);
+                    if(e.isPopupTrigger()){
+                        if(p instanceof JComponent){
+                            JComponent jc=(JComponent) p;
+                            JPopupMenu cpm = jc.getComponentPopupMenu();
+                            if(cpm!=null) {
+                                //cpm.show(jc, x, y);
+                            }
+                        }
+                    }
+                }
+            }
+            ;
+        }
+
+        public void mouseClicked(MouseEvent e) {
+            dispatchParent(e);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            dispatchParent(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            dispatchParent(e);
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            dispatchParent(e);
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            dispatchParent(e);
+        }
+    };
     private static final Logger LOG = Logger.getLogger(SwingApplicationUtils.class.getName());
 
     public static void bindVisible(Component t, WritableBoolean p) {
@@ -124,7 +182,10 @@ public class SwingApplicationUtils {
         button.setVisible(appComponent.visible().get());
 
         appComponent.icon().onChange((PropertyEvent event) -> {
-            button.setIcon(SwingAppImage.iconOf(event.newValue()));
+            button.setIcon(SwingAppImage.iconOf(appComponent.icon().get()));
+        });
+        appComponent.iconConfig().onChange((PropertyEvent event) -> {
+            button.setIcon(SwingAppImage.iconOf(appComponent.icon().get()));
         });
 //        appComponent.smallIcon().reevalValue();
         button.setIcon(SwingAppImage.iconOf(appComponent.icon().get()));
@@ -232,6 +293,7 @@ public class SwingApplicationUtils {
     }
 
     /////////////////////////////////////////////////////////////////////////
+    @Deprecated
     public static void updateButton(AbstractButton b, Application app) {
         String iconId = (String) b.getClientProperty("icon-id");
         if (iconId != null) {
@@ -243,7 +305,7 @@ public class SwingApplicationUtils {
                     LOG.log(Level.FINER, "missing button icon message binding for {0}", iconId);
                 }
             }
-            AppImage aim = app.iconSets().icon(iconId).get();
+            AppImage aim = app.iconSets().icon(iconId, null);
             b.setIcon(aim == null ? null : SwingAppImage.iconOf(aim));
         }
         String messageId = (String) b.getClientProperty("message-id");
@@ -252,6 +314,7 @@ public class SwingApplicationUtils {
         }
     }
 
+    @Deprecated
     public static void updateAction(javax.swing.Action b, Application app) {
         String iconId = (String) b.getValue("icon-id");
         if (iconId != null) {
@@ -263,7 +326,7 @@ public class SwingApplicationUtils {
                     LOG.log(Level.FINER, "missing action icon message binding for {0}", iconId);
                 }
             }
-            b.putValue(AbstractAction.SMALL_ICON, SwingAppImage.iconOf(app.iconSets().icon(iconId).get()));
+            b.putValue(AbstractAction.SMALL_ICON, SwingAppImage.iconOf(app.iconSets().icon(iconId, null)));
         }
         String messageId = (String) b.getValue("message-id");
         if (messageId != null) {
@@ -479,6 +542,9 @@ public class SwingApplicationUtils {
             );
             if (f != null) {
                 component.setFont(f);
+            } else {
+                //only size has changed!!
+                component.setFont(initialFont);
             }
         }
     }
@@ -531,6 +597,7 @@ public class SwingApplicationUtils {
             }
         }
     }
+
     public static void setLabelTextAlign(AbstractButton label, Anchor anchor) {
         switch (anchor) {
             case TOP: {
@@ -628,6 +695,7 @@ public class SwingApplicationUtils {
             }
         }
     }
+
     public static void setLabelContentAlign(AbstractButton label, Anchor anchor) {
         switch (anchor) {
             case TOP: {

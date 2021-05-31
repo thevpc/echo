@@ -7,12 +7,12 @@ import net.thevpc.echo.api.components.AppPanel;
 import net.thevpc.echo.constraints.*;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
 import net.thevpc.echo.spi.peers.AppPanelPeer;
+import net.thevpc.echo.swing.SwingApplicationUtils;
 import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Arrays;
 
 public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
 
@@ -30,7 +30,7 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
         }
         this.appPanel = (AppPanel) component;
         this.swingComponent = new JPanel();
-
+//        this.swingComponent.setBorder(BorderFactory.createLineBorder(Color.RED));
         this.swingComponent.putClientProperty(AppComponentPeer.class.getName(), this);
         this.swingComponent.putClientProperty(AppComponent.class.getName(), appPanel);
 
@@ -176,8 +176,8 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
                 Grow gr = child.childConstraints().get(Grow.class);
                 if (gr == null) {
                     AllGrow pg = appPanel.parentConstraints().get(AllGrow.class);
-                    if(pg!=null){
-                        gr=Grow.valueOf(pg.name());
+                    if (pg != null) {
+                        gr = Grow.valueOf(pg.name());
                     }
                 }
                 Weight weight = child.childConstraints().get(Weight.class);
@@ -280,10 +280,6 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
         refreshPanel();
     }
 
-    private void refreshPanel() {
-        SwingHelpers.refreshPanel(swingComponent, 2);
-    }
-
     @Override
     public void removeChild(AppComponent other, int index) {
         Component comp = (Component) other.peer().toolkitComponent();
@@ -304,6 +300,10 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
     @Override
     public Object toolkitComponent() {
         return swingComponent;
+    }
+
+    private void refreshPanel() {
+        SwingHelpers.refreshPanel(swingComponent, 2);
     }
 
     private void applyAnchorAsAlignment(AppComponent child, Component childComponent, Anchor defaultAnchor) {
@@ -367,13 +367,13 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
 
     protected void relayout(boolean rebuild) {
         Layout layout = resolveLayout();
-        GrowContainer growContainer = appPanel.parentConstraints().get(GrowContainer.class);
+        ContainerGrow containerGrow = appPanel.parentConstraints().get(ContainerGrow.class);
         ColumnCount w = appPanel.parentConstraints().get(ColumnCount.class);
         AllPaddings padding = appPanel.parentConstraints().get(AllPaddings.class);
         int wrap = w == null ? 0 : w.getCount();
         switch (layout) {
             case BORDER: {
-                applyParentGrowContainerDefaultIsGrowing(growContainer);
+                applyParentGrowContainerDefaultNonGrowing(containerGrow);
                 holder.setLayout(new BorderLayout());
                 break;
             }
@@ -384,7 +384,7 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
                     vgap = (int) padding.getHeight();
                     hgap = (int) padding.getWidth();
                 }
-                applyParentGrowContainerDefaultIsGrowing(growContainer);
+                applyParentGrowContainerDefaultNonGrowing(containerGrow);
                 holder.setLayout(new FlowLayout(FlowLayout.CENTER, hgap, vgap));
                 break;
             }
@@ -395,7 +395,7 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
                     vgap = (int) padding.getHeight();
                     hgap = (int) padding.getWidth();
                 }
-                applyParentGrowContainerDefaultIsGrowing(growContainer);
+                applyParentGrowContainerDefaultNonGrowing(containerGrow);
                 if (wrap > 1) {
                     holder.setLayout(new GridLayout(0, wrap, hgap, vgap));
                 } else {
@@ -412,7 +412,7 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
                     vgap = (int) padding.getHeight();
                     hgap = (int) padding.getWidth();
                 }
-                applyParentGrowContainerDefaultIsGrowing(growContainer);
+                applyParentGrowContainerDefaultNonGrowing(containerGrow);
                 if (wrap > 1) {
                     holder.setLayout(new GridLayout(wrap, 0, hgap, vgap));
                 } else {
@@ -421,7 +421,7 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
                 break;
             }
             case GRID: {
-                applyParentGrowContainerDefaultNonGrowing(growContainer);
+                applyParentGrowContainerDefaultNonGrowing(containerGrow);
                 holder.setLayout(new GridBagLayout());
                 break;
             }
@@ -443,53 +443,530 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
 //        }
     }
 
-    private void applyParentGrowContainerDefaultIsGrowing(GrowContainer gx) {
-        if (gx == GrowContainer.BOTH) {
-            swingComponent.removeAll();
-            swingComponent.setLayout(new BorderLayout());
-            JPanel p1 = new JPanel(new BorderLayout());
-            p1.setName("FORCE_ALIGN_LEFT");
-            swingComponent.add(p1, BorderLayout.LINE_START);
-//            jcomponent.add(new JLabel("NO_CENTER"), BorderLayout.CENTER);
-            JPanel p2 = new JPanel();
-            p1.add(p2, BorderLayout.PAGE_START);
-            p2.setName("FORCE_ALIGN_TOP");
-//            p1.add(new JLabel("NO_CENTER"), BorderLayout.CENTER);
-            holder = p2;
-        } else if (gx == GrowContainer.HORIZONTAL) {
-            swingComponent.removeAll();
-            swingComponent.setLayout(new BorderLayout());
-            JPanel p1 = new JPanel(new BorderLayout());
-            p1.setName("FORCE_ALIGN_LEFT");
-            swingComponent.add(p1, BorderLayout.PAGE_START);
-//            jcomponent.add(new JLabel("NO_CENTER"), BorderLayout.CENTER);
-            holder = p1;
-        } else if (gx == GrowContainer.VERTICAL) {
-            swingComponent.removeAll();
-            swingComponent.setLayout(new BorderLayout());
-            JPanel p2 = new JPanel();
-            p2.setName("ALIGNED_HOLDER");
-            swingComponent.add(p2, BorderLayout.LINE_START);
-            swingComponent.setName("FORCE_ALIGN_TOP");
-//            jcomponent.add(new JLabel("NO_CENTER"), BorderLayout.CENTER);
-            holder = p2;
-        } else {
-            holder = swingComponent;
+    private void applyParentGrowContainerDefaultNonGrowing(ContainerGrow gx) {
+        if (gx == null) {
+            gx = ContainerGrow.ALL;
         }
-    }
+        switch (gx) {
+            case ALL: {
+                holder = swingComponent;
+                break;
+            }
+            case LEFT_COLUMN:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
 
-    private void applyParentGrowContainerDefaultNonGrowing(GrowContainer gx) {
-        if (gx == GrowContainer.BOTH) {
-            holder = swingComponent;
-        } else if (gx == GrowContainer.VERTICAL) {
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=1;
+                c.gridy=0;
+                swingComponent.add(getHorizontalGlue(),c);
+                break;
+            }
+            case RIGHT_COLUMN:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=1;
+                c.gridy=0;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                swingComponent.add(getHorizontalGlue(),c);
+                break;
+            }
+            case CENTER_COLUMN:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=1;
+                c.gridy=0;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=2;
+                c.gridy=0;
+                swingComponent.add(getHorizontalGlue(),c);
+                break;
+            }
+            case TOP_ROW:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=0;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=1;
+                swingComponent.add(getVerticalGlue(),c);
+                break;
+            }
+            case BOTTOM_ROW:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=1;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                swingComponent.add(getVerticalGlue(),c);
+                break;
+            }
+            case CENTER_ROW:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=1;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                swingComponent.add(getVerticalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=2;
+                swingComponent.add(getVerticalGlue(),c);
+                break;
+            }
+            case CENTER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                //c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=1;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                c.gridwidth=3;
+                swingComponent.add(getVerticalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=2;
+                c.gridwidth=3;
+                swingComponent.add(getVerticalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=1;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=2;
+                c.gridy=1;
+                swingComponent.add(getHorizontalGlue(),c);
+                break;
+            }
+            case TOP_LEFT_CORNER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.HORIZONTAL;
+                c.anchor=GridBagConstraints.NORTH;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=0;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=0;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=1;
+                c.gridwidth=3;
+                swingComponent.add(getVerticalGlue(),c);
+                break;
+            }
+            case BOTTOM_LEFT_CORNER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.HORIZONTAL;
+                c.anchor=GridBagConstraints.SOUTH;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=1;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=1;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                c.gridwidth=2;
+                swingComponent.add(getVerticalGlue(),c);
+                break;
+            }
+            case TOP_RIGHT_CORNER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.fill=GridBagConstraints.HORIZONTAL;
+                c.anchor=GridBagConstraints.NORTH;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=0;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=0;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=1;
+                c.weightx=2;
+                swingComponent.add(getVerticalGlue(),c);
+                break;
+            }
+            case BOTTOM_RIGHT_CORNER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.anchor=GridBagConstraints.SOUTH;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=1;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                c.gridwidth=2;
+                swingComponent.add(getVerticalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=1;
+                swingComponent.add(getHorizontalGlue(),c);
+                break;
+            }
+            case LEFT_CORNER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.anchor=GridBagConstraints.CENTER;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=1;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                c.gridwidth=2;
+                swingComponent.add(getVerticalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=2;
+                c.gridwidth=2;
+                swingComponent.add(getVerticalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=1;
+                swingComponent.add(getHorizontalGlue(),c);
+                break;
+            }
+            case TOP_CORNER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.anchor=GridBagConstraints.CENTER;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=0;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=0;
+                c.gridheight=2;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=2;
+                c.gridy=0;
+                c.gridheight=2;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=1;
+                c.gridy=1;
+                swingComponent.add(getVerticalGlue(),c);
+                break;
+            }
+            case RIGHT_CORNER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.anchor=GridBagConstraints.CENTER;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=1;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=0;
+                c.gridwidth=2;
+                swingComponent.add(getVerticalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=0;
+                c.gridy=2;
+                c.gridwidth=2;
+                swingComponent.add(getVerticalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=1;
+                swingComponent.add(getHorizontalGlue(),c);
+                break;
+            }
+            case BOTTOM_CORNER:{
+                swingComponent.removeAll();
+                swingComponent.setLayout(new GridBagLayout());
+                GridBagConstraints c=new GridBagConstraints();
+                c.anchor=GridBagConstraints.CENTER;
+                c.weightx=0;
+                c.weighty=0;
+                c.gridx=1;
+                c.gridy=1;
+                JPanel p2 = new JPanel();
+                p2.setName(gx.name());
+                holder = p2;
+                swingComponent.add(p2,c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=0;
+                c.gridy=0;
+                c.gridheight=2;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=1;
+                c.weighty=0;
+                c.gridx=2;
+                c.gridy=0;
+                c.gridheight=2;
+                swingComponent.add(getHorizontalGlue(),c);
+
+                c=new GridBagConstraints();
+                c.fill=GridBagConstraints.BOTH;
+                c.weightx=0;
+                c.weighty=1;
+                c.gridx=1;
+                c.gridy=0;
+                swingComponent.add(getVerticalGlue(),c);
+                break;
+            }
+            default:{
+                throw new IllegalArgumentException("not implemented");
+            }
+        }
+        if(true){
+            return;
+        }
+        if (gx == ContainerGrow.ALL) {
+//            holder = swingComponent;
+        } else if (gx == ContainerGrow.LEFT_COLUMN) {
             swingComponent.removeAll();
             swingComponent.setLayout(new BorderLayout());
             JPanel p1 = new JPanel(new BorderLayout());
             p1.setName("FORCE_ALIGN_LEFT");
             swingComponent.add(p1, BorderLayout.LINE_START);
-//            jcomponent.add(new JLabel("NO_CENTER"), BorderLayout.CENTER);
             holder = p1;
-        } else if (gx == GrowContainer.HORIZONTAL) {
+        } else if (gx == ContainerGrow.TOP_ROW) {
             swingComponent.removeAll();
             swingComponent.setLayout(new BorderLayout());
             JPanel p2 = new JPanel();
@@ -510,6 +987,22 @@ public class SwingPanelPeer implements SwingPeer, AppPanelPeer {
 //            p1.add(new JLabel("NO_CENTER"), BorderLayout.CENTER);
             holder = p2;
         }
+    }
+
+    private Component getHorizontalGlue() {
+//        JComponent z = (JComponent) new JLabel("H Spacer");//Box.createHorizontalGlue();
+//        z.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        JComponent z = (JComponent) Box.createHorizontalGlue();
+        z.addMouseListener(SwingApplicationUtils.DISPATCH_PARENT_MOUSE_LISTENER);
+        return z;
+    }
+
+    private Component getVerticalGlue() {
+//        JComponent z = (JComponent) new JLabel("V Spacer");//Box.createVerticalGlue();
+//        z.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+        JComponent z = (JComponent) Box.createVerticalGlue();
+        z.addMouseListener(SwingApplicationUtils.DISPATCH_PARENT_MOUSE_LISTENER);
+        return z;
     }
 
     public Layout resolveLayout() {

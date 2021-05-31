@@ -41,7 +41,7 @@ public class NoIconSet implements IconSet {
     }
 
     @Override
-    public AppImage getIcon(String id, IconSetConfig config) {
+    public AppImage getIcon(String id, IconConfig config) {
         return null;
     }
 

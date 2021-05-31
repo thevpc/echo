@@ -44,18 +44,33 @@ public class SwingTabPanePeer implements SwingPeer, AppTabPanePeer {
         );
         child.title().onChangeAndInit(
                 v->child.title().withValue(
-                        x->tabbedPane.setTitleAt(indexOf(child),
-                                Applications.rawString(x,child)
-                        )));
+                        x-> {
+                            int i = indexOf(child);
+                            if(i>=0) {
+                                tabbedPane.setTitleAt(i,
+                                        Applications.rawString(x, child)
+                                );
+                            }
+                        }));
         child.locale().onChangeAndInit(
                 v->child.title().withValue(
-                        x->tabbedPane.setTitleAt(indexOf(child),
-                                Applications.rawString(x,child)
-                        )));
+                        x-> {
+                            int i = indexOf(child);
+                            if(i>=0) {
+                                tabbedPane.setTitleAt(i,
+                                        Applications.rawString(x, child)
+                                );
+                            }
+                        }));
 
         child.icon().onChangeAndInit(
                 v->child.icon().withValue(
-                        x->tabbedPane.setIconAt(indexOf(child),SwingHelpers.toAwtIcon(x))));
+                        x-> {
+                            int i = indexOf(child);
+                            if(i>=0) {
+                                tabbedPane.setIconAt(i, SwingHelpers.toAwtIcon(x));
+                            }
+                        }));
     }
 
     private int indexOf(AppComponent child){

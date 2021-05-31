@@ -48,6 +48,9 @@ public class TreeBase<T> extends ControlBase implements AppTree<T> {
                 PropertyType.of(TreeNodeChildrenFactory.class, this.itemType), null
         );
         selection = new WritableListSelectionImpl<>("selection", PropertyType.of(this.itemType));
+        selection.onChange(()->{
+            System.out.println("<DEBUG> tree selection = "+selection);
+        });
         propagateEvents(root, rootVisible, morph);
     }
 

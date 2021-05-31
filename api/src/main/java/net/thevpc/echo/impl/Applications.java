@@ -3,7 +3,10 @@ package net.thevpc.echo.impl;
 import net.thevpc.common.i18n.I18n;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.common.i18n.WritableStr;
-import net.thevpc.common.props.*;
+import net.thevpc.common.props.PropertyEvent;
+import net.thevpc.common.props.PropertyListener;
+import net.thevpc.common.props.PropertyUpdate;
+import net.thevpc.common.props.WritableList;
 import net.thevpc.echo.AppState;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.Image;
@@ -11,6 +14,7 @@ import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppContainer;
 import net.thevpc.echo.api.components.AppTextControl;
+import net.thevpc.echo.iconset.IconConfig;
 import net.thevpc.echo.impl.components.ComponentBase;
 import net.thevpc.echo.spi.peers.AppPanelPeer;
 
@@ -25,8 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Stack;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class Applications {
 
@@ -51,7 +53,7 @@ public class Applications {
         if (str == null) {
             return "";
         }
-        return str.value(i18n,locale);
+        return str.value(i18n, locale);
     }
 
     public static WritableStr resolveTextProperty(AppComponent model) {
@@ -76,144 +78,53 @@ public class Applications {
         return o.toString();
     }
 
-    public static <T> int bestSelectableIndex(ObservableList<T> list, Predicate<T> selectable, int currIndex, int lastIndex) {
-        int bestIndex = -1;
-        if (lastIndex <= currIndex) {
-            bestIndex = nextSelectableIndex(list, selectable, currIndex);
-            if (bestIndex < 0) {
-                bestIndex = previousSelectableIndex(list, selectable, currIndex);
-            }
-        } else {
-            bestIndex = previousSelectableIndex(list, selectable, currIndex);
-            if (bestIndex < 0) {
-                bestIndex = nextSelectableIndex(list, selectable, currIndex);
-            }
+    public static void copyResources(AppComponent parent, AppComponent child) {
+        String e = parent.iconSet().get();
+        if (e != null) {
+            Applications.visitComponentTree(child, new ComponentTreeVisitor() {
+                @Override
+                public boolean visit(AppComponent component) {
+                    if (component.iconSet().get() == null) {
+                        component.iconSet().set(e);
+                        return true;
+                    }
+                    return false;
+                }
+            });
         }
-        return bestIndex;
+
+        IconConfig ic = parent.iconConfig().get();
+        if(ic!=null){
+            Applications.visitComponentTree(child, new ComponentTreeVisitor() {
+                @Override
+                public boolean visit(AppComponent component) {
+                    if (component.iconConfig().get() == null) {
+                        component.iconConfig().set(ic);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
+        Locale lc = parent.locale().get();
+        if(lc!=null){
+            Applications.visitComponentTree(child, new ComponentTreeVisitor() {
+                @Override
+                public boolean visit(AppComponent component) {
+                    if (component.locale().get() == null) {
+                        component.locale().set(lc);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
-    //    public static AppChoiceItemRenderer<SimpleItem> prepareSimpleItemList(AppChoiceList<SimpleItem> c, Function<String, AppImage> functionResolver) {
-//        LastIndexTracker lastIndexTracker = new LastIndexTracker();
-//        c.selection().onChange(lastIndexTracker);
-//        c.selection().adjusters().add(new PropertyAdjuster() {
-//            @Override
-//            public void adjust(PropertyAdjusterContext context) {
-//                SimpleItem v = (SimpleItem) context.getNewValue();
-//                if (v.isGroup()) {
-//                    WritableList<SimpleItem> values = c.values();
-//                    int newIndex = bestSelectableIndex(values, values.findFirstIndexOf(v), lastIndexTracker.getLastIndex());
-//                    context.doInstead(() -> {
-//                        c.selection().indices().add(newIndex);
-//                    });
-//                }
-//            }
-//        });
-//        c.selection().onChange(new PropertyListener() {
-//            private int lastIndex = -1;
-//
-//            @Override
-//            public void propertyUpdated(PropertyEvent event) {
-//                SimpleItem v = c.selection().get();
-//                if (v != null) {
-//                    WritableList<SimpleItem> vals = c.values();
-//                    int i = vals.findFirstIndex(a -> a.equals(v));
-//                    if (v.isGroup()) {
-//                        int bestIndex = -1;
-//                        if (lastIndex <= i) {
-//                            bestIndex = next(i);
-//                            if (bestIndex < 0) {
-//                                bestIndex = previous(i);
-//                            }
-//                        } else {
-//                            bestIndex = previous(i);
-//                            if (bestIndex < 0) {
-//                                bestIndex = next(i);
-//                            }
-//                        }
-//                        if (bestIndex < 0) {
-//                            c.selection().clear();
-//                        } else {
-//                            c.selection().setAll(c.values().get(bestIndex));
-//                        }
-//                    }
-//                    lastIndex = i;
-//                }
-//            }
-//
-//            private int next(int i) {
-//                int bestIndex = -1;
-//                for (int j = i + 1; j < c.values().size(); j++) {
-//                    SimpleItem o2 = c.values().get(j);
-//                    if (!o2.isGroup()) {
-//                        bestIndex = j;
-//                        break;
-//                    }
-//                }
-//                return bestIndex;
-//            }
-//
-//            private int previous(int i) {
-//                int bestIndex = -1;
-//                for (int j = i - 1; j >= 0; j--) {
-//                    SimpleItem o2 = c.values().get(j);
-//                    if (!o2.isGroup()) {
-//                        bestIndex = j;
-//                        break;
-//                    }
-//                }
-//                return bestIndex;
-//            }
-//        });
-//        c.itemRenderer().set(
-//                context -> {
-//                    SimpleItem value = context.getValue();
-//                    if (value == null) {
-//                        context.setIcon(null);
-//                    } else {
-//                        SimpleItem nv = value;
-//                        if (nv.isGroup()) {
-//                            AppFont f = context.getFont();
-//                            AppColor fc = context.getColor();
-//                            AppColor bc = context.getBackgroundColor();
-//                            context.setOpaque(true);
-//                            context.setBackgroundColor(fc);
-//                            context.setTextColor(bc);
-//                            context.setTextFont(f.derive(FontWeight.BOLD).derive(FontPosture.ITALIC));
-//                        } else {
-//                            String icon = (value).getIcon();
-//                            AppImage iconObj = null;
-//                            if (functionResolver != null) {
-//                                iconObj = functionResolver.apply(icon);
-//                            }
-//                            context.setIcon(iconObj);
-//                        }
-//                    }
-//                }
-//        );
-//    }
-//
-    private static <T> int nextSelectableIndex(ObservableList<T> list, Predicate<T> selectable, int i) {
-        int bestIndex = -1;
-        for (int j = i + 1; j < list.size(); j++) {
-            T o2 = list.get(j);
-            if (!selectable.test(o2)) {
-                bestIndex = j;
-                break;
-            }
-        }
-        return bestIndex;
-    }
-
-    private static <T> int previousSelectableIndex(ObservableList<T> list, Predicate<T> selectable, int i) {
-        int bestIndex = -1;
-        for (int j = i - 1; j >= 0; j--) {
-            T o2 = list.get(j);
-            if (!selectable.test(o2)) {
-                bestIndex = j;
-                break;
-            }
-        }
-        return bestIndex;
+    public static void propagateResources(AppComponent parent, AppComponent child) {
+        parent.iconSet().onChangeAndInit(() -> child.iconSet().set(parent.iconSet().get()));
+        parent.iconConfig().onChangeAndInit(() -> child.iconConfig().set(parent.iconConfig().get()));
+        parent.locale().onChangeAndInit(() -> child.locale().set(parent.locale().get()));
     }
 
     public static void bindContent(AppComponent parent, AppComponent child) {
@@ -234,6 +145,7 @@ public class Applications {
                 child.peer().requestFocus();
             }
         });
+        propagateResources(parent, child);
     }
 
     public static String getFileExtension(String name) {
@@ -447,70 +359,38 @@ public class Applications {
     public static void setAllLocale(AppComponent component, Locale locale) {
         visitComponentTree(component, (c) -> {
             c.locale().set(locale);
+            return true;
         });
     }
 
     public static void setAllIconSet(AppComponent component, String iconSet) {
         visitComponentTree(component, (c) -> {
             c.iconSet().set(iconSet);
+            return true;
         });
     }
 
-    public static void visitComponentTree(AppComponent component, Consumer<AppComponent> a) {
+    public static void setAllIconConfig(AppComponent component, IconConfig iconConfig) {
+        visitComponentTree(component, (c) -> {
+            c.iconConfig().set(iconConfig);
+            return true;
+        });
+    }
+
+    public static void visitComponentTree(AppComponent component, ComponentTreeVisitor a) {
         Stack<AppComponent> stack = new Stack<>();
         stack.push(component);
         while (!stack.isEmpty()) {
             AppComponent curr = stack.pop();
-            a.accept(curr);
-            if (curr instanceof AppContainer) {
-                for (AppComponent child : ((AppContainer<?>) curr).children()) {
-                    stack.push(child);
-                }
-            }
-        }
-
-    }
-
-    public static class Helper {
-
-
-        public static void runAfterStart(Application application, Runnable r) {
-            if (application.state().get().ordinal() >= AppState.STARTED.ordinal()) {
-                r.run();
-            } else {
-                application.state().onChange(event -> {
-                    AppState e = event.newValue();
-                    if (e == AppState.STARTED) {
-                        r.run();
+            if (a.visit(curr)) {
+                if (curr instanceof AppContainer) {
+                    for (AppComponent child : ((AppContainer<?>) curr).children()) {
+                        stack.push(child);
                     }
-                });
-            }
-        }
-
-    }
-
-    public static class LastIndexTracker implements PropertyListener {
-        private int lastIndex = -1;
-
-        @Override
-        public void propertyUpdated(PropertyEvent event) {
-            Integer o = event.newValue();
-            if (event.eventType() == PropertyUpdate.ADD) {
-                lastIndex = o;
-                WritableList<Integer> p = (WritableList<Integer>) event.property();
-                if (p.size() == 1 && lastIndex != p.get(0)) {
-                    // this happens because of the following scenario :
-                    // add disabled selection index (example index 3)
-                    // -> fire add next valid index (example index 4)
-                    // -> fire selection changed (with previous index : here 3)
-                    lastIndex = p.get(0);
                 }
             }
         }
 
-        public int getLastIndex() {
-            return lastIndex;
-        }
     }
 
     public static String loadStreamAsString(URL url) {
@@ -555,6 +435,52 @@ public class Applications {
             }
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
+        }
+    }
+
+    public interface ComponentTreeVisitor {
+        boolean visit(AppComponent component);
+    }
+
+    public static class Helper {
+
+
+        public static void runAfterStart(Application application, Runnable r) {
+            if (application.state().get().ordinal() >= AppState.STARTED.ordinal()) {
+                r.run();
+            } else {
+                application.state().onChange(event -> {
+                    AppState e = event.newValue();
+                    if (e == AppState.STARTED) {
+                        r.run();
+                    }
+                });
+            }
+        }
+
+    }
+
+    public static class LastIndexTracker implements PropertyListener {
+        private int lastIndex = -1;
+
+        @Override
+        public void propertyUpdated(PropertyEvent event) {
+            Integer o = event.newValue();
+            if (event.eventType() == PropertyUpdate.ADD) {
+                lastIndex = o;
+                WritableList<Integer> p = (WritableList<Integer>) event.property();
+                if (p.size() == 1 && lastIndex != p.get(0)) {
+                    // this happens because of the following scenario :
+                    // add disabled selection index (example index 3)
+                    // -> fire add next valid index (example index 4)
+                    // -> fire selection changed (with previous index : here 3)
+                    lastIndex = p.get(0);
+                }
+            }
+        }
+
+        public int getLastIndex() {
+            return lastIndex;
         }
     }
 

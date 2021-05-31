@@ -29,14 +29,19 @@ import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.PropertyBase;
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.*;
-import net.thevpc.echo.api.components.*;
+import net.thevpc.echo.api.components.AppComponent;
+import net.thevpc.echo.api.components.AppContainer;
+import net.thevpc.echo.api.components.AppFrame;
 import net.thevpc.echo.iconset.DefaultIconsets;
 import net.thevpc.echo.iconset.IconSets;
 import net.thevpc.echo.iconset.NoIconSet;
 import net.thevpc.echo.impl.components.ContainerBase;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ServiceLoader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
@@ -45,7 +50,7 @@ import java.util.stream.Collectors;
 /**
  * @author vpc
  */
-public class DefaultApplication extends PropertyBase implements Application {
+public class DefaultApplication extends PropertyBase implements Application, ChildPropertyResolver {
 
     protected WritableValue<AppState> state = Props.of("state").valueOf(AppState.class, AppState.NONE);
     protected DefaultApplicationLoader applicationLoader;
@@ -126,7 +131,7 @@ public class DefaultApplication extends PropertyBase implements Application {
                 AppFrame n = event.newValue();
                 if (n != null) {
                     n.state().vetos().add(new WinPropertyVetoImpl(DefaultApplication.this, n));
-                    rootContainer.children().add(n,"mainFrame");
+                    rootContainer.children().add(n, "mainFrame");
                 }
             }
 
@@ -181,18 +186,18 @@ public class DefaultApplication extends PropertyBase implements Application {
         });
         ((DefaultIconsets) iconSets).setBuilderSupplier(() -> new DefaultIconSetSupplier(this));
 
-        mainFrame().onChange(e->{
+        mainFrame().onChange(e -> {
             AppFrame ov = e.oldValue();
-            if(ov!=null){
+            if (ov != null) {
                 ov.state().events().remove(this::closeAppOnCloseFrame);
-                if(components().contains(ov)){
+                if (components().contains(ov)) {
                     components().remove(ov);
                 }
             }
             AppFrame nv = e.newValue();
-            if(nv!=null){
+            if (nv != null) {
                 nv.state().onChange(this::closeAppOnCloseFrame);
-                if(!components().contains(nv)){
+                if (!components().contains(nv)) {
                     components().add(nv);
                 }
             }
@@ -215,13 +220,13 @@ public class DefaultApplication extends PropertyBase implements Application {
 
         });
 
-        components().onChange(e->{
-            AppComponent c=e.newValue();
-            if(c!=null) {
+        components().onChange(e -> {
+            AppComponent c = e.newValue();
+            if (c != null) {
                 Path cp = c.path().get();
-                switch (cp.name()){
-                    case "mainFrame":{
-                        if(mainFrame().get()!=c){
+                switch (cp.name()) {
+                    case "mainFrame": {
+                        if (mainFrame().get() != c) {
                             mainFrame().set((AppFrame) c);
                         }
                         break;
@@ -302,7 +307,7 @@ public class DefaultApplication extends PropertyBase implements Application {
 //        }
 //    }
     protected void startImpl() {
-        if(mainFrame().get()!=null) {
+        if (mainFrame().get() != null) {
             mainFrame().get().open();
         }
     }
@@ -375,6 +380,11 @@ public class DefaultApplication extends PropertyBase implements Application {
     }
 
     @Override
+    public WritableValue<ExecutorService> executorService() {
+        return executorService;
+    }
+
+    @Override
     public Application shutdown() {
         switch (state.get()) {
             case CLOSING:
@@ -432,10 +442,6 @@ public class DefaultApplication extends PropertyBase implements Application {
     public WritableValue<AppPropertiesTree> activeProperties() {
         return activeProperties;
     }
-
-    public void runUI(Runnable run) {
-        toolkit.runUI(wrapSafeRunnable(run));
-    }
 //
 //    @Override
 //    public AppPropertyBinding[] getProperties() {
@@ -446,6 +452,10 @@ public class DefaultApplication extends PropertyBase implements Application {
 //    public PropertyListeners events() {
 //        return support.events();
 //    }
+
+    public void runUI(Runnable run) {
+        toolkit.runUI(wrapSafeRunnable(run));
+    }
 
     @Override
     public void runWorker(Runnable run) {
@@ -496,6 +506,11 @@ public class DefaultApplication extends PropertyBase implements Application {
         return container().children();
     }
 
+    @Override
+    public WritableBoolean hideDisabled() {
+        return hideDisabled;
+    }
+
     private void closeAppOnCloseFrame(PropertyEvent event) {
         WindowStateSet s = event.newValue();
         if (s.is(WindowState.CLOSING)) {
@@ -509,6 +524,19 @@ public class DefaultApplication extends PropertyBase implements Application {
                 state.set(AppState.CLOSED);
             }
         }
+    }
+
+    @Override
+    public Property resolveChildProperty(String name) {
+        for (AppComponent component : components()) {
+            if (component.path().get().name().equals(name)) {
+                return component;
+            }
+            if (component.id().equals(name)) {
+                return component;
+            }
+        }
+        return null;
     }
 
     //    private class AppRootNode implements AppNode {
@@ -606,17 +634,7 @@ public class DefaultApplication extends PropertyBase implements Application {
 
         @Override
         public AppComponent createPreferredChild(String name, Path absolutePath) {
-            return new Frame(name,app());
+            return new Frame(name, app());
         }
     }
-
-    @Override
-    public WritableValue<ExecutorService> executorService() {
-        return executorService;
-    }
-    @Override
-    public WritableBoolean hideDisabled() {
-        return hideDisabled;
-    }
-
 }

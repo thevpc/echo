@@ -8,7 +8,7 @@ import net.thevpc.echo.api.components.AppComponentEvent;
 import net.thevpc.echo.api.components.AppComponentEventListener;
 import net.thevpc.echo.api.components.AppEventType;
 import net.thevpc.echo.constraints.*;
-import net.thevpc.echo.iconset.IconSetConfig;
+import net.thevpc.echo.iconset.IconConfig;
 import net.thevpc.echo.impl.Applications;
 
 import java.io.File;
@@ -23,7 +23,7 @@ public class FolderView extends GridPane {
         public AppImage resolveFastThumb(String filePath, FileType fileType, FolderView folderView) {
             Application app = folderView.app();
             int imageSize = folderView.imageSize;
-            IconSetConfig iconSizeConfig = IconSetConfig.of(imageSize);
+            IconConfig iconSizeConfig = IconConfig.of(imageSize);
             if (fileType == FileType.UP) {
                 return app.iconSets().iconSet().getIcon("folder-up", iconSizeConfig);
             } else if (fileType == FileType.DIRECTORY) {
@@ -38,7 +38,7 @@ public class FolderView extends GridPane {
         public AppImage resolveThumb(String filePath, FileType fileType, FolderView folderView) {
             Application app = folderView.app();
             int imageSize = folderView.imageSize;
-            IconSetConfig iconSizeConfig = IconSetConfig.of(imageSize);
+            IconConfig iconSizeConfig = IconConfig.of(imageSize);
             if (fileType == FileType.UP) {
                 return null;//reuse fast icon
             } else if (fileType == FileType.DIRECTORY) {
@@ -184,13 +184,13 @@ public class FolderView extends GridPane {
             this.file = file0;
             this.otherName = otherName0;
             this.imageSize = imageSize0;
-            parentConstraints().addAll(AllGrow.NONE, AllAnchors.CENTER, AllMargins.of(0), AllFill.NONE, GrowContainer.BOTH);
+            parentConstraints().addAll(AllGrow.NONE, AllAnchors.CENTER, AllMargins.of(0), AllFill.NONE, ContainerGrow.ALL);
             AppImage icon = null;
             //JLabel.CENTER
             Label iconLabel = new Label(Str.of(""), app());
             iconLabel.textStyle().align().set(Anchor.CENTER);
 //        iconLabel.prefSize().set(new Dimension(80,80));
-            IconSetConfig iconSizeConfig = IconSetConfig.of(imageSize);
+            IconConfig iconSizeConfig = IconConfig.of(imageSize);
             FolderViewThumbResolver t = viewer0.thumbResolver().get();
             if (t == null) {
                 t = DEFAULT_THUMB_RESOLVER;

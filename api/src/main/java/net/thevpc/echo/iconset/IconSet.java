@@ -31,5 +31,5 @@ public interface IconSet {
 
     String getId();
 
-    AppImage getIcon(String id, IconSetConfig config);
+    AppImage getIcon(String id, IconConfig config);
 }

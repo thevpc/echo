@@ -94,4 +94,11 @@ public class SwingHelpers {
                 app
         );
     }
+
+
+//
+//    public static void BorderLayout_setComponent(Container panel, int borderLayoutConstraint, Component comp) {
+//        BorderLayout_removeComponent(panel, borderLayoutConstraint);
+//        panel.add(comp, borderLayoutConstraint);
+//    }
 }

@@ -21,7 +21,7 @@ public class SimpleItemAppChoiceItemRenderer implements AppChoiceItemRenderer<Si
             context.renderDefault();
             context.setText(v.getName().value(context.getApplication().i18n(),context.getChoice().locale().get()));
             context.setIcon(
-                    (icon != null && icon.length() > 0) ? app.iconSets().icon(icon).get() : null
+                    (icon != null && icon.length() > 0) ? app.iconSets().icon(icon,context.getChoice()) : null
             );
         } else {
             context.renderDefault();

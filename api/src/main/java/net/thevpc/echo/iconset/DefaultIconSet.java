@@ -136,12 +136,12 @@ public class DefaultIconSet implements IconSet {
     }
 
     @Override
-    public AppImage getIcon(String id, IconSetConfig size) {
+    public AppImage getIcon(String id, IconConfig size) {
         if (id == null) {
             return null;
         }
         if (size == null) {
-            size = IconSetConfig.DEFAULT;
+            size = IconConfig.DEFAULT;
         }
         String id2 = names.getProperty(id);
         if (id2 != null) {
@@ -151,7 +151,7 @@ public class DefaultIconSet implements IconSet {
         if (icon.icon != null) {
             return icon.icon;
         }
-        if (size.equals(IconSetConfig.DEFAULT)) {
+        if (size.equals(IconConfig.DEFAULT)) {
             StringBuilder p = new StringBuilder(basePath).append('/').append(id).append('.').append(type);
             URL u = null;
             if (classLoader == null) {
@@ -224,7 +224,7 @@ public class DefaultIconSet implements IconSet {
                 return null;
             } else {
 
-                AppImage o = getIcon(id, IconSetConfig.DEFAULT);
+                AppImage o = getIcon(id, IconConfig.DEFAULT);
                 if (o == null) {
                     return null;
                 }
@@ -241,10 +241,10 @@ public class DefaultIconSet implements IconSet {
 
     private static class ImageSizeCache {
 
-        private IconSetConfig size;
+        private IconConfig size;
         private AppImage icon;
 
-        public ImageSizeCache(IconSetConfig size) {
+        public ImageSizeCache(IconConfig size) {
             this.size = size;
         }
 
@@ -252,10 +252,10 @@ public class DefaultIconSet implements IconSet {
 
     private static class ImageSizeMapCache {
 
-        private IconSetConfig size;
+        private IconConfig size;
         private Map<String, ImageSizeCache> icons = new HashMap<>();
 
-        public ImageSizeMapCache(IconSetConfig size) {
+        public ImageSizeMapCache(IconConfig size) {
             this.size = size;
         }
 
@@ -274,9 +274,9 @@ public class DefaultIconSet implements IconSet {
         private int maxReports = 2000;
         private Set<String> reportedNotFound = new HashSet<>();
 
-        private Map<IconSetConfig, ImageSizeMapCache> icons = new HashMap<>();
+        private Map<IconConfig, ImageSizeMapCache> icons = new HashMap<>();
 
-        public ImageSizeCache get(String id, IconSetConfig size) {
+        public ImageSizeCache get(String id, IconConfig size) {
             ImageSizeMapCache q = icons.get(size);
             if (q == null) {
                 q = new ImageSizeMapCache(size);

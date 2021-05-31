@@ -5,7 +5,7 @@
  */
 package net.thevpc.echo.swing.peers;
 
-import net.thevpc.common.swing.dock.JDockPane;
+import net.thevpc.common.swing.dock.JDockAnchor;
 import net.thevpc.common.swing.win.InternalWindowsHelper;
 import net.thevpc.common.swing.win.WindowInfo;
 import net.thevpc.echo.Dimension;
@@ -28,8 +28,8 @@ public class SwingDesktopPeer implements SwingPeer, AppDesktopPeer {
     InternalWindowsHelper desktop = new InternalWindowsHelper();
     private AppDesktop appDesktop;
 
-    public static JDockPane.DockAnchor toDocAnchor(Anchor anchor) {
-        return JDockPane.DockAnchor.valueOf(anchor.name());
+    public static JDockAnchor toDocAnchor(Anchor anchor) {
+        return JDockAnchor.valueOf(anchor.name());
     }
 
     @Override

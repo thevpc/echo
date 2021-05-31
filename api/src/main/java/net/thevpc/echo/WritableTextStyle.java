@@ -13,8 +13,8 @@ import java.util.Objects;
 
 public class WritableTextStyle extends PropertyBase {
     private WritableValue<AppFont> font = Props.of("font").valueOf(AppFont.class);
-    private WritableValue<AppColor> foregroundColor = Props.of("foregroundColor").valueOf(AppColor.class);
-    private WritableValue<AppColor> backgroundColor = Props.of("backgroundColor").valueOf(AppColor.class);
+//    private WritableValue<AppColor> foregroundColor = Props.of("foregroundColor").valueOf(AppColor.class);
+//    private WritableValue<AppColor> backgroundColor = Props.of("backgroundColor").valueOf(AppColor.class);
     private WritableBoolean underline = Props.of("underline").booleanOf(false);
     private WritableBoolean strikethrough = Props.of("strikethrough").booleanOf(false);
     private WritableInt strokeSize = Props.of("strokeSize").intOf(1);
@@ -22,7 +22,9 @@ public class WritableTextStyle extends PropertyBase {
 
     public WritableTextStyle(String name) {
         super(name);
-        this.propagateEvents(font, foregroundColor, backgroundColor, underline, strikethrough, strokeSize);
+        this.propagateEvents(font, underline, strikethrough, strokeSize
+//                , foregroundColor, backgroundColor
+        );
     }
 
     public WritableValue<AppFont> font() {
@@ -33,13 +35,13 @@ public class WritableTextStyle extends PropertyBase {
         return align;
     }
 
-    public WritableValue<AppColor> foregroundColor() {
-        return foregroundColor;
-    }
-
-    public WritableValue<AppColor> backgroundColor() {
-        return backgroundColor;
-    }
+//    public WritableValue<AppColor> foregroundColor() {
+//        return foregroundColor;
+//    }
+//
+//    public WritableValue<AppColor> backgroundColor() {
+//        return backgroundColor;
+//    }
 
     public WritableBoolean underline() {
         return underline;
@@ -55,7 +57,8 @@ public class WritableTextStyle extends PropertyBase {
 
     @Override
     public int hashCode() {
-        return Objects.hash(font, foregroundColor, underline, strikethrough, strokeSize, align);
+        //, foregroundColor,backgroundColor
+        return Objects.hash(font, underline, strikethrough, strokeSize, align);
     }
 
     @Override
@@ -64,7 +67,8 @@ public class WritableTextStyle extends PropertyBase {
         if (o == null || getClass() != o.getClass()) return false;
         WritableTextStyle that = (WritableTextStyle) o;
         return Objects.equals(font.get(), that.font.get())
-                && Objects.equals(foregroundColor.get(), that.foregroundColor.get())
+//                && Objects.equals(foregroundColor.get(), that.foregroundColor.get())
+//                && Objects.equals(backgroundColor.get(), that.backgroundColor.get())
                 && Objects.equals(underline.get(), that.underline.get())
                 && Objects.equals(strikethrough.get(), that.strikethrough.get())
                 && Objects.equals(strokeSize, that.strokeSize)

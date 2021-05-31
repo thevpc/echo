@@ -5,14 +5,12 @@
  */
 package net.thevpc.echo.swing.peers;
 
-import net.thevpc.common.swing.dock.JDockPane;
-import net.thevpc.echo.Dimension;
+import net.thevpc.common.swing.dock.JDockAnchor;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppScrollPane;
 import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.spi.peers.AppScrollPanePeer;
 import net.thevpc.echo.swing.SwingPeerHelper;
-import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,8 +23,8 @@ public class SwingScrollPanePeer implements SwingPeer, AppScrollPanePeer {
     JScrollPane swingComponent = new JScrollPane();
     private AppScrollPane appComponent;
 
-    public static JDockPane.DockAnchor toDocAnchor(Anchor anchor) {
-        return JDockPane.DockAnchor.valueOf(anchor.name());
+    public static JDockAnchor toDocAnchor(Anchor anchor) {
+        return JDockAnchor.valueOf(anchor.name());
     }
 
     @Override

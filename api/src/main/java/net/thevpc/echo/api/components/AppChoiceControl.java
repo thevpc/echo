@@ -14,9 +14,4 @@ public interface AppChoiceControl<T> extends AppControl {
 
     WritableListIndexSelectionExt<T> selection();
 
-    WritableValue<Predicate<T>> disabledPredicate();
-
-    WritableListIndexSelection<T> disabledSelection();
-
-    WritableBoolean multipleValues();
 }

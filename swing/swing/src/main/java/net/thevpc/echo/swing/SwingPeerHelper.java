@@ -169,11 +169,14 @@ public class SwingPeerHelper {
     }
 
     public static JComponent effectiveSwingComponent(AppComponent component) {
+        component.peer();
         return (JComponent) component.userObjects().get(AppComponentPeer.class.getName() + ":effective");
     }
 
     public static void installComponent(AppComponent appComponent, JComponent swingComponent) {
         appComponent.userObjects().put(AppComponentPeer.class.getName() + ":effective", swingComponent);
+        swingComponent.putClientProperty("toolkit-impl-type",appComponent.getClass().getSimpleName());
+
         swingComponent.putClientProperty(AppComponent.class.getName(), appComponent);
         swingComponent.addKeyListener(FROM_SWING_KEY_MAPPER);
         swingComponent.addFocusListener(FROM_SWING_FOCUS_MAPPER);
@@ -190,8 +193,12 @@ public class SwingPeerHelper {
         appComponent.opaque().onChangeAndInit(
                 () -> swingComponent.setOpaque(appComponent.opaque().get())
         );
-
-        appComponent.backgroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getBackground(), appComponent.app()));
+        if(appComponent.backgroundColor().get()==null) {
+            appComponent.backgroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getBackground(), appComponent.app()));
+        }else{
+            Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get());
+            SwingApplicationUtils.setComponentBackground(swingComponent, c);
+        }
         appComponent.backgroundColor().onChange(
                 () -> {
                     Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get());
@@ -200,27 +207,35 @@ public class SwingPeerHelper {
                     }
                 }
         );
-        if(appComponent instanceof AppTextControl) {
-            AppTextControl appTextComponent1 = (AppTextControl) appComponent;
-            appTextComponent1.textStyle().foregroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getForeground(), appComponent.app()));
-            appTextComponent1.textStyle().foregroundColor().onChange(
-                    () -> {
-                        Color c = SwingHelpers.toAwtColor(appTextComponent1.textStyle().foregroundColor().get());
-                        if(c!=null) {
-                            SwingApplicationUtils.setComponentForeground(swingComponent, c);
-                        }
-                    }
-            );
-        }else{
+        if(appComponent.foregroundColor().get()==null) {
             appComponent.foregroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getForeground(), appComponent.app()));
-            appComponent.foregroundColor().onChangeAndInit(
-                    () -> {
-                        Color c = SwingHelpers.toAwtColor(appComponent.foregroundColor().get());
-                        if(c!=null) {
-                            SwingApplicationUtils.setComponentForeground(swingComponent, c);
-                        }
+        }else{
+            Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get());
+            SwingApplicationUtils.setComponentForeground(swingComponent, c);
+        }
+        appComponent.foregroundColor().onChangeAndInit(
+                () -> {
+                    Color c = SwingHelpers.toAwtColor(appComponent.foregroundColor().get());
+                    if(c!=null) {
+                        SwingApplicationUtils.setComponentForeground(swingComponent, c);
                     }
-            );
+                }
+        );
+        if(appComponent instanceof AppTextControl) {
+            AppTextControl tc = (AppTextControl) appComponent;
+            AppComponentTextStylerApplier appComponentTextStylerApplier = new AppComponentTextStylerApplier(tc);
+            AppFont afont = tc.textStyle().font().get();
+            if(afont!=null){
+                appComponentTextStylerApplier.propertyUpdated(null);
+            }else {
+                tc.textStyle().font().set(
+                        SwingHelpers.fromAwtFont(swingComponent.getFont(), appComponent.app())
+                );
+            }
+            tc.textStyle().font().onChange(appComponentTextStylerApplier);
+            tc.textStyle().strokeSize().onChange(appComponentTextStylerApplier); // no init because already initialize
+            tc.textStyle().strikethrough().onChange(appComponentTextStylerApplier);
+            tc.textStyle().underline().onChange(appComponentTextStylerApplier);
         }
         appComponent.visible().onChangeAndInit(
                 () -> swingComponent.setVisible(appComponent.visible().get())
@@ -243,6 +258,13 @@ public class SwingPeerHelper {
                     }
                 }
         );
+        appComponent.onChange(e->{
+            if("UpdateUI".equals(e.changeId())){
+                swingComponent.invalidate();
+                swingComponent.revalidate();
+                swingComponent.repaint();
+            }
+        });
 //        SwingApplicationUtils.deriveFont(
 //                ff,
 //                null, null,
@@ -250,19 +272,6 @@ public class SwingPeerHelper {
 //                appComponent.textStyle().strikethrough().get()
 //        )
 
-
-
-        if (appComponent instanceof AppTextControl) {
-            AppTextControl tc = (AppTextControl) appComponent;
-            AppComponentTextStylerApplier appComponentTextStylerApplier = new AppComponentTextStylerApplier(tc);
-            tc.textStyle().font().set(
-                    SwingHelpers.fromAwtFont(swingComponent.getFont(), appComponent.app())
-            );
-            tc.textStyle().font().onChange(appComponentTextStylerApplier);
-            tc.textStyle().strokeSize().onChange(appComponentTextStylerApplier); // no init because already initialize
-            tc.textStyle().strikethrough().onChange(appComponentTextStylerApplier);
-            tc.textStyle().underline().onChange(appComponentTextStylerApplier);
-        }
     }
 
     public static class AppComponentTextStylerApplier implements PropertyListener {

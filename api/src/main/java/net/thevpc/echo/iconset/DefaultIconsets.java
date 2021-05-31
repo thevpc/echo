@@ -21,7 +21,6 @@
 
 package net.thevpc.echo.iconset;
 
-import java.awt.Color;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +41,7 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
     protected WritableString id = Props.of("id").stringOf( null);
     protected WritableValue<AppIconResolver> resolver = Props.of("id").valueOf(AppIconResolver.class, null);
     private Map<String, WritableValue<AppImage>> icons = new HashMap<>();
-    private WritableValue<IconSetConfig> config = Props.of("id").valueOf(IconSetConfig.class, IconSetConfig.of(16));
+    private WritableValue<IconConfig> config = Props.of("id").valueOf(IconConfig.class, IconConfig.of(16));
     private Supplier<IconSetBuilder> builderSupplier;
 
     public DefaultIconsets(String name) {
@@ -63,7 +62,7 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
                 entry.getValue().set(null);
             }
         } else {
-            IconSetConfig cnf = config.get();
+            IconConfig cnf = config.get();
             for (Map.Entry<String, WritableValue<AppImage>> entry : icons.entrySet()) {
                 AppImage i = s.getIcon(entry.getKey(), cnf);
                 if (i != null) {
@@ -85,7 +84,7 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
     }
 
     @Override
-    public WritableValue<IconSetConfig> config() {
+    public WritableValue<IconConfig> config() {
         return config;
     }
 
@@ -106,15 +105,23 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
     }
 
     @Override
-    public AppImage icon(String id, String iconSet) {
-        IconSet i = get(iconSet);
+    public AppImage icon(String id, IconSetAware iconSetAware) {
+        String q = iconSetAware.iconSet().get();
+        if(q==null){
+            q=id().get();
+        }
+        IconConfig c = iconSetAware.iconConfig().get();
+        if(c==null){
+            c=config().get();
+        }
+        IconSet i = get(q);
         if(i==null){
             i=iconSet();
         }
         if(i==null){
             return null;
         }
-        return i.getIcon(id,config().get());
+        return i.getIcon(id,c);
     }
 
     @Override
@@ -146,13 +153,13 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
     }
 
     @Override
-    public ObservableValue<AppImage> iconForFile(File f, boolean selected, boolean expanded) {
-        return icon(iconIdForFile(f, selected, expanded));
+    public AppImage iconForFile(File f, boolean selected, boolean expanded, IconSetAware iconSetAware) {
+        return icon(iconIdForFile(f, selected, expanded),iconSetAware);
     }
 
     @Override
-    public ObservableValue<AppImage> iconForFileName(String f, boolean selected, boolean expanded) {
-        return icon(iconIdForFileName(f, selected, expanded));
+    public AppImage iconForFileName(String f, boolean selected, boolean expanded, IconSetAware iconSetAware) {
+        return icon(iconIdForFileName(f, selected, expanded),iconSetAware);
     }
 
     public Supplier<IconSetBuilder> getBuilderSupplier() {

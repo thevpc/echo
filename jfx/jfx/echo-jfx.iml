@@ -14,7 +14,7 @@
     <orderEntry type="module" module-name="echo-api" />
     <orderEntry type="module" module-name="thevpc-common-i18n" />
     <orderEntry type="module" module-name="thevpc-common-props" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-msg:1.0.0" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-msg" />
     <orderEntry type="library" name="Maven: org.jfxtras:jfxtras-window:8.0-r6" level="project" />
     <orderEntry type="library" name="Maven: org.jfxtras:jfxtras-common:8.0-r6" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:15.0.1" level="project" />

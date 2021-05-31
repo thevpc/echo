@@ -3,6 +3,7 @@ package net.thevpc.echo.impl.components;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.*;
+import net.thevpc.common.props.impl.DefaultPropertyListeners;
 import net.thevpc.common.props.impl.PropertyBase;
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.AppChildConstraints;
@@ -14,6 +15,7 @@ import net.thevpc.echo.api.components.AppComponentEvents;
 import net.thevpc.echo.api.components.AppComponentOptions;
 import net.thevpc.echo.api.components.AppContextMenu;
 import net.thevpc.echo.constraints.Anchor;
+import net.thevpc.echo.iconset.IconConfig;
 import net.thevpc.echo.iconset.WritableImage;
 import net.thevpc.echo.impl.DefaultAppComponentEvents;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
@@ -38,13 +40,13 @@ public class ComponentBase extends PropertyBase implements AppComponent {
     private final WritableImage largeIcon;
     private final WritableBoolean editable;
     private final WritableBoolean active;
-    private final WritableValue<AppFont> font;
     private final WritableValue<AppColor> foregroundColor;
     private final WritableValue<AppColor> backgroundColor;
     private final WritableValue<Dimension> prefSize;
     private final WritableValue<Bounds> bounds;
     private final WritableValue<Locale> locale = Props.of("path").valueOf(Locale.class, null);
     private final WritableValue<String> iconSet = Props.of("path").valueOf(String.class, null);
+    private final WritableValue<IconConfig> iconConfig = Props.of("iconConfig").valueOf(IconConfig.class, null);
     private final WritableBoolean shown;
     private final WritableBoolean opaque;
     protected AppComponent parent;
@@ -87,7 +89,6 @@ public class ComponentBase extends PropertyBase implements AppComponent {
         largeIcon.set(doConfig/*&&model.config().configurableLargeIcon().get()*/ ? Str.i18n(id + ".largeIcon") : null);
         accelerator = AppProps.of("accelerator", app).stringOf(null);
         mnemonic = AppProps.of("mnemonic", app).intOf(0);
-        font = AppProps.of("font", app).valueOf(AppFont.class);
         foregroundColor = AppProps.of("foregroundColor", app).valueOf(AppColor.class);
         backgroundColor = AppProps.of("backgroundColor", app).valueOf(AppColor.class);
         opaque = AppProps.of("opaque", app).booleanOf(true);
@@ -98,8 +99,8 @@ public class ComponentBase extends PropertyBase implements AppComponent {
         this.path.set(Path.of(id()));
         propagateEvents(anchor, enabled, visible, editable, active, title, titleStyle,
                 tooltip, icon, largeIcon, accelerator, mnemonic, prefSize,
-                focused, editing, bounds, shown, locale, iconSet,properties,opaque,
-                foregroundColor,backgroundColor,font,
+                focused, editing, bounds, shown, locale, iconSet,iconConfig,properties,opaque,
+                foregroundColor,backgroundColor,
                 contextMenu,parentConstraints,childConstraints,order
         );
         focused.onChange(event -> {
@@ -107,16 +108,32 @@ public class ComponentBase extends PropertyBase implements AppComponent {
                 ((WritableValue<AppComponent>) app.toolkit().focusOwner()).set(this);
             }
         });
+        icon().onChange(e->{
+            AppContextMenu cm = contextMenu().get();
+            if(cm!=null){
+                cm.iconSet().set(iconSet().get());
+            }
+            updateUI();
+        });
+        iconConfig().onChange(e->{
+            AppContextMenu cm = contextMenu().get();
+            if(cm!=null){
+                cm.iconConfig().set(iconConfig().get());
+            }
+            updateUI();
+        });
+        locale().onChange(e->{
+            AppContextMenu cm = contextMenu().get();
+            if(cm!=null){
+                cm.locale().set(locale().get());
+            }
+            updateUI();
+        });
     }
 
     @Override
     protected PropertyListeners createListeners() {
         return new DefaultAppComponentEvents(this);
-    }
-
-    @Override
-    public WritableValue<AppFont> font() {
-        return font;
     }
 
     @Override
@@ -304,6 +321,11 @@ public class ComponentBase extends PropertyBase implements AppComponent {
     }
 
     @Override
+    public WritableValue<IconConfig> iconConfig() {
+        return iconConfig;
+    }
+
+    @Override
     public WritableBoolean shown() {
         return shown;
     }
@@ -363,5 +385,16 @@ public class ComponentBase extends PropertyBase implements AppComponent {
 
     public void setPeer(AppComponentPeer peer) {
         this.peer = peer;
+    }
+
+    public void updateUI(){
+        ((DefaultPropertyListeners)events()).firePropertyUpdated(
+                new PropertyEvent(
+                        this,null,
+                        this,this,
+                        Path.of(propertyName()),
+                        PropertyUpdate.INIT,"UpdateUI",true
+                )
+        );
     }
 }

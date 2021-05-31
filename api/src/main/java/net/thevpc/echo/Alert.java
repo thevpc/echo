@@ -35,12 +35,19 @@ public class Alert extends ControlBase implements AppAlert {
     protected WritableStr headerText;
     protected AppDialogAction action = null;
 
+    public Alert(AppComponent owner) {
+        this(owner.app());
+        iconSet().set(owner.iconSet().get());
+        iconConfig().set(owner.iconConfig().get());
+        locale().set(owner.locale().get());
+    }
+
     public Alert(Application app) {
         this(null, app);
         headerText = AppProps.of("headerText", app).strOf(Str.empty());
         defaultButton = Props.of("defaultButton").stringOf(null);
         content = Props.of("content").valueOf(AppComponent.class);
-        headerIcon = new WritableImage("headerIcon", app,this);
+        headerIcon = new WritableImage("headerIcon", app, this);
         propagateEvents(headerText);
     }
 
