@@ -76,6 +76,7 @@ public class DefaultApplication extends PropertyBase implements Application, Chi
     private WritableBoolean hideDisabled = Props.of("hideDisabled").booleanOf(false);
     private List<Semaphore> waitings = new ArrayList<>();
     private ApplicationToolkit toolkit;
+    private PrinterService printerService;
 
     public DefaultApplication() {
         this(null);
@@ -537,6 +538,14 @@ public class DefaultApplication extends PropertyBase implements Application, Chi
             }
         }
         return null;
+    }
+
+    @Override
+    public PrinterService printerService() {
+        if(printerService==null){
+            printerService=toolkit().printerService();
+        }
+        return printerService;
     }
 
     //    private class AppRootNode implements AppNode {

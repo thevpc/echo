@@ -32,7 +32,7 @@ public class ComponentBase extends PropertyBase implements AppComponent {
     private final WritableBoolean editing;
     private final WritableBoolean enabled;
     private final WritableBoolean visible;
-    private final WritableInt mnemonic;
+    private final WritableValue<KeyCode> mnemonic;
     private final WritableString accelerator;
     private final WritableStr title;
     private final WritableStr tooltip;
@@ -88,7 +88,7 @@ public class ComponentBase extends PropertyBase implements AppComponent {
         largeIcon = new WritableImage("largeIcon", app, this);
         largeIcon.set(doConfig/*&&model.config().configurableLargeIcon().get()*/ ? Str.i18n(id + ".largeIcon") : null);
         accelerator = AppProps.of("accelerator", app).stringOf(null);
-        mnemonic = AppProps.of("mnemonic", app).intOf(0);
+        mnemonic = AppProps.of("mnemonic", app).valueOf(KeyCode.class);
         foregroundColor = AppProps.of("foregroundColor", app).valueOf(AppColor.class);
         backgroundColor = AppProps.of("backgroundColor", app).valueOf(AppColor.class);
         opaque = AppProps.of("opaque", app).booleanOf(true);
@@ -264,7 +264,7 @@ public class ComponentBase extends PropertyBase implements AppComponent {
         return largeIcon;
     }
 
-    public WritableInt mnemonic() {
+    public WritableValue<KeyCode> mnemonic() {
         return mnemonic;
     }
 

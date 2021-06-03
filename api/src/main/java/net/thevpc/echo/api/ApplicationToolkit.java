@@ -21,6 +21,7 @@ package net.thevpc.echo.api;
 
 import net.thevpc.common.props.ObservableValue;
 import net.thevpc.echo.Clipboard;
+import net.thevpc.echo.PrinterService;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.iconset.IconTransform;
 import net.thevpc.echo.spi.peers.AppColorPeer;
@@ -78,4 +79,6 @@ public interface ApplicationToolkit {
     Clipboard systemClipboard();
 
     ObservableValue<AppComponent> focusOwner();
+
+    PrinterService printerService();
 }

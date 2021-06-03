@@ -59,7 +59,6 @@ public class ToggleControlGroup<T> extends ChoiceBase<T> {
             }
         };
         selection().onChange(() -> {
-            System.out.println(selection().toList());
             for (AppComponent child : container().children()) {
                 T tt = (T) child.userObjects().get(VALUE_PROPERTY_NAME);
                 boolean selectedValue = selection().contains(tt);

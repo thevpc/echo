@@ -20,10 +20,7 @@ package net.thevpc.echo.api.components;
 
 import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.*;
-import net.thevpc.echo.Application;
-import net.thevpc.echo.Bounds;
-import net.thevpc.echo.Dimension;
-import net.thevpc.echo.WritableTextStyle;
+import net.thevpc.echo.*;
 import net.thevpc.echo.api.AppChildConstraints;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
@@ -99,7 +96,7 @@ public interface AppComponent extends Property, IconSetAware {
 
     WritableImage largeIcon();
 
-    WritableInt mnemonic();
+    WritableValue<KeyCode> mnemonic();
 
     WritableString accelerator();
 
