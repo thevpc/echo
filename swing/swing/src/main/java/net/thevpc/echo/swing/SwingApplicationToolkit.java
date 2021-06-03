@@ -17,6 +17,7 @@ import net.thevpc.echo.spi.peers.*;
 import net.thevpc.echo.swing.icons.SwingAppImage;
 import net.thevpc.echo.swing.icons.SwingColorIconTransform;
 import net.thevpc.echo.swing.peers.*;
+import net.thevpc.echo.swing.print.ComponentPrintable;
 import net.thevpc.jeep.editor.ColorResource;
 import net.thevpc.swing.plaf.UIPlaf;
 import net.thevpc.swing.plaf.UIPlafManager;
@@ -310,6 +311,22 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
                     //ex.printStackTrace();
                 }
                 return null;
+            }
+        };
+    }
+
+    @Override
+    public PrinterService printerService() {
+        return new PrinterService() {
+            @Override
+            public PrinterJob createJob() {
+                return new PrinterJob() {
+                    @Override
+                    public void printComponent(AppComponent component) {
+                        JComponent c=(JComponent)component.peer().toolkitComponent();
+                        new ComponentPrintable(c).print();
+                    }
+                };
             }
         };
     }

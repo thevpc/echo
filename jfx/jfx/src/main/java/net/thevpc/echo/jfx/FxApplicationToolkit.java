@@ -10,6 +10,7 @@ import javafx.embed.swing.SwingNode;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import net.thevpc.echo.Clipboard;
+import net.thevpc.echo.PrinterService;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.api.AppUIPlaf;
 import net.thevpc.echo.Application;
@@ -309,5 +310,10 @@ public class FxApplicationToolkit extends AbstractApplicationToolkit {
 
             }
         };
+    }
+
+    @Override
+    public PrinterService printerService() {
+        throw new IllegalArgumentException("unsupported yet");
     }
 }

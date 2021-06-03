@@ -1,6 +1,7 @@
 package net.thevpc.echo.swing;
 
 import net.thevpc.common.i18n.Str;
+import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.echo.Application;
@@ -300,18 +301,23 @@ public class SwingPeerHelper {
         }
     }
 
-    private static class InstallTextComponent {
+    public static class InstallTextComponent {
 
         private boolean updatingDocument;
-        private AppEditTextControl appComponent;
+        private AppControl appComponent;
         private JTextComponent swingComponent;
+        private WritableStr text;
 
         public InstallTextComponent(AppEditTextControl appComponent, JTextComponent swingComponent) {
+            this(appComponent,swingComponent,appComponent.text());
+        }
+        public InstallTextComponent(AppControl appComponent, JTextComponent swingComponent,WritableStr text) {
             this.appComponent = appComponent;
             this.swingComponent = swingComponent;
+            this.text = text;
         }
 
-        void install() {
+        public void install() {
             DocumentListener documentListener = new DocumentListener() {
 
                 @Override
@@ -333,7 +339,7 @@ public class SwingPeerHelper {
                     if (!updatingDocument) {
                         try {
                             updatingDocument = true;
-                            appComponent.text().set(Str.of(swingComponent.getText()));
+                            text.set(Str.of(swingComponent.getText()));
                         } finally {
                             updatingDocument = false;
                         }
@@ -369,7 +375,7 @@ public class SwingPeerHelper {
             swingComponent.getDocument().addDocumentListener(documentListener);
 
             //ignore locale!!
-            appComponent.text().onChangeAndInit(new Runnable() {
+            text.onChangeAndInit(new Runnable() {
                 boolean updating = false;
 
                 @Override
@@ -379,7 +385,7 @@ public class SwingPeerHelper {
                         try {
                             if (!updatingDocument) {
                                 swingComponent.setText(
-                                        appComponent.text().getOr(x -> x == null ? "" : x.toString())
+                                        text.getOr(x -> x == null ? "" : x.toString())
                                 );
                             }
                         } finally {

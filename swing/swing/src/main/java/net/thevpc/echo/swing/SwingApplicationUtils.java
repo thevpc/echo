@@ -8,12 +8,14 @@ import net.thevpc.common.props.PropertyEvent;
 import net.thevpc.common.props.PropertyListener;
 import net.thevpc.common.props.WritableBoolean;
 import net.thevpc.echo.Application;
+import net.thevpc.echo.KeyCode;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.constraints.Anchor;
 import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.DefaultActionEvent;
+import net.thevpc.echo.swing.helpers.KeyCodeHelper;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 import net.thevpc.echo.swing.icons.SwingAppImage;
 import net.thevpc.echo.swing.peers.SwingPeer;
@@ -190,10 +192,10 @@ public class SwingApplicationUtils {
 //        appComponent.smallIcon().reevalValue();
         button.setIcon(SwingAppImage.iconOf(appComponent.icon().get()));
 
-        appComponent.mnemonic().onChange((PropertyEvent event) -> {
-            button.setMnemonic((Integer) event.newValue());
+        appComponent.mnemonic().onChangeAndInit((PropertyEvent event) -> {
+            KeyCode q = appComponent.mnemonic().get();
+            button.setMnemonic(KeyCodeHelper.toAwtKeyEvent(q));
         });
-        button.setMnemonic(appComponent.mnemonic().get());
 
         if (button instanceof JMenuItem && !(button instanceof JMenu)) {
             appComponent.accelerator().onChange((PropertyEvent event) -> {

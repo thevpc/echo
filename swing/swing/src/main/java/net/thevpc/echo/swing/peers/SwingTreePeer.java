@@ -103,9 +103,9 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
             List<?> collBefore = before_echoSelection.stream().map(x -> x.get()).collect(Collectors.toList());
             List<Object> collAfter = after_swingSelection.stream().map(x -> x.get()).collect(Collectors.toList());
             if (!before_echoSelection.equals(after_swingSelection)) {
-                System.out.println("SWING-ECHO......................");
-                System.out.println("==> BEFORE " + before_echoSelection.size() + " :: " + collBefore);
-                System.out.println("==> AFTER " + after_swingSelection.size() + " :: " + collAfter);
+//                System.out.println("SWING-ECHO......................");
+//                System.out.println("==> BEFORE " + before_echoSelection.size() + " :: " + collBefore);
+//                System.out.println("==> AFTER " + after_swingSelection.size() + " :: " + collAfter);
                 appTree.selection().setCollection((Collection) after_swingSelection);
             }
         });
@@ -119,9 +119,9 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
                     .map(p -> ((AppTreeNode) p.getLastPathComponent()))
                     .collect(Collectors.toList());
             if (!before_swingSelection.equals(after_echoSelection)) {
-                System.out.println("ECHO-SWING......................");
-                System.out.println("==> BEFORE " + before_swingSelection.size() + " :: " + before_swingSelection.stream().map(x -> x.get()).collect(Collectors.toList()));
-                System.out.println("==> AFTER " + after_echoSelection.size() + " :: " + after_echoSelection.stream().map(x -> x.get()).collect(Collectors.toList()));
+//                System.out.println("ECHO-SWING......................");
+//                System.out.println("==> BEFORE " + before_swingSelection.size() + " :: " + before_swingSelection.stream().map(x -> x.get()).collect(Collectors.toList()));
+//                System.out.println("==> AFTER " + after_echoSelection.size() + " :: " + after_echoSelection.stream().map(x -> x.get()).collect(Collectors.toList()));
                 swingComponent.setSelectionPaths(echoSelectionPaths.toArray(new TreePath[0]));
             }
         });
