@@ -4,8 +4,10 @@ import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppSeparator;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.components.ComponentBase;
 import net.thevpc.echo.spi.peers.AppSeparatorPeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +24,8 @@ public class SwingSeparatorPeer implements SwingPeer, AppSeparatorPeer {
             return;
         }
         AppSeparator etool=(AppSeparator) component;
-        Object sParent = component.parent()==null?null:component.parent().peer().toolkitComponent();
+        AppComponent ep = Applications.effectiveParent(component);
+        Object sParent = ep==null?null:ep.peer().toolkitComponent();
         double height = ((Number) etool.height().get()).doubleValue();
         double width = ((Number) etool.width().get()).doubleValue();
         if (
@@ -45,6 +48,7 @@ public class SwingSeparatorPeer implements SwingPeer, AppSeparatorPeer {
         } else {
             separator= createSpacer(height, width);
         }
+        SwingPeerHelper.installComponent(component,(JComponent) separator);
     }
 
     private Box.Filler createSpacer(double height, double width) {

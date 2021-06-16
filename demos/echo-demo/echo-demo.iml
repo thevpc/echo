@@ -10,10 +10,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="echo-api" />
     <orderEntry type="module" module-name="swing-explorer" />
     <orderEntry type="library" name="Maven: org.jboss:javassist:3.7.1.GA" level="project" />
     <orderEntry type="library" name="Maven: org.swinglabs:swing-layout:1.0.3" level="project" />
-    <orderEntry type="module" module-name="echo-api" />
+    <orderEntry type="module" module-name="echo" />
     <orderEntry type="module" module-name="thevpc-common-i18n" />
     <orderEntry type="module" module-name="thevpc-common-props" />
     <orderEntry type="module" module-name="thevpc-common-msg" />
@@ -30,25 +31,5 @@
     <orderEntry type="module" module-name="thevpc-common-text-source-log" />
     <orderEntry type="module" module-name="thevpc-common-classpath" />
     <orderEntry type="module" module-name="jeep-swing-editorkits" />
-    <orderEntry type="module" module-name="echo-swing-mydoggy" />
-    <orderEntry type="module" module-name="mydoggy-api" />
-    <orderEntry type="module" module-name="mydoggy-plaf" />
-    <orderEntry type="library" name="Maven: tablelayout:TableLayout:20050920" level="project" />
-    <orderEntry type="module" module-name="mydoggy-res" />
-    <orderEntry type="module" module-name="echo-swing-swingx" />
-    <orderEntry type="library" name="Maven: org.swinglabs:swingx:1.6.1" level="project" />
-    <orderEntry type="library" name="Maven: com.jhlabs:filters:2.0.235" level="project" />
-    <orderEntry type="library" name="Maven: org.swinglabs:swing-worker:1.1" level="project" />
-    <orderEntry type="module" module-name="echo-jfx" />
-    <orderEntry type="library" name="Maven: org.jfxtras:jfxtras-window:8.0-r6" level="project" />
-    <orderEntry type="library" name="Maven: org.jfxtras:jfxtras-common:8.0-r6" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:linux:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-graphics:linux:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-base:linux:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:15.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:linux:15.0.1" level="project" />
   </component>
 </module>

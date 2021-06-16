@@ -22,7 +22,8 @@ public class SwingLabelPeer implements SwingPeer, AppLabelPeer {
 
     public void install(AppComponent component) {
         AppLabel ecomp = (AppLabel) component;
-        Object sParent = component.parent() == null ? null : component.parent().peer().toolkitComponent();
+        AppComponent ep = Applications.effectiveParent(component);
+        Object sParent = ep == null ? null : ep.peer().toolkitComponent();
         if (
                 sParent instanceof JMenu
                         || sParent instanceof JPopupMenu

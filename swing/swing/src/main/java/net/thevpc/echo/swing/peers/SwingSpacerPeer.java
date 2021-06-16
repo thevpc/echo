@@ -4,6 +4,7 @@ import net.thevpc.common.swing.button.JDropDownButton;
 import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppSpacer;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppSpacerPeer;
 import net.thevpc.echo.impl.components.ComponentBase;
 
@@ -22,7 +23,8 @@ public class SwingSpacerPeer implements SwingPeer, AppSpacerPeer {
             return;
         }
         AppSpacer ecomp = (AppSpacer) component;
-        Object sParent = component.parent()==null?null:component.parent().peer().toolkitComponent();
+        AppComponent ep = Applications.effectiveParent(component);
+        Object sParent = ep==null?null:ep.peer().toolkitComponent();
         double height = ecomp.height().get().doubleValue();
         double width = ecomp.width().get().doubleValue();
         if (

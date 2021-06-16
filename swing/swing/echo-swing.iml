@@ -12,6 +12,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="echo-api" />
+    <orderEntry type="module" module-name="echo" />
     <orderEntry type="module" module-name="thevpc-common-i18n" />
     <orderEntry type="module" module-name="thevpc-common-props" />
     <orderEntry type="module" module-name="thevpc-common-msg" />

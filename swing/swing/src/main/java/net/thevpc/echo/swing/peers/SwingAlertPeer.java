@@ -8,13 +8,10 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.common.i18n.Str;
 import net.thevpc.common.swing.SwingUtilities3;
 import net.thevpc.common.swing.dialog.JDialog2;
-import net.thevpc.common.swing.icon.EmptyIcon;
 import net.thevpc.common.swing.layout.GridBagLayoutSupport;
 import net.thevpc.echo.Alert;
 import net.thevpc.echo.Application;
-import net.thevpc.echo.api.AppDialogAction;
 import net.thevpc.echo.api.AppDialogContext;
-import net.thevpc.echo.api.AppDialogResult;
 import net.thevpc.echo.api.AppImage;
 import net.thevpc.echo.api.components.AppAlert;
 import net.thevpc.echo.api.components.AppComponent;
@@ -22,6 +19,7 @@ import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.DefaultAppDialogContext;
 import net.thevpc.echo.impl.dialog.DefaultAppDialogResult;
 import net.thevpc.echo.spi.peers.AppAlertPeer;
+import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
@@ -32,6 +30,10 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Supplier;
+import net.thevpc.echo.api.AppAlertAction;
+import net.thevpc.echo.api.AppAlertInputPane;
+import net.thevpc.echo.api.AppAlertResult;
 
 /**
  * @author vpc
@@ -47,7 +49,7 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
 //    private Supplier<?> valueEvaluator;
 //    private Component mainComponent;
 
-    //    public SwingAlertPeer(Application app, AppAlert binding, String titleId, JComponent mainComponent, String[] buttonIds, String defaultId, AppDialogAction cons
+    //    public SwingAlertPeer(Application app, AppAlert binding, String titleId, JComponent mainComponent, String[] buttonIds, String defaultId, AppAlertAction cons
 //            , Supplier<?> valueEvaluator
 //            , Object... params) {
 //        this(app, binding,titleId, valueEvaluator,params);
@@ -80,10 +82,13 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         return null;
     }
 
-    public String showDialog(AppComponent owner) {
+    public AppAlertResult showDialog(AppComponent owner) {
         this.selectedButton = null;
-        JFrame f = (JFrame) (app.mainFrame().get()==null?null:app.mainFrame().get().peer().toolkitComponent());
-        JDialog2 dialog2 = new JDialog2(f);
+        if (owner == null) {
+            owner = appAlert.owner().get();
+        }
+        Window f = SwingPeerHelper.resolveOwnerWindow(owner, appAlert.app());
+        JDialog2 dialog2 = (f instanceof Frame) ? new JDialog2((Frame) f) : new JDialog2((Dialog) f);
         dialog2.setModal(true);
 
         dialog2.setTitle(evalTitle());
@@ -99,15 +104,16 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         }
         build(dialog2, _mainComponent,
                 appAlert.getButtonIds().toArray(new String[0]),
-                appAlert.defaultButton().get(), appAlert.getAction()
+                appAlert.defaultButton().get(), appAlert.getAction(), f
         );
         currentDialog = dialog2;
         dialog2.setVisible(true);
-        return selectedButton == null ? "" : selectedButton;
-    }
-
-    public AppDialogResult showInputDialog(AppComponent owner) {
-        return new DefaultAppDialogResult(showDialog(owner), appAlert.getValueEvaluator(), appAlert, app);
+        String buttonResult = selectedButton == null ? "" : selectedButton;
+        Supplier<?> valueEvaluator = null;
+        if (appAlert.content().get() instanceof AppAlertInputPane) {
+            valueEvaluator = ((AppAlertInputPane) appAlert.content().get())::getValue;
+        }
+        return new DefaultAppDialogResult(buttonResult, valueEvaluator, appAlert, app);
     }
 
     @Override
@@ -118,7 +124,7 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         }
     }
 
-    public void build(JDialog2 dialog2, Component mainComponent, String[] buttonIds, String defaultId, AppDialogAction action) {
+    public void build(JDialog2 dialog2, Component mainComponent, String[] buttonIds, String defaultId, AppAlertAction action, Window owner) {
 
         //            Str _titleId = title;
         java.util.List<String> _buttonIds = buttonIds == null ? new java.util.ArrayList<>() : new java.util.ArrayList<>(
@@ -129,10 +135,10 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         }
         buttonIds = _buttonIds.toArray(new String[0]);
         if (action == null) {
-            action = new AppDialogAction() {
+            action = new AppAlertAction() {
                 @Override
                 public void onAction(AppDialogContext context) {
-                    AppDialogAction a = appAlert.getAction(context.getButtonId());
+                    AppAlertAction a = appAlert.getAction(context.getButtonId());
                     if (a != null) {
                         a.onAction(context);
                     }
@@ -145,46 +151,27 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         JPanel withBorder = new JPanel(new BorderLayout());
         withBorder.add(mainComponent);
         withBorder.setBorder(BorderFactory.createEmptyBorder(10, 5, 5, 5));
-
-        JLabel hh = new JLabel();
-        hh.setText(evalHeader());
-        hh.setHorizontalTextPosition(SwingConstants.RIGHT);
-        hh.setIconTextGap(16);
-        hh.setOpaque(true);
-        hh.setPreferredSize(new Dimension(400, 60));
-        hh.setMinimumSize(new Dimension(400, 60));
+        SwingAlertHeader header = new SwingAlertHeader();
+        header.setHeaderText(evalHeader());
         Icon icon = null;
         AppImage hi = appAlert.headerIcon().get();
         if (hi != null) {
             hi = hi.scaleTo(24, 24);
         }
         icon = SwingHelpers.toAwtIcon(hi);
-        if (icon == null) {
-            icon = new EmptyIcon(24, 24);
-        }
-        hh.setIcon(icon);
-//        hh.setIcon(new RectColorIcon(Color.RED, 32));
+        header.setHeaderIcon(icon);
 
-        hh.setFont(hh.getFont().deriveFont(Font.BOLD, (int) (hh.getFont().getSize() * 1.2)));
-        hh.setOpaque(false);
-        Box hb = Box.createHorizontalBox();
-        hb.add(Box.createHorizontalStrut(10));
-        hb.add(hh);
-
-        hb.setBackground(Color.WHITE);
-        hb.setOpaque(true);
-        hb.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.DARK_GRAY));
-
-        dialog2.getRootPane().add(hb, BorderLayout.NORTH);
+        dialog2.getRootPane().add(header, BorderLayout.NORTH);
         dialog2.getRootPane().add(withBorder, BorderLayout.CENTER);
         dialog2.getRootPane().add(footer, BorderLayout.SOUTH);
         SwingUtilities3.addEscapeBindings(dialog2);
         if (defaultId != null) {
             dialog2.getRootPane().setDefaultButton(footer.getButton(defaultId));
         }
-        JFrame f = (JFrame) (app.mainFrame().get()==null?null:app.mainFrame().get().peer().toolkitComponent());
         dialog2.pack();
-        dialog2.setLocationRelativeTo(f);
+        if (owner != null) {
+            dialog2.setLocationRelativeTo(owner);
+        }
     }
 
     public String evalHeader() {
@@ -220,7 +207,7 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
         Map<String, JButton> buttons = new LinkedHashMap<>();
         private ActionListenerImpl actionListenerImpl;
 
-        public GenFooter(Application app, AppDialogAction cons, String[] buttonIds) {
+        public GenFooter(Application app, AppAlertAction cons, String[] buttonIds) {
             StringBuilder form = new StringBuilder("[-=glue(h)]");
             actionListenerImpl = new ActionListenerImpl(cons);
             for (int i = 0; i < buttonIds.length; i++) {
@@ -250,9 +237,9 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
 
     private class ActionListenerImpl implements ActionListener {
 
-        private final AppDialogAction cons;
+        private final AppAlertAction cons;
 
-        public ActionListenerImpl(AppDialogAction cons) {
+        public ActionListenerImpl(AppAlertAction cons) {
             this.cons = cons;
         }
 

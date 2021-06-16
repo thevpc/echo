@@ -52,7 +52,7 @@ public class EchoAppDemo {
                     new Alert(app)
                             .setContentText(Str.of("Example Text"))
                             .withButtons("Please", "Never")
-                            .showDialog(null);
+                            .showDialog();
                 }, app),
                 "/mainFrame/toolBar/Default/*");
 
@@ -91,8 +91,8 @@ public class EchoAppDemo {
                 (app.toolkit().id().equals("swing"))
                         ? new JButton(text)
                         : (app.toolkit().id().equals("javafx"))
-                        ? new javafx.scene.control.Button(text)
-                        : null
+//                        ? new javafx.scene.control.Button(text)
+//                        : null
         ), app);
     }
 

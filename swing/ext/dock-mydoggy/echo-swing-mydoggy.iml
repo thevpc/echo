@@ -11,12 +11,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="echo-api" />
     <orderEntry type="module" module-name="mydoggy-api" />
     <orderEntry type="module" module-name="mydoggy-plaf" />
     <orderEntry type="library" name="Maven: tablelayout:TableLayout:20050920" level="project" />
     <orderEntry type="module" module-name="mydoggy-res" />
     <orderEntry type="module" module-name="echo-swing" />
-    <orderEntry type="module" module-name="echo-api" />
+    <orderEntry type="module" module-name="echo" />
     <orderEntry type="module" module-name="thevpc-common-i18n" />
     <orderEntry type="module" module-name="thevpc-common-props" />
     <orderEntry type="module" module-name="thevpc-common-msg" />

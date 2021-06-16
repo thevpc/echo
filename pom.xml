@@ -9,10 +9,10 @@
     <version>1.1.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>api</module>
         <module>swing</module>
-        <module>jfx</module>
+<!--        <module>jfx</module>-->
         <module>demos/echo-demo</module>
+        <module>echo</module>
     </modules>
     <properties>
     </properties>

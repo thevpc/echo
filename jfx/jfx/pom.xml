@@ -49,9 +49,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <github.global.server>github</github.global.server>
+        <javafx.version>15.0.1</javafx.version>
+        <!--<javafx.version>11</javafx.version>-->
     </properties>
     <dependencies>
         <!-- ##############################
@@ -59,7 +61,7 @@
         ############################## -->
         <dependency>
             <groupId>net.thevpc.echo</groupId>
-            <artifactId>echo-api</artifactId>
+            <artifactId>echo</artifactId>
             <version>1.1.0</version>
         </dependency>
 
@@ -87,12 +89,12 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>15.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>15.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>com.kitfox.svg</groupId>

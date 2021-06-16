@@ -5,6 +5,7 @@ import net.thevpc.common.swing.label.JDropDownLabel;
 import net.thevpc.echo.api.components.AppCheckBox;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppRadioButton;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.impl.components.ToggleBase;
 import net.thevpc.echo.spi.peers.AppCheckBoxPeer;
 import net.thevpc.echo.spi.peers.AppRadioButtonPeer;
@@ -26,7 +27,8 @@ public class SwingToggleButtonPeer implements SwingPeer, AppToggleButtonPeer, Ap
     public void install(AppComponent component) {
         ToggleBase ecomp = (ToggleBase) component;
 //        AppComponentType ct = component.componentType();
-        Object sParent = component.parent() == null ? null : component.parent().peer().toolkitComponent();
+        AppComponent ep = Applications.effectiveParent(component);
+        Object sParent = ep == null ? null : ep.peer().toolkitComponent();
         if (
                 sParent instanceof JMenu
                         || sParent instanceof JPopupMenu

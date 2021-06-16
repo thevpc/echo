@@ -316,4 +316,10 @@ public class FxApplicationToolkit extends AbstractApplicationToolkit {
     public PrinterService printerService() {
         throw new IllegalArgumentException("unsupported yet");
     }
+
+    @Override
+    public AppFont[] availablefonts() {
+        throw new IllegalArgumentException("unsupported yet");
+    }
+    
 }

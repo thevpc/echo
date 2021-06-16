@@ -205,6 +205,11 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
     }
 
     @Override
+    public <T> AppTreeCallBack<T> callback() {
+        return m.callback();
+    }
+
+    @Override
     public Object toolkitComponent() {
         return swingComponent;
     }

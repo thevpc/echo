@@ -1,20 +1,43 @@
 package net.thevpc.echo.swing.raw;
 
-import net.thevpc.common.props.PropertyEvent;
-import net.thevpc.common.props.PropertyListener;
-import net.thevpc.common.props.PropertyUpdate;
 import net.thevpc.common.swing.tree.AbstractTreeModel;
 import net.thevpc.echo.api.components.AppTree;
+import net.thevpc.echo.api.components.AppTreeCallBack;
+import net.thevpc.echo.api.components.AppTreeIndexedChild;
 import net.thevpc.echo.api.components.AppTreeNode;
-import net.thevpc.echo.impl.TreeNode;
 import net.thevpc.echo.model.AppTreeMutator;
-import net.thevpc.echo.swing.peers.SwingTreePeer;
 
 import javax.swing.*;
+import java.util.Arrays;
 
 public class TreeItemTreeModel<T> extends AbstractTreeModel {
     private AppTree<T> tree;
     private JTree jtree;
+    private AppTreeCallBack<T> callback=new AppTreeCallBack<T>() {
+        @Override
+        public void nodesWereUpdated(AppTreeNode<T> parent, AppTreeIndexedChild<T>... children) {
+            TreeItemTreeModel<T> t=TreeItemTreeModel.this;
+            t.nodesChanged(parent, Arrays.stream(children).mapToInt(x->x.index()).toArray());
+        }
+        @Override
+        public void nodesWereInserted(AppTreeNode<T> parent, AppTreeIndexedChild<T>... children) {
+            TreeItemTreeModel<T> t=TreeItemTreeModel.this;
+            t.nodesWereInserted(parent, Arrays.stream(children).mapToInt(x->x.index()).toArray());
+        }
+
+        @Override
+        public void nodesWereDeleted(AppTreeNode<T> parent, AppTreeIndexedChild<T>... children) {
+            TreeItemTreeModel<T> t=TreeItemTreeModel.this;
+            t.nodesWereRemoved(parent,
+                    Arrays.stream(children).mapToInt(x->x.index()).toArray(),
+                    Arrays.stream(children).map(x->x.child()).toArray()
+            );
+        }
+    };
+
+    public <T> AppTreeCallBack<T> callback() {
+        return (AppTreeCallBack<T>) callback;
+    }
 
     public TreeItemTreeModel(AppTree<T> tree0) {
         this.tree=tree0;
@@ -40,11 +63,11 @@ public class TreeItemTreeModel<T> extends AbstractTreeModel {
                 if (node!=null) {
                     switch (event.eventType()){
                         case ADD:{
-                            fireTreeNodesInserted(jtree, SwingTreePeer.toTreePath(node).getPath(),
-                                    new int[]{event.index()},
-                                    new Object[]{event.newValue()}
-                            );
-                            jtree.updateUI();
+//                            fireTreeNodesInserted(jtree, SwingTreePeer.toTreePath(node).getPath(),
+//                                    new int[]{event.index()},
+//                                    new Object[]{event.newValue()}
+//                            );
+                            //jtree.updateUI();
 //                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
                             break;
                         }
@@ -54,16 +77,27 @@ public class TreeItemTreeModel<T> extends AbstractTreeModel {
 //                                    new Object[]{event.newValue()}
 //                            );
 //                            jtree.updateUI();
-                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
+                            //fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
                             break;
                         }
                         case REMOVE:{
-                            fireTreeNodesRemoved(jtree, SwingTreePeer.toTreePath2Arr(node),
-                                    new int[]{event.index()},
-                                    new Object[]{event.oldValue()}
-                                    );
-                            jtree.updateUI();
+//                            Object p = node.parent().get();
+//                            if(p!=null){
+//                                fireTreeStructureChanged(jtree,
+//                                        SwingTreePeer.toTreePath2Arr((AppTreeNode) p)
+//                                        ,null,null);
+//                            }
+//                            fireTreeNodesRemoved(jtree, SwingTreePeer.toTreePath2Arr(node),
+//                                    new int[]{event.index()},
+//                                    new Object[]{event.oldValue()}
+//                                    );
+                            //jtree.updateUI();
 //                            fireTreeStructureChanged(jtree,new Object[]{getRoot()},null,null);
+                            break;
+                        }
+                        case REFRESH:{
+                            //jtree.updateUI();
+                            nodeChanged(node);
                             break;
                         }
                     }
@@ -119,7 +153,7 @@ public class TreeItemTreeModel<T> extends AbstractTreeModel {
     protected void insertNodeIntoImpl(Object parent, Object newChild, int index) {
         AppTreeMutator<T> g = tree.mutator().get();
         if(g!=null){
-            g.addChild((AppTreeNode<T>) parent,(AppTreeNode<T>) newChild,index);
+            g.addChild((AppTreeNode<T>) parent,(AppTreeNode<T>) newChild,index, callback);
         }
     }
 
@@ -127,7 +161,7 @@ public class TreeItemTreeModel<T> extends AbstractTreeModel {
     protected void removeNodeFromParentImpl(Object parent, int index) {
         AppTreeMutator<T> g = tree.mutator().get();
         if(g!=null){
-            g.removeChild((AppTreeNode<T>) parent,index);
+            g.removeChild((AppTreeNode<T>) parent,index, callback);
         }
     }
 

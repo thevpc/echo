@@ -14,7 +14,7 @@
         </dependency>
         <dependency>
             <groupId>net.thevpc.echo</groupId>
-            <artifactId>echo-api</artifactId>
+            <artifactId>echo</artifactId>
             <version>1.1.0</version>
         </dependency>
         <dependency>
@@ -22,26 +22,21 @@
             <artifactId>echo-swing</artifactId>
             <version>1.1.0</version>
         </dependency>
-        <dependency>
-            <groupId>net.thevpc.echo</groupId>
-            <artifactId>echo-swing-mydoggy</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.echo</groupId>
-            <artifactId>echo-swing-mydoggy</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.echo</groupId>
-            <artifactId>echo-swing-swingx</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.thevpc.echo</groupId>
-            <artifactId>echo-jfx</artifactId>
-            <version>1.1.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>net.thevpc.echo</groupId>-->
+<!--            <artifactId>echo-swing-mydoggy</artifactId>-->
+<!--            <version>1.1.0</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>net.thevpc.echo</groupId>-->
+<!--            <artifactId>echo-swing-swingx</artifactId>-->
+<!--            <version>1.1.0</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>net.thevpc.echo</groupId>-->
+<!--            <artifactId>echo-jfx</artifactId>-->
+<!--            <version>1.1.0</version>-->
+<!--        </dependency>-->
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

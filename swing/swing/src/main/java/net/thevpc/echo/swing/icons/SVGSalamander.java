@@ -11,8 +11,13 @@ import com.kitfox.svg.SVGException;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author vpc
@@ -75,10 +80,43 @@ public class SVGSalamander {
         }
     }
 
+//    private static final Map<URI,SVGDiagram> loaded=new HashMap<>();
+//    private static final Set<URI> loading=new HashSet<>();
     private static SVGDiagram getSvgDiagram(URL url) throws URISyntaxException {
         SVGDiagram diagram=null;
-        synchronized (SVGCache.getSVGUniverse()) {
-            diagram = SVGCache.getSVGUniverse().getDiagram(url.toURI());
+        URI uri = url.toURI();
+//        synchronized (loaded) {
+//            SVGDiagram a = loaded.get(uri);
+//            if(a!=null){
+//                return a;
+//            }
+//        }
+//        boolean stillLoading=true;
+//        while(stillLoading) {
+//            synchronized (loading) {
+//                if (loading.contains(uri)) {
+//                    try {
+//                        Thread.sleep(200);
+//                    } catch (InterruptedException e) {
+//                        //
+//                    }
+//                }else{
+//                    loading.add(uri);
+//                    stillLoading=false;
+//                }
+//            }
+//        }
+        try {
+            synchronized (SVGCache.getSVGUniverse()) {
+                diagram = SVGCache.getSVGUniverse().getDiagram(uri);
+            }
+        }finally {
+//            synchronized (loading) {
+//                loading.remove(uri);
+//            }
+//            synchronized (loaded) {
+//                loaded.put(uri, diagram);
+//            }
         }
         return diagram;
     }

@@ -7,6 +7,7 @@ import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppTextArea;
 import net.thevpc.echo.spi.peers.AppTextAreaPeer;
 import net.thevpc.echo.swing.SwingPeerHelper;
+import net.thevpc.echo.swing.peers.htmleditor.SwingRichHtmlEditorPeer;
 import net.thevpc.jeep.editor.ColorResource;
 import net.thevpc.jeep.editor.JEditorPaneBuilder;
 import net.thevpc.jeep.editor.JSyntaxStyleManager;

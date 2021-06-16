@@ -20,7 +20,8 @@ public class SwingMenuPeer implements SwingPeer, AppMenuPeer {
     @Override
     public void install(AppComponent comp) {
         this.component = (AppTextControl) comp;
-        if(comp.parent() instanceof AppToolBar) {
+        AppComponent ep = Applications.effectiveParent(component);
+        if(ep instanceof AppToolBar) {
             jcomponent = new JDropDownButton();
             ((JDropDownButton)jcomponent).setQuickActionDelay(0);
             SwingApplicationUtils.prepareAbstractButton(jcomponent, component, comp.app(), false);

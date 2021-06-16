@@ -17,6 +17,7 @@ import net.thevpc.echo.spi.peers.*;
 import net.thevpc.echo.swing.icons.SwingAppImage;
 import net.thevpc.echo.swing.icons.SwingColorIconTransform;
 import net.thevpc.echo.swing.peers.*;
+import net.thevpc.echo.swing.peers.htmleditor.SwingRichHtmlEditorPeer;
 import net.thevpc.echo.swing.print.ComponentPrintable;
 import net.thevpc.jeep.editor.ColorResource;
 import net.thevpc.swing.plaf.UIPlaf;
@@ -34,9 +35,11 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 /**
  * @author vpc
@@ -53,7 +56,7 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
         super.initialize(app);
         addPeerFactory(AppLabelPeer.class, SwingLabelPeer.class);
         addPeerFactory(AppAlertPeer.class, SwingAlertPeer.class);
-        addPeerFactory(AppFileChooserPeer.class, SwingAppFileChooserPeer.class);
+        addPeerFactory(AppFileChooserPeer.class, SwingFileChooserPeer.class);
         addPeerFactory(AppFramePeer.class, SwingFramePeer.class);
         addPeerFactory(AppButtonPeer.class, SwingButtonPeer.class);
         addPeerFactory(AppContextMenuPeer.class, SwingContextMenuPeer.class);
@@ -84,6 +87,10 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
         addPeerFactory(AppColorButtonPeer.class, SwingColorButtonPeer.class);
         addPeerFactory(AppWebViewPeer.class, SwingWebViewPeer.class);
         addPeerFactory(AppBreadCrumbPeer.class, SwingBreadCrumbPeer.class);
+//        addPeerFactory(AppFontChooserPeer.class, SwingFontChooserPeer.class);
+//        addPeerFactory(AppFontButtonPeer.class, SwingFontButtonPeer.class);
+        addPeerFactory(AppNumberFieldPeer.class, SwingNumberFieldPeer.class);
+//        addPeerFactory(AppFileFieldPeer.class, SwingFileFieldPeer.class);
 
         UIPlafManager.getCurrentManager().addListener(x -> {
             app.plaf().set(x.getId());
@@ -330,4 +337,13 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
             }
         };
     }
+
+    @Override
+    public AppFont[] availablefonts() {
+        Font[] fontList = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+        return Arrays.stream(fontList)
+                .map(x->SwingHelpers.fromAwtFont(x, app))
+                .toArray(AppFont[]::new);
+    }
+    
 }

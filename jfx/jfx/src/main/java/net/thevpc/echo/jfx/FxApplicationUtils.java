@@ -135,7 +135,7 @@ public class FxApplicationUtils {
                 public void handle(javafx.event.ActionEvent t) {
                     Action a = action.action().get();
                     if (a != null) {
-                        a.run(new DefaultActionEvent(app, tool, t.getSource(), t));
+                        a.run(new DefaultActionEvent(app, tool, t.getSource(), t,action.value().get()));
                     }
                 }
             });
@@ -193,7 +193,7 @@ public class FxApplicationUtils {
                 public void handle(javafx.event.ActionEvent t) {
                     Action a = action.action().get();
                     if (a != null) {
-                        a.run(new DefaultActionEvent(app, tool, t.getSource(), t));
+                        a.run(new DefaultActionEvent(app, tool, t.getSource(), t,action.value().get()));
                     }
                 }
             });

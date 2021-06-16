@@ -58,11 +58,11 @@ public class SwingApplicationUtils {
                             e.getButton()
                     );
                     p.dispatchEvent(e2);
-                    if(e.isPopupTrigger()){
-                        if(p instanceof JComponent){
-                            JComponent jc=(JComponent) p;
+                    if (e.isPopupTrigger()) {
+                        if (p instanceof JComponent) {
+                            JComponent jc = (JComponent) p;
                             JPopupMenu cpm = jc.getComponentPopupMenu();
-                            if(cpm!=null) {
+                            if (cpm != null) {
                                 //cpm.show(jc, x, y);
                             }
                         }
@@ -174,14 +174,6 @@ public class SwingApplicationUtils {
                 button.setToolTipText(Applications.rawString(textStr.get(), app, button.getLocale()));
             }
         }
-        appComponent.enabled().onChange((PropertyEvent event) -> {
-            button.setEnabled((Boolean) event.newValue());
-        });
-        button.setEnabled(appComponent.enabled().get());
-        appComponent.visible().onChange((PropertyEvent event) -> {
-            button.setVisible((Boolean) event.newValue());
-        });
-        button.setVisible(appComponent.visible().get());
 
         appComponent.icon().onChange((PropertyEvent event) -> {
             button.setIcon(SwingAppImage.iconOf(appComponent.icon().get()));
@@ -210,7 +202,6 @@ public class SwingApplicationUtils {
             );
         }
 
-
         if (appComponent instanceof AppButton) {
             AppButton action = (AppButton) appComponent;
             button.addActionListener(new ActionListener() {
@@ -218,7 +209,9 @@ public class SwingApplicationUtils {
                 public void actionPerformed(ActionEvent e) {
                     net.thevpc.echo.api.Action a = action.action().get();
                     if (a != null) {
-                        a.run(new DefaultActionEvent(app, appComponent, e.getSource(), e));
+                        a.run(new DefaultActionEvent(app, appComponent, e.getSource(), e,
+                                action.value().get()
+                        ));
                     }
                 }
             });
@@ -452,10 +445,10 @@ public class SwingApplicationUtils {
     }
 
     public static Font deriveFont(Font initialFont,
-                                  Boolean italic,
-                                  Boolean bold,
-                                  Boolean underline,
-                                  Boolean strike) {
+            Boolean italic,
+            Boolean bold,
+            Boolean underline,
+            Boolean strike) {
         Map<TextAttribute, Object> attributes = (Map<TextAttribute, Object>) initialFont.getAttributes();
         boolean wasI = initialFont.isItalic();
         boolean wasB = initialFont.isBold();
@@ -481,7 +474,7 @@ public class SwingApplicationUtils {
                 }
             }
             if (s != wasS) {
-                if (u) {
+                if (s) {
                     attributes.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
                 } else {
                     attributes.remove(TextAttribute.STRIKETHROUGH);
@@ -497,10 +490,10 @@ public class SwingApplicationUtils {
     }
 
     public static void setComponentFont(Component component, AppFont initialFont,
-                                        Boolean italic,
-                                        Boolean bold,
-                                        Boolean underline,
-                                        Boolean strike) {
+            Boolean italic,
+            Boolean bold,
+            Boolean underline,
+            Boolean strike) {
         Font f = initialFont == null ? null : (Font) initialFont.peer().toolkitFont();
         setComponentFont(component, f, italic, bold, underline, strike);
     }
@@ -520,10 +513,10 @@ public class SwingApplicationUtils {
     }
 
     public static void setComponentFont(Component component, Font initialFont,
-                                        Boolean italic,
-                                        Boolean bold,
-                                        Boolean underline,
-                                        Boolean strike
+            Boolean italic,
+            Boolean bold,
+            Boolean underline,
+            Boolean strike
     ) {
         if (initialFont == null) {
             initialFont = component.getFont();
@@ -533,8 +526,8 @@ public class SwingApplicationUtils {
         }
 
         Font old = component.getFont();
-        String olds = fontHashSting(old);
-        String ffs = fontHashSting(initialFont);
+        String olds = fontHashString(old, null, null, null, null);
+        String ffs = fontHashString(initialFont, italic, bold, underline, strike);
         if (!olds.equals(ffs)) {
             Font f = SwingApplicationUtils.deriveFont(
                     initialFont,
@@ -751,27 +744,41 @@ public class SwingApplicationUtils {
         return f == null ? "" : String.valueOf(f.getRGB());
     }
 
-    public static String fontHashSting(Font f) {
+    public static String fontHashString(Font f, Boolean italic,
+            Boolean bold,
+            Boolean underline,
+            Boolean strike) {
         if (f == null) {
             return "";
         }
-        String style = "";
-        if (f.isBold()) {
-            style += "B";
-        }
-        if (f.isItalic()) {
-            style += "I";
-        }
         Map<TextAttribute, ?> a = f.getAttributes();
-        Object au = a.get(TextAttribute.UNDERLINE);
-        if (TextAttribute.UNDERLINE_ON.equals(au)) {
-            style += "U";
+        if (bold == null) {
+            bold = f.isBold();
         }
-        au = a.get(TextAttribute.STRIKETHROUGH);
-        if (TextAttribute.STRIKETHROUGH_ON.equals(au)) {
-            style += "S";
+        if (italic == null) {
+            italic = f.isItalic();
         }
-        return f.getFamily() + ":" + style;
+        if (underline == null) {
+            underline = TextAttribute.UNDERLINE_ON.equals(a.get(TextAttribute.UNDERLINE));
+        }
+        if (strike == null) {
+            strike = TextAttribute.STRIKETHROUGH_ON.equals(a.get(TextAttribute.STRIKETHROUGH));
+        }
+        StringBuilder sb = new StringBuilder(f.toString());
+        sb.append(":");
+        if (bold) {
+            sb.append("B");
+        }
+        if (italic) {
+            sb.append("I");
+        }
+        if (underline) {
+            sb.append("U");
+        }
+        if (strike) {
+            sb.append("S");
+        }
+        return sb.toString();
     }
 
     private static class I18nStringUpdaterPropertyListener implements PropertyListener {
@@ -871,12 +878,12 @@ public class SwingApplicationUtils {
         }
 
         public void unregisterAll() {
-            for (Iterator<javax.swing.Action> it = actions.iterator(); it.hasNext(); ) {
+            for (Iterator<javax.swing.Action> it = actions.iterator(); it.hasNext();) {
                 javax.swing.Action action = it.next();
                 SwingApplicationUtils.unregisterAction(action, app);
                 it.remove();
             }
-            for (Iterator<AbstractButton> it = buttons.iterator(); it.hasNext(); ) {
+            for (Iterator<AbstractButton> it = buttons.iterator(); it.hasNext();) {
                 AbstractButton button = it.next();
                 SwingApplicationUtils.unregisterButton(button, app);
                 it.remove();

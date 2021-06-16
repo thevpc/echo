@@ -31,6 +31,26 @@ public class SwingScrollPanePeer implements SwingPeer, AppScrollPanePeer {
     public void install(AppComponent comp) {
         appComponent=(AppScrollPane) comp;
         SwingPeerHelper.installComponent(appComponent, swingComponent);
+        appComponent.children().onChange((e)->{
+            switch (e.eventType()){
+                case UPDATE:{
+                    AppComponent other = e.newValue();//this.appComponent.child().get();
+                    swingComponent.getViewport().setView(
+                            other==null?null: (Component) other.peer().toolkitComponent()
+                    );
+                    swingComponent.invalidate();
+                    swingComponent.revalidate();
+                    swingComponent.repaint();
+                    break;
+                }
+                case REFRESH:{
+                    swingComponent.invalidate();
+                    swingComponent.revalidate();
+                    swingComponent.repaint();
+                    break;
+                }
+            }
+        });
 //        appComponent.children().onChange(()->{
 //            AppComponent c = this.appComponent.children().get();
 //            swingComponent.getViewport().setView(

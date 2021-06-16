@@ -7,20 +7,14 @@ import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.spi.peers.AppBreadCrumbPeer;
 import net.thevpc.echo.swing.SwingPeerHelper;
 import net.thevpc.echo.swing.helpers.SwingAppChoiceItemContext1;
-import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 import javax.swing.*;
-import javax.swing.plaf.ComponentUI;
-import javax.swing.plaf.SeparatorUI;
-import javax.swing.plaf.basic.BasicSeparatorUI;
-import javax.swing.plaf.metal.MetalSeparatorUI;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class SwingBreadCrumbPeer implements SwingPeer, AppBreadCrumbPeer {
 
-    ActionListenerImpl actionListenerImpl = new ActionListenerImpl();
+    private ActionListenerImpl actionListenerImpl = new ActionListenerImpl();
     private AppBreadCrumb appBreadCrumb;
     private JToolBar jcomponent;
 

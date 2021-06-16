@@ -3,6 +3,7 @@ package net.thevpc.echo.swing.peers;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppDesktop;
 import net.thevpc.echo.api.components.AppWindow;
+import net.thevpc.echo.impl.Applications;
 import net.thevpc.echo.spi.peers.AppWindowPeer;
 import net.thevpc.echo.swing.SwingPeerHelper;
 
@@ -98,9 +99,10 @@ public class SwingWindowPeer implements SwingPeer, AppWindowPeer {
 
     @Override
     public void resize(double x, double y, double w, double h) {
-        if(win.parent() instanceof AppDesktop){
-            if(win.parent().peer().toolkitComponent() instanceof JDesktopPane) {
-                JDesktopPane desk = (JDesktopPane) win.parent().peer().toolkitComponent();
+        AppComponent ep = Applications.effectiveParent(win);
+        if(ep instanceof AppDesktop){
+            if(ep.peer().toolkitComponent() instanceof JDesktopPane) {
+                JDesktopPane desk = (JDesktopPane) ep.peer().toolkitComponent();
                 JInternalFrame f = Arrays.stream(desk.getAllFrames())
                         .filter(inf ->
                                 inf.getContentPane().getComponentCount() == 1
