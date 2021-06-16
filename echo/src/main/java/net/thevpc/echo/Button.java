@@ -35,12 +35,32 @@ public class Button extends TextBase implements AppButton {
     }
 
     public Button(String id, Str txt, Application app) {
+        this(id, txt, (Action) null, app);
+    }
+
+    public Button(String id, Str txt, Action a, Application app) {
         super(id, txt, app, AppButton.class, AppButtonPeer.class);
         if (id != null) {
             String aid = "Action." + id;
-            text().set(Str.i18n(aid));
+            if (txt == null) {
+                text().set(Str.i18n(aid));
+            }
             icon().set(Str.i18n(aid + ".icon"));
         }
+        action.set(a);
+        propagateEvents(action);
+    }
+
+    public Button(String id, Str txt, Runnable a, Application app) {
+        super(id, txt, app, AppButton.class, AppButtonPeer.class);
+        if (id != null) {
+            String aid = "Action." + id;
+            if (txt == null) {
+                text().set(Str.i18n(aid));
+            }
+            icon().set(Str.i18n(aid + ".icon"));
+        }
+        action.set(a);
         propagateEvents(action);
     }
 
