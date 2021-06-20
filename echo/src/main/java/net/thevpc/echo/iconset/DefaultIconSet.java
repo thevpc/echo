@@ -16,9 +16,6 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-
-
-
 package net.thevpc.echo.iconset;
 
 import java.io.IOException;
@@ -71,6 +68,12 @@ public class DefaultIconSet implements IconSet {
         this.id = id;
         this.app = app;
         this.initIconTransform = initIconTransform;
+        if (path.indexOf('/') < 0) {
+            path = path.replace('.', '/');
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+        }
         this.path = path;
         this.classLoader = classLoader;
         StringBuilder p = new StringBuilder(path.trim());
@@ -88,7 +91,7 @@ public class DefaultIconSet implements IconSet {
         }
         names = new Properties();
         if (namesURL != null) {
-            try (InputStreamReader r = new InputStreamReader(namesURL.openStream())) {
+            try ( InputStreamReader r = new InputStreamReader(namesURL.openStream())) {
                 names.load(r);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
@@ -160,7 +163,7 @@ public class DefaultIconSet implements IconSet {
                 u = classLoader.getResource(p.toString());
             }
             if (u != null) {
-                AppImage i = new Image(u,app).scaleTo(128, 128);
+                AppImage i = new Image(u, app).scaleTo(128, 128);
                 if (initIconTransform != null) {
                     i = initIconTransform.transformIcon(i);
                 }
@@ -188,7 +191,7 @@ public class DefaultIconSet implements IconSet {
             } else {
                 u = classLoader.getResource(p.toString());
             }
-            if (u!=null && u.toString().toLowerCase().endsWith(".svg")) {
+            if (u != null && u.toString().toLowerCase().endsWith(".svg")) {
                 if (u != null) {
                     int w = size.getWidth();
                     int h = size.getHeight();
@@ -196,13 +199,13 @@ public class DefaultIconSet implements IconSet {
                     if (w < 0 && h < 0) {
                         w = 128;
                         h = 128;
-                        i = new Image(u,app).scaleTo(w, h);
+                        i = new Image(u, app).scaleTo(w, h);
                     } else if (h < 0) {
-                        i = new Image(u,app).scaleTo(w, h);
+                        i = new Image(u, app).scaleTo(w, h);
                     } else if (w == h) {
-                        i = new Image(u,app).scaleTo(w, h);
+                        i = new Image(u, app).scaleTo(w, h);
                     } else {
-                        i = new Image(u,app).scaleTo(w, h);
+                        i = new Image(u, app).scaleTo(w, h);
                     }
                     if (initIconTransform != null && i != null) {
                         i = initIconTransform.transformIcon(i);
