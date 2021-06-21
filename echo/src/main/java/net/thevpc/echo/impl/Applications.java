@@ -12,10 +12,7 @@ import net.thevpc.echo.AppState;
 import net.thevpc.echo.Application;
 import net.thevpc.echo.Image;
 import net.thevpc.echo.api.AppImage;
-import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.components.AppContainer;
-import net.thevpc.echo.api.components.AppFrame;
-import net.thevpc.echo.api.components.AppTextControl;
+import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.iconset.IconConfig;
 import net.thevpc.echo.impl.components.ComponentBase;
 import net.thevpc.echo.spi.peers.AppPanelPeer;
@@ -130,9 +127,9 @@ public class Applications {
     }
 
     public static void bindContent(AppContentAdapter parent) {
-        AppComponent child=parent.content();
+        AppComponent child = parent.content();
         ((ComponentBase) child).setParent(parent);
-        child.userObjects().put(AppContentAdapter.class.getName() + ":contentFor",parent);
+        child.userObjects().put(AppContentAdapter.class.getName() + ":contentFor", parent);
         ((ComponentBase) parent).setPeer(new AppContentAdapterPeer(child));
         propagateResources(parent, child);
         parent.visible().bind(child.visible());
@@ -390,9 +387,12 @@ public class Applications {
                 if (curr instanceof AppContentAdapter) {
                     stack.push(((AppContentAdapter) curr).content());
                 }
+                AppContextMenu c = curr.contextMenu().get();
+                if (c != null) {
+                    stack.push(c);
+                }
             }
         }
-
     }
 
     public static String loadStreamAsString(URL url) {

@@ -22,7 +22,7 @@ public class SwingColorButtonPeer implements SwingPeer, AppColorButtonPeer {
     public void install(AppComponent component0) {
         this.appComponent = (AppColorButton) component0;
         AppComponent ep = Applications.effectiveParent(component0);
-        if (ep instanceof net.thevpc.echo.Menu) {
+        if (ep instanceof net.thevpc.echo.Menu ||  ep instanceof net.thevpc.echo.ContextMenu) {
             swingComponent = new JMenuItemColorChooser(null, true);
             appComponent.title().onChangeAndInit(
                     () -> ((JMenuItemColorChooser) swingComponent).setText(

@@ -4,39 +4,52 @@ import net.thevpc.common.i18n.Str;
 import net.thevpc.common.props.Path;
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.TextAlignment;
-import net.thevpc.echo.api.components.AppComponent;
-import net.thevpc.echo.api.components.AppRichHtmlEditor;
+import net.thevpc.echo.api.components.*;
 import net.thevpc.echo.impl.Applications;
-import java.util.function.Consumer;
 
-import net.thevpc.echo.api.components.AppContainer;
-import net.thevpc.echo.api.components.AppFrame;
-import net.thevpc.echo.api.components.AppMenu;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class RichHtmlToolBarHelper {
 
     public static void prepareMenu(Frame frame, boolean prefixSeparator, boolean suffixSeparator) {
         AppMenu e = (AppMenu) frame.children().addFolder(Path.of("/menuBar/Edit"));
-        prepareContainer(e, frame,prefixSeparator, suffixSeparator);
+        prepareContainer(e, frame, prefixSeparator, suffixSeparator);
     }
 
     public static void prepareToolBar(Frame frame, boolean prefixSeparator, boolean suffixSeparator) {
         frame.findOrCreateToolBar("RichHtml", editToolBar -> {
-            prepareContainer(editToolBar, frame,prefixSeparator, suffixSeparator);
+            prepareContainer(editToolBar, frame, prefixSeparator, suffixSeparator);
         });
     }
 
-    public static void prepareContainer(AppContainer editToolBar, AppComponent owner,boolean prefixSeparator, boolean suffixSeparator) {
-        if (editToolBar.userObjects().get(RichHtmlToolBarHelper.class) != null) {
-            return;
-        }
-        editToolBar.userObjects().put(RichHtmlToolBarHelper.class, true);
+    public static void prepareContainer(AppContainer editToolBar, AppComponent owner, boolean prefixSeparator, boolean suffixSeparator) {
         AppFrame frame = Applications.frameOf(editToolBar);
         if (frame == null) {
             throw new IllegalArgumentException("missing frame");
         }
         Application app = frame.app();
         WithEnableIfRichHtmlEditor enableIfRichHtmlEditor = new WithEnableIfRichHtmlEditor(frame);
+        prepareContainer0(editToolBar, owner, prefixSeparator, suffixSeparator,
+                () -> app.toolkit().focusOwner().get(),
+                enableIfRichHtmlEditor);
+    }
+
+    public static void prepareContextMenu(RichHtmlEditor editor, boolean prefixSeparator, boolean suffixSeparator) {
+        AppContextMenu contextMenu = editor.contextMenu().getOrCompute(() -> new ContextMenu(editor.app()));
+        prepareContainer0(contextMenu, editor, prefixSeparator, suffixSeparator, () -> editor, (e) -> {
+        });
+    }
+
+    private static void prepareContainer0(AppContainer editToolBar, AppComponent owner, boolean prefixSeparator, boolean suffixSeparator,
+                                          Supplier<AppComponent> selected,
+                                          Consumer<AppComponent> enableIfRichHtmlEditor
+    ) {
+        if (editToolBar.userObjects().get(RichHtmlToolBarHelper.class) != null) {
+            return;
+        }
+        editToolBar.userObjects().put(RichHtmlToolBarHelper.class, true);
+        Application app = editToolBar.app();
         if (prefixSeparator) {
             editToolBar.children().addSeparator().with(enableIfRichHtmlEditor);
         }
@@ -48,7 +61,7 @@ public class RichHtmlToolBarHelper {
         folder.with(enableIfRichHtmlEditor);
         for (String tag : new String[]{"h1", "h2", "h3", "h5", "h6", "pre", "div", "p", "ol", "ul", "hr"}) {
             editToolBar.children().add(new Button("insert-" + tag, event -> {
-                AppComponent fo = app.toolkit().focusOwner().get();
+                AppComponent fo = selected.get();
                 if (fo instanceof AppRichHtmlEditor) {
                     RichHtmlEditor t = (RichHtmlEditor) fo;
                     t.runTextInsertTag(tag);
@@ -57,28 +70,28 @@ public class RichHtmlToolBarHelper {
         }
 
         editToolBar.children().add(new Button("font-bold", event -> {
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runTextBold();
             }
         }, app).with(enableIfRichHtmlEditor));
         editToolBar.children().add(new Button("font-italic", event -> {
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runTextItalic();
             }
         }, app).with(enableIfRichHtmlEditor));
         editToolBar.children().add(new Button("font-underline", event -> {
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runTextUnderline();
             }
         }, app).with(enableIfRichHtmlEditor));
         editToolBar.children().add(new Button("font-strike-through", event -> {
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runTextStrikeThrough();
@@ -86,7 +99,7 @@ public class RichHtmlToolBarHelper {
         }, app).with(enableIfRichHtmlEditor));
         for (TextAlignment align : TextAlignment.values()) {
             editToolBar.children().add(new Button("align-" + (align.name().toLowerCase()), event -> {
-                AppComponent fo = app.toolkit().focusOwner().get();
+                AppComponent fo = selected.get();
                 if (fo instanceof AppRichHtmlEditor) {
                     RichHtmlEditor t = (RichHtmlEditor) fo;
                     t.runTextAlignment(align);
@@ -97,7 +110,7 @@ public class RichHtmlToolBarHelper {
                 .with(enableIfRichHtmlEditor)
                 .with((ColorButton c) -> {
                     c.value().onChange(cc -> {
-                        AppComponent fo = app.toolkit().focusOwner().get();
+                        AppComponent fo = selected.get();
                         if (fo instanceof AppRichHtmlEditor) {
                             RichHtmlEditor t = (RichHtmlEditor) fo;
                             if (t.textSelection().get().length() > 0) {
@@ -113,7 +126,7 @@ public class RichHtmlToolBarHelper {
                 .with(enableIfRichHtmlEditor)
                 .with((ColorButton c) -> {
                     c.value().onChange(cc -> {
-                        AppComponent fo = app.toolkit().focusOwner().get();
+                        AppComponent fo = selected.get();
                         if (fo instanceof AppRichHtmlEditor) {
                             RichHtmlEditor t = (RichHtmlEditor) fo;
                             if (t.textSelection().get().length() > 0) {
@@ -125,11 +138,11 @@ public class RichHtmlToolBarHelper {
                     });
                 })
         );
-        editToolBar.children().add(new FontButton("font", owner,app)
+        editToolBar.children().add(new FontButton("font", owner, app)
                 .with(enableIfRichHtmlEditor)
                 .with((FontButton c) -> {
                     c.selection().onChange(cc -> {
-                        AppComponent fo = app.toolkit().focusOwner().get();
+                        AppComponent fo = selected.get();
                         if (fo instanceof AppRichHtmlEditor) {
                             RichHtmlEditor t = (RichHtmlEditor) fo;
                             if (t.textSelection().get().length() > 0) {
@@ -154,7 +167,7 @@ public class RichHtmlToolBarHelper {
         tableFolder.with(enableIfRichHtmlEditor);
         editToolBar.children().add(new Button("insert-table", event -> {
             //KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner()
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runInsertTable();
@@ -162,7 +175,7 @@ public class RichHtmlToolBarHelper {
         }, app).with(enableIfRichHtmlEditor), Path.of("Table/*"));
         editToolBar.children().add(new Button("insert-table-row", event -> {
             //KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner()
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runInsertTableRow();
@@ -170,7 +183,7 @@ public class RichHtmlToolBarHelper {
         }, app).with(enableIfRichHtmlEditor), Path.of("Table/*"));
         editToolBar.children().add(new Button("insert-table-column", event -> {
             //KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner()
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runInsertTableColumn();
@@ -178,7 +191,7 @@ public class RichHtmlToolBarHelper {
         }, app).with(enableIfRichHtmlEditor), Path.of("Table/*"));
         editToolBar.children().add(new Button("delete-table-row", event -> {
             //KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner()
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runDeleteTableRow();
@@ -186,7 +199,7 @@ public class RichHtmlToolBarHelper {
         }, app).with(enableIfRichHtmlEditor), Path.of("Table/*"));
         editToolBar.children().add(new Button("delete-table-column", event -> {
             //KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner()
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runDeleteTableColumn();
@@ -194,7 +207,7 @@ public class RichHtmlToolBarHelper {
         }, app).with(enableIfRichHtmlEditor), Path.of("Table/*"));
         editToolBar.children().add(new Button("delete-table", event -> {
             //KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusOwner()
-            AppComponent fo = app.toolkit().focusOwner().get();
+            AppComponent fo = selected.get();
             if (fo instanceof AppRichHtmlEditor) {
                 RichHtmlEditor t = (RichHtmlEditor) fo;
                 t.runDeleteTable();
@@ -203,7 +216,7 @@ public class RichHtmlToolBarHelper {
 
         editToolBar.children().add(new Button("insert-image",
                 () -> {
-                    AppComponent fo = app.toolkit().focusOwner().get();
+                    AppComponent fo = selected.get();
                     if (fo instanceof AppRichHtmlEditor) {
                         RichHtmlEditor t = (RichHtmlEditor) fo;
                         t.runInsertImage();

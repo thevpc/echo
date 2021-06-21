@@ -68,7 +68,7 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
         ShefHelper.init(editor);
         SwingRichHtmlEditorKit k = new SwingRichHtmlEditorKit();
         editor.setEditorKitForContentType("text/html", k);
-        k.addInstallHelper(new MinWysiwygHTMLEditorKitInstallHelper());
+        k.addInstallHelper(new EchoHTMLEditorKitInstallHelper());
         editor.setContentType("text/plain");
         editor.setContentType("text/html");
         return editor;
@@ -190,7 +190,7 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
 
     @Override
     public void runTextStrikeThrough() {
-        runAction("custom-strike");
+        runAction("font-strike-through");
     }
 
     @Override
