@@ -10,20 +10,13 @@ public class Color extends Paint implements AppColor {
     private double blue;
     private double opacity;
 
-    public static String format(AppColor c) {
-        return c==null?"":((Color)c).format();
-    }
-
-    public static Color of(String text, Application app) {
-        if(text==null||text.isEmpty()){
-            return null;
-        }
-        return new Color(text, app);
-    }
-
     public Color(String text, Application app) {
         super(app);
-        int rgba=app.toolkit().parseColor(text);
+        if (text == null || text.trim().isEmpty()) {
+            throw new IllegalArgumentException("null or empty text: Call Color.of(...) instead");
+        }
+        text = text.trim();
+        int rgba = app.toolkit().parseColor(text);
         red = ((rgba >> 16) & 0xFF) / 255.0;
         green = ((rgba >> 8) & 0xFF) / 255.0;
         blue = ((rgba >> 0) & 0xFF) / 255.0;
@@ -47,14 +40,6 @@ public class Color extends Paint implements AppColor {
         peer = app.toolkit().createColorPeer(this);
     }
 
-    @Override
-    public int rgba() {
-        return  ((opacity255() & 0xFF) << 24) |
-                ((red255() & 0xFF) << 16) |
-                ((green255() & 0xFF) << 8)  |
-                ((blue255() & 0xFF) << 0);
-    }
-
     public Color(double red, double green, double blue, double opacity, Application app) {
         super(app);
         this.app = app;
@@ -65,19 +50,50 @@ public class Color extends Paint implements AppColor {
         peer = app.toolkit().createColorPeer(this);
     }
 
-    public static Color BLACK(Application app) {
+    public static String format(AppColor c) {
+        return c == null ? "" : ((Color) c).format();
+    }
+
+    public static AppColor ofDefault(String text, Application app) {
+        if (text == null || text.trim().isEmpty()) {
+            text = "<default>";
+        }
+        return of(text, app);
+    }
+
+    public static AppColor of(String text, Application app) {
+        if (text == null || text.trim().isEmpty()) {
+            return null;
+        }
+        if (text.equals("<default>")) {
+            return new DefaultColor();
+        }
+        return new Color(text, app);
+    }
+
+    public static AppColor BLACK(Application app) {
         return new Color(0, 0, 0, 1, app);
     }
 
-    public static Color WHITE(Application app) {
+    public static AppColor WHITE(Application app) {
         return new Color(1, 1, 1, 1, app);
     }
 
-    public static Color LIGHT_GRAY(Application app) {
+    public static AppColor LIGHT_GRAY(Application app) {
         return new Color(192, 192, 192, app);
     }
-    public static Color DARK_GRAY(Application app) {
+
+    public static AppColor DARK_GRAY(Application app) {
         return new Color(64, 64, 64, app);
+    }
+
+    private static String toHex(int value, int pad) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Integer.toHexString(value));
+        while (sb.length() < pad) {
+            sb.insert(0, '0');
+        }
+        return sb.toString();
     }
 
     @Override
@@ -125,6 +141,14 @@ public class Color extends Paint implements AppColor {
         return peer;
     }
 
+    @Override
+    public int rgba() {
+        return ((opacity255() & 0xFF) << 24) |
+                ((red255() & 0xFF) << 16) |
+                ((green255() & 0xFF) << 8) |
+                ((blue255() & 0xFF) << 0);
+    }
+
     public String format() {
         return "#"
                 + toHex(red255(), 4)
@@ -132,13 +156,9 @@ public class Color extends Paint implements AppColor {
                 + toHex(blue255(), 4)
                 + toHex(opacity255(), 4);
     }
-    private static String toHex(int value, int pad) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(Integer.toHexString(value));
-        while (sb.length() < pad) {
-            sb.insert(0, '0');
-        }
-        return sb.toString();
-    }
 
+    @Override
+    public String toString() {
+        return format();
+    }
 }

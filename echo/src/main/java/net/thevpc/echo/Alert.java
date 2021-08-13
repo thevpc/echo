@@ -5,6 +5,9 @@ import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.props.Props;
 import net.thevpc.common.props.WritableString;
 import net.thevpc.common.props.WritableValue;
+import net.thevpc.echo.api.AppAlertAction;
+import net.thevpc.echo.api.AppAlertInputPane;
+import net.thevpc.echo.api.AppAlertResult;
 import net.thevpc.echo.api.components.AppAlert;
 import net.thevpc.echo.api.components.AppComponent;
 import net.thevpc.echo.api.components.AppLabel;
@@ -18,9 +21,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.thevpc.echo.api.AppAlertAction;
-import net.thevpc.echo.api.AppAlertInputPane;
-import net.thevpc.echo.api.AppAlertResult;
 
 public class Alert extends ControlBase implements AppAlert {
 
@@ -30,7 +30,7 @@ public class Alert extends ControlBase implements AppAlert {
     protected WritableString defaultButton;
     protected WritableImage headerIcon;
     protected Map<String, AppAlertAction> consMap = new HashMap<>();
-    protected AppAlertAction onClose = c -> c.getAlert().closeAlert();
+    //    protected AppAlertAction onClose = c -> c.getAlert().closeAlert();
     protected WritableStr headerText;
     protected AppAlertAction action = null;
 
@@ -123,13 +123,13 @@ public class Alert extends ControlBase implements AppAlert {
 
     @Override
     public AppAlert withOkOnlyButton() {
-        return withOkOnlyButton(onClose);
+        return withOkOnlyButton(null);
     }
 
     @Override
     public AppAlert withOkOnlyButton(AppAlertAction ok) {
         buttonIds = Arrays.asList("ok");
-        consMap.put("ok", ok);
+        setButtonAction("ok", ok);
         if (defaultButton.get() == null) {
             defaultButton().set("ok");
         }
@@ -138,14 +138,14 @@ public class Alert extends ControlBase implements AppAlert {
 
     @Override
     public AppAlert withOkCancelButtons() {
-        return withOkCancelButtons(onClose, onClose);
+        return withOkCancelButtons(null, null);
     }
 
     @Override
     public AppAlert withOkCancelButtons(AppAlertAction ok, AppAlertAction cancel) {
         buttonIds = Arrays.asList("ok", "cancel");
-        consMap.put("ok", ok);
-        consMap.put("cancel", cancel);
+        setButtonAction("ok", ok);
+        setButtonAction("cancel", cancel);
         if (defaultButton.get() == null) {
             defaultButton().set("ok");
         }
@@ -154,14 +154,14 @@ public class Alert extends ControlBase implements AppAlert {
 
     @Override
     public AppAlert withYesNoButtons() {
-        return withYesNoButtons(onClose, onClose);
+        return withYesNoButtons(null, null);
     }
 
     @Override
     public AppAlert withYesNoButtons(AppAlertAction yes, AppAlertAction no) {
         buttonIds = Arrays.asList("yes", "no");
-        consMap.put("yes", yes);
-        consMap.put("no", no);
+        setButtonAction("yes", yes);
+        setButtonAction("no", no);
         if (defaultButton.get() == null) {
             defaultButton().set("yes");
         }
@@ -170,15 +170,15 @@ public class Alert extends ControlBase implements AppAlert {
 
     @Override
     public AppAlert withYesNoCancelButtons() {
-        return withYesNoCancelButtons(onClose, onClose, onClose);
+        return withYesNoCancelButtons(null, null, null);
     }
 
     @Override
     public AppAlert withYesNoCancelButtons(AppAlertAction yes, AppAlertAction no, AppAlertAction cancel) {
         buttonIds = Arrays.asList("yes", "no", "cancel");
-        consMap.put("yes", yes);
-        consMap.put("no", no);
-        consMap.put("cancel", cancel);
+        setButtonAction("yes", yes);
+        setButtonAction("no", no);
+        setButtonAction("cancel", cancel);
         if (defaultButton.get() == null) {
             defaultButton().set("yes");
         }
@@ -188,6 +188,9 @@ public class Alert extends ControlBase implements AppAlert {
     @Override
     public AppAlert withButtons(String... buttonIds) {
         this.buttonIds = buttonIds == null ? null : Arrays.asList(buttonIds);
+        for (String buttonId : buttonIds) {
+            setButtonAction(buttonId, null);
+        }
         return this;
     }
 
@@ -199,7 +202,11 @@ public class Alert extends ControlBase implements AppAlert {
 
     @Override
     public AppAlert setButtonAction(String s, AppAlertAction r) {
-        consMap.put(s, r);
+        if (r == null) {
+            consMap.remove(s);
+        } else {
+            consMap.put(s, r);
+        }
         return this;
     }
 

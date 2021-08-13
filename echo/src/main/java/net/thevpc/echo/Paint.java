@@ -10,11 +10,18 @@ public abstract class Paint implements AppPaint {
         return c==null?"":((Paint)c).format();
     }
 
-    public static Paint of(String text, Application app) {
-        if(text==null||text.isEmpty()){
+    public static AppColor ofDefault(String text, Application app) {
+        if (text == null || text.trim().isEmpty()) {
+            text="<default>";
+        }
+        return of(text,app);
+    }
+
+    public static AppColor of(String text, Application app) {
+        if (text == null || text.trim().isEmpty()) {
             return null;
         }
-        return new Color(text, app);
+        return Color.of(text, app);
     }
 
     public Paint(Application app) {

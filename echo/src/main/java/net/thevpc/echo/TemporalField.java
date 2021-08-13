@@ -26,5 +26,9 @@ public class TemporalField<T extends Temporal> extends ControlBase implements Ap
         return value;
     }
 
+    @Override
+    public Class valueType() {
+        return value().propertyClass();
+    }
 }
 

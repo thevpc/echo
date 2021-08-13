@@ -91,6 +91,8 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
 //        addPeerFactory(AppFontButtonPeer.class, SwingFontButtonPeer.class);
         addPeerFactory(AppNumberFieldPeer.class, SwingNumberFieldPeer.class);
 //        addPeerFactory(AppFileFieldPeer.class, SwingFileFieldPeer.class);
+        addPeerFactory(AppTemporalFieldPeer.class, SwingTemporalFieldPeer.class);
+        addPeerFactory(AppColorChooserPeer.class, SwingColorChooserPeer.class);
 
         UIPlafManager.getCurrentManager().addListener(x -> {
             app.plaf().set(x.getId());

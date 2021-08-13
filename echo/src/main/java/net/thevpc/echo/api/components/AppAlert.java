@@ -47,6 +47,10 @@ public interface AppAlert extends AppControl {
 
     AppAlert setInputContent(AppAlertInputPane inputPanel);
 
+    /**
+     * @see net.thevpc.echo.api.AppAlertInputPane
+     * @return content property
+     */
     WritableValue<AppComponent> content();
 
     AppAlert setContent(AppComponent mainComponent);

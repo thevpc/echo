@@ -4,6 +4,12 @@
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/demos/echo-demo/target" />
+      <excludeFolder url="file://$MODULE_DIR$/echo/target" />
+      <excludeFolder url="file://$MODULE_DIR$/jfx/jfx/target" />
+      <excludeFolder url="file://$MODULE_DIR$/swing/ext/dock-mydoggy/target" />
+      <excludeFolder url="file://$MODULE_DIR$/swing/ext/swingx/target" />
+      <excludeFolder url="file://$MODULE_DIR$/swing/swing/target" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

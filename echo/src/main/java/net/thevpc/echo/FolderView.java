@@ -223,7 +223,7 @@ public class FolderView extends GridPane {
                 public void onEvent(AppComponentEvent event) {
                     switch (event.eventType()) {
                         case MOUSE_ENTER: {
-                            Color col = Color.LIGHT_GRAY(app());
+                            AppColor col = Color.LIGHT_GRAY(app());
                             backgroundColor().set(col);
                             iconLabel.backgroundColor().set(col);
                             textLabel.backgroundColor().set(col);

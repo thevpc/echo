@@ -175,9 +175,9 @@ public class SwingPeerHelper {
     public static void installComponent(AppComponent appComponent, JComponent swingComponent) {
         appComponent.userObjects().put(AppComponentPeer.class.getName() + ":effective", swingComponent);
         swingComponent.putClientProperty("toolkit-impl-type", appComponent.getClass().getSimpleName());
-        boolean separator=swingComponent instanceof Box.Filler || swingComponent instanceof JSeparator;
+        boolean separator = swingComponent instanceof Box.Filler || swingComponent instanceof JSeparator;
         swingComponent.putClientProperty(AppComponent.class.getName(), appComponent);
-        if(!separator) {
+        if (!separator) {
             swingComponent.addKeyListener(FROM_SWING_KEY_MAPPER);
             swingComponent.addFocusListener(FROM_SWING_FOCUS_MAPPER);
             appComponent.prefSize().onChangeAndInit(
@@ -185,37 +185,38 @@ public class SwingPeerHelper {
                         swingComponent.setPreferredSize(SwingHelpers.toAwtDimension(appComponent.prefSize().get()));
                     }
             );
-            appComponent.opaque().onChangeAndInit(
-                    () -> swingComponent.setOpaque(appComponent.opaque().get())
-            );
+
+            //Property Opaque
+            appComponent.opaque().onChangeAndInit(() -> swingComponent.setOpaque(appComponent.opaque().get()));
+
+            //Property Background
             if (appComponent.backgroundColor().get() == null) {
                 appComponent.backgroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getBackground(), appComponent.app()));
             } else {
-                Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get());
+                Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get(), swingComponent, SwingHelpers.DEF_COLOR_BACKGROUND);
                 SwingApplicationUtils.setComponentBackground(swingComponent, c);
             }
             appComponent.backgroundColor().onChange(
                     () -> {
-                        Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get());
-                        if (c != null) {
-                            SwingApplicationUtils.setComponentBackground(swingComponent, c);
-                        }
+                        Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get(), swingComponent, SwingHelpers.DEF_COLOR_BACKGROUND);
+                        SwingApplicationUtils.setComponentBackground(swingComponent, c);
                     }
             );
+
+            //Property Foreground
             if (appComponent.foregroundColor().get() == null) {
                 appComponent.foregroundColor().set(SwingHelpers.fromAwtColor(swingComponent.getForeground(), appComponent.app()));
             } else {
-                Color c = SwingHelpers.toAwtColor(appComponent.backgroundColor().get());
+                Color c = SwingHelpers.toAwtColor(appComponent.foregroundColor().get(), swingComponent, SwingHelpers.DEF_COLOR_FOREGROUND);
                 SwingApplicationUtils.setComponentForeground(swingComponent, c);
             }
-            appComponent.foregroundColor().onChangeAndInit(
+            appComponent.foregroundColor().onChange(
                     () -> {
-                        Color c = SwingHelpers.toAwtColor(appComponent.foregroundColor().get());
-                        if (c != null) {
-                            SwingApplicationUtils.setComponentForeground(swingComponent, c);
-                        }
+                        Color c = SwingHelpers.toAwtColor(appComponent.foregroundColor().get(), swingComponent, SwingHelpers.DEF_COLOR_FOREGROUND);
+                        SwingApplicationUtils.setComponentForeground(swingComponent, c);
                     }
             );
+
             if (appComponent instanceof AppTextControl) {
                 AppTextControl tc = (AppTextControl) appComponent;
                 AppComponentTextStylerApplier appComponentTextStylerApplier = new AppComponentTextStylerApplier(tc);
@@ -260,7 +261,7 @@ public class SwingPeerHelper {
                 }
         );
         appComponent.onChange(e -> {
-            if ("UpdateUI".equals(e.changeId()) || e.eventType()== PropertyUpdate.REFRESH) {
+            if ("UpdateUI".equals(e.changeId()) || e.eventType() == PropertyUpdate.REFRESH) {
                 swingComponent.invalidate();
                 swingComponent.revalidate();
                 swingComponent.repaint();
@@ -278,7 +279,7 @@ public class SwingPeerHelper {
     public static Window resolveOwnerWindow(AppComponent cmp, Application app) {
         Component c = resolveOwnerComponent(cmp, app);
         if (c != null) {
-            if(c instanceof Window){
+            if (c instanceof Window) {
                 return (Window) c;
             }
             return SwingUtilities.getWindowAncestor(c);
@@ -291,6 +292,28 @@ public class SwingPeerHelper {
             return (Component) cmp.peer().toolkitComponent();
         }
         return (app.mainFrame().get() == null ? null : (Component) (app.mainFrame().get().peer().toolkitComponent()));
+    }
+
+    public static Window getComponentOwnerWindow(Object parent, AppComponent comp) {
+        while (comp != null) {
+            Object c = comp.peer().toolkitComponent();
+            if (c instanceof Window) {
+                return (Window) c;
+            }
+            comp = comp.parent();
+        }
+        return null;
+    }
+
+    public static Component getComponentOwner(Object parent, AppComponent comp) {
+        if (parent instanceof Component) {
+            return (Component) parent;
+        }
+        parent = comp.app().mainFrame().get().peer().toolkitComponent();
+        if (parent instanceof Component) {
+            return (Component) parent;
+        }
+        return null;
     }
 
     public static class AppComponentTextStylerApplier implements PropertyListener {
@@ -565,28 +588,6 @@ public class SwingPeerHelper {
         public Application app() {
             return component.app();
         }
-    }
-
-    public static Window getComponentOwnerWindow(Object parent,AppComponent comp) {
-        while(comp!=null){
-            Object c = comp.peer().toolkitComponent();
-            if(c instanceof Window){
-                return (Window) c;
-            }
-            comp=comp.parent();
-        }
-        return null;
-    }
-
-    public static Component getComponentOwner(Object parent,AppComponent comp) {
-        if (parent instanceof Component) {
-            return (Component) parent;
-        }
-        parent = comp.app().mainFrame().get().peer().toolkitComponent();
-        if (parent instanceof Component) {
-            return (Component) parent;
-        }
-        return null;
     }
 
 }

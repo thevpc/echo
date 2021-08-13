@@ -126,9 +126,11 @@ public class SwingChoiceListPeer implements SwingPeer, AppChoiceListPeer {
             JList list = c.list;
             super.getListCellRendererComponent(list, c.getText(), c.getIndex(), c.isSelected(), c.isFocused());
             setIcon(c.getIcon());
-            if (c.isDisabled() && !c.isSelected() && list.hasFocus()) {
-                setForeground(list.getSelectionBackground());
-                setBackground(list.getSelectionForeground());
+            if (c.isDisabled() /*&& !c.isSelected() && list.hasFocus()*/) {
+                setBackground(new JLabel().getBackground());
+//                setForeground(new JLabel().getDis());
+//                setForeground(list.getSelectionBackground());
+//                setBackground(list.getSelectionForeground());
             }
             return this;
         }

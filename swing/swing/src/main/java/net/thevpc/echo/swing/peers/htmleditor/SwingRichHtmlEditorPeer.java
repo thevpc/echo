@@ -290,14 +290,14 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
     @Override
     public void runTextForegroundColor(AppColor color) {
         MutableAttributeSet attr = new SimpleAttributeSet();
-        StyleConstants.setForeground(attr, SwingHelpers.toAwtColor(color));
+        StyleConstants.setForeground(attr, SwingHelpers.toAwtColor(color, editorBuilder.editor(), SwingHelpers.DEF_COLOR_FOREGROUND));
         SwingComponentUtils.setCharacterAttributes(editorBuilder.editor(), attr, false);
     }
 
     @Override
     public void runTextBackgroundColor(AppColor color) {
         MutableAttributeSet attr = new SimpleAttributeSet();
-        StyleConstants.setBackground(attr, SwingHelpers.toAwtColor(color));
+        StyleConstants.setBackground(attr, SwingHelpers.toAwtColor(color, editorBuilder.editor(), SwingHelpers.DEF_COLOR_BACKGROUND));
         SwingComponentUtils.setCharacterAttributes(editorBuilder.editor(), attr, false);
     }
 

@@ -5,14 +5,41 @@ import net.thevpc.echo.*;
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.api.AppFont;
 import net.thevpc.echo.api.AppImage;
+import net.thevpc.swing.plaf.UIPlafManager;
 
 import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 public class SwingHelpers {
+    public static final SwingHelpers.NamedFunction<JComponent, Color> DEF_COLOR_FOREGROUND = new SwingHelpers.NamedFunction<JComponent, Color>() {
+        @Override
+        public String name() {
+            return "foreground";
+        }
+
+        @Override
+        public Color apply(JComponent component) {
+            return component.getForeground();
+        }
+    };
+    public static final SwingHelpers.NamedFunction<JComponent, Color> DEF_COLOR_BACKGROUND = new SwingHelpers.NamedFunction<JComponent, Color>() {
+        @Override
+        public String name() {
+            return "background";
+        }
+
+        @Override
+        public Color apply(JComponent component) {
+            return component.getBackground();
+        }
+    };
+
     public static Icon toAwtIcon(AppImage i) {
         if (i == null) {
             return null;
@@ -47,6 +74,54 @@ public class SwingHelpers {
                 break;
             }
         }
+    }
+
+    private static Map<String,Color> defColors=new LinkedHashMap<>();
+    private static Map<String,Font> defFont=new LinkedHashMap<>();
+
+    public interface NamedFunction<A,B> extends Function<A,B>{
+        String name();
+    }
+
+    public static Color toAwtColor(AppColor color, JComponent c,NamedFunction<JComponent,Color> def) {
+        if(color==null){
+            return null;
+        }
+        if(color.toString().equals("<default>")){
+            String pn = UIPlafManager.getCurrentManager().getCurrent().getName();
+            String cn = c.getClass().getName();
+            String fn = def.name();
+            String id =pn+":"+cn+":"+fn;
+            return defColors.computeIfAbsent(id,n->{
+                try {
+                    JComponent jc = c.getClass().newInstance();
+                    return def.apply(jc);
+                }catch (Exception ex){
+                    return null;
+                }
+            });
+        }
+        return (Color) color.peer().toolkitColor();
+    }
+    public static Font toAwtFont(AppFont color, JComponent c,NamedFunction<JComponent,Font> def) {
+        if(color==null){
+            return null;
+        }
+        if(color.toString().equals("<default>")){
+            String pn = UIPlafManager.getCurrentManager().getCurrent().getName();
+            String cn = c.getClass().getName();
+            String fn = def.name();
+            String id =pn+":"+cn+":"+fn;
+            return defFont.computeIfAbsent(id,n->{
+                try {
+                    JComponent jc = c.getClass().newInstance();
+                    return def.apply(jc);
+                }catch (Exception ex){
+                    return null;
+                }
+            });
+        }
+        return (Font) color.peer().toolkitFont();
     }
 
     public static Color toAwtColor(AppColor color) {
@@ -93,6 +168,52 @@ public class SwingHelpers {
                 f.isItalic() ? FontPosture.ITALIC : FontPosture.REGULAR,
                 app
         );
+    }
+
+    public static java.awt.Dimension minDim(java.awt.Dimension... all) {
+        java.awt.Dimension d=null;
+        for (java.awt.Dimension dimension : all) {
+            if(d==null){
+                d=dimension;
+            }else {
+                if(dimension!=null) {
+                    d = new java.awt.Dimension(
+                            (int) Math.min(d.getWidth(), dimension.getWidth()),
+                            (int) Math.min(d.getHeight(), dimension.getHeight())
+                    );
+                }
+            }
+        }
+        return d;
+    }
+
+    public static java.awt.Dimension sizePercent(java.awt.Dimension size, float w, float h) {
+        if(size==null){
+            return null;
+        }
+        if(w<=0 || w>=0){
+            w=1;
+        }
+        if(h<=0 || h>=0){
+            h=1;
+        }
+        return new java.awt.Dimension(
+                (int) (size.width*w),
+                (int) (size.height*h)
+        );
+    }
+
+    public static java.awt.Dimension sizeOf(GraphicsConfiguration gc) {
+        if(gc==null){
+            return null;
+        }
+        return sizeOf(gc.getDevice().getDisplayMode());
+    }
+
+    public static java.awt.Dimension sizeOf(DisplayMode dm) {
+        int w = dm.getWidth();
+        int h = dm.getHeight();
+        return new java.awt.Dimension(w,h);
     }
 
 

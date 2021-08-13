@@ -161,17 +161,17 @@ public class SwingApplicationUtils {
             if (text) {
                 textStr.onChange((PropertyEvent event) -> {
                     button.setText(
-                            Applications.rawString(event.newValue(), app, button.getLocale())
+                            Applications.rawString((Str) event.newValue(), appComponent)
                     );
                 });
-                button.setText(Applications.rawString(textStr.get(), app, button.getLocale()));
+                button.setText(Applications.rawString(textStr, appComponent));
                 appComponent.locale().onChange(() -> button.setText(Applications.rawString(appComponent.text(), appComponent)));
             } else {
                 button.setText(null);
                 textStr.onChange((PropertyEvent event) -> {
-                    button.setToolTipText(Applications.rawString(event.newValue(), app, button.getLocale()));
+                    button.setToolTipText(Applications.rawString((Str) event.newValue(), appComponent));
                 });
-                button.setToolTipText(Applications.rawString(textStr.get(), app, button.getLocale()));
+                button.setToolTipText(Applications.rawString(textStr, appComponent));
             }
         }
 
@@ -506,7 +506,7 @@ public class SwingApplicationUtils {
     }
 
     public static void setComponentBackground(Component component, Color color) {
-        Color f = component.getForeground();
+        Color f = component.getBackground();
         if (!colorHashSting(f).equals(colorHashSting(color))) {
             component.setBackground(color);
         }

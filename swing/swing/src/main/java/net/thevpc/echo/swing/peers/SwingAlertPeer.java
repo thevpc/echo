@@ -107,6 +107,20 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
                 appAlert.defaultButton().get(), appAlert.getAction(), f
         );
         currentDialog = dialog2;
+        Dimension size = dialog2.getSize();
+
+        //ensure size is not too big!
+//        DisplayMode dm = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
+        Window o = dialog2.getOwner();
+        Dimension size2= SwingHelpers.minDim(
+                dialog2.getSize(),
+                SwingHelpers.sizePercent(SwingHelpers.sizeOf(dialog2.getGraphicsConfiguration()),0.9f,0.9f),
+                SwingHelpers.sizePercent(o==null?null:o.getSize(),0.9f,0.9f)
+        );
+        if(!size2.equals(size)){
+            dialog2.setSize(size2);
+        }
+
         dialog2.setVisible(true);
         String buttonResult = selectedButton == null ? "" : selectedButton;
         Supplier<?> valueEvaluator = null;
@@ -139,9 +153,10 @@ public class SwingAlertPeer implements AppAlertPeer, SwingPeer {
                 @Override
                 public void onAction(AppDialogContext context) {
                     AppAlertAction a = appAlert.getAction(context.getButtonId());
-                    if (a != null) {
-                        a.onAction(context);
+                    if (a == null) {
+                        a=c -> c.getAlert().closeAlert();
                     }
+                    a.onAction(context);
                 }
             };
         }
