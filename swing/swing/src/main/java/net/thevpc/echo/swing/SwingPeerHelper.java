@@ -21,6 +21,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -426,9 +427,15 @@ public class SwingPeerHelper {
                         updating = true;
                         try {
                             if (!updatingDocument) {
-                                swingComponent.setText(
-                                        text.getOr(x -> x == null ? "" : x.toString())
-                                );
+                                String t = text.getOr(x -> x == null ? "" : x.toString());
+                                if(swingComponent.getDocument() instanceof HTMLDocument){
+                                    //BUG work-around, when replacing a document with some invisible table
+                                    //with empty text, the table is inheritted!
+                                    if(t.isEmpty()) {
+                                        swingComponent.setText("empty text");
+                                    }
+                                }
+                                swingComponent.setText(t);
                             }
                         } finally {
                             updating = false;

@@ -158,14 +158,6 @@ public class Applications {
         return suffix;
     }
 
-    public static String trim(String in) {
-        return in == null ? "" : in.trim();
-    }
-
-    public static boolean isBlank(String in) {
-        return in == null || in.trim().isEmpty();
-    }
-
     public static byte[] toByteArray(InputStream in) {
 
         try {

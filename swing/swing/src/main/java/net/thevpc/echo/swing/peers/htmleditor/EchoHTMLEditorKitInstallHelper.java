@@ -5,20 +5,47 @@
  */
 package net.thevpc.echo.swing.peers.htmleditor;
 
-import java.awt.event.ActionEvent;
-import javax.swing.ActionMap;
-import javax.swing.JEditorPane;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledEditorKit;
 import net.thevpc.more.shef.MinWysiwygHTMLEditorKitInstallHelper;
+import net.thevpc.more.shef.WysiwygHTMLEditorKit;
+
+import javax.swing.*;
+import javax.swing.text.*;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.io.StringWriter;
 
 /**
- *
  * @author vpc
  */
 public class EchoHTMLEditorKitInstallHelper extends MinWysiwygHTMLEditorKitInstallHelper {
+
+    public static String getDocumentText2(Document doc) {
+        return getDocumentText2(doc,new WysiwygHTMLEditorKit());
+    }
+
+    public static String getDocumentText2(Document doc, EditorKit k) {
+        String txt;
+        try {
+            StringWriter out = new StringWriter();
+            try {
+                k.write(out, doc, 0, doc.getLength());
+            } catch (BadLocationException e) {
+                throw new IOException(e.getMessage());
+            }
+            txt = out.toString();
+        } catch (IOException ioe) {
+            txt = null;
+        }
+        return txt;
+    }
+
+    public static String getDocumentText(Document d) {
+        try {
+            return d.getText(0, d.getLength());
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 
     @Override
     public void install(JEditorPane editor) {

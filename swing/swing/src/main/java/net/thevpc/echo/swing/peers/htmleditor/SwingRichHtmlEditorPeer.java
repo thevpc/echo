@@ -26,6 +26,7 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
+import javax.swing.text.html.HTMLDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseWheelEvent;
@@ -37,8 +38,6 @@ import java.util.logging.Logger;
 
 public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer {
 
-    //    private JInternalFrameHelper helper;
-//    private InternalWindowsHelper desktop;
     private AppRichHtmlEditor appComponent;
     private JEditorPaneBuilder editorBuilder;
     DocumentListener documentListener = new DocumentListener() {
@@ -327,7 +326,13 @@ public class SwingRichHtmlEditorPeer implements SwingPeer, AppRichHtmlEditorPeer
 
     @Override
     public void runDeleteTable() {
-        ShefHelper.runDeleteTable(editorBuilder.editor());
+        JEditorPane ed = editorBuilder.editor();
+        String ta1 = EchoHTMLEditorKitInstallHelper.getDocumentText(ed.getDocument());
+        String ta2 = EchoHTMLEditorKitInstallHelper.getDocumentText2(ed.getDocument());
+        ShefHelper.runDeleteTable(ed);
+        ((SwingRichHtmlEditorKit)ed.getEditorKit()).updateMonitoredViews((HTMLDocument) ed.getDocument());
+        String tb1 = EchoHTMLEditorKitInstallHelper.getDocumentText(ed.getDocument());
+        String tb2 = EchoHTMLEditorKitInstallHelper.getDocumentText2(ed.getDocument());
     }
 
     @Override
