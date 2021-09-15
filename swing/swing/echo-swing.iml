@@ -40,12 +40,12 @@
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:1.1.2" level="project" />
     <orderEntry type="module" module-name="shef-core" />
     <orderEntry type="library" name="Maven: net.sf.jtidy:jtidy:r938" level="project" />
-    <orderEntry type="module" module-name="jeep-swing-editor" />
-    <orderEntry type="module" module-name="jeep" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-text-source:1.3.0" level="project" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-text-source-log:1.3.0" level="project" />
-    <orderEntry type="library" name="Maven: net.thevpc.common:thevpc-common-classpath:1.3.2" level="project" />
-    <orderEntry type="module" module-name="jeep-swing-editorkits" />
+    <orderEntry type="library" name="Maven: net.thevpc.jeep:jeep-swing-editor:1.2.8" level="project" />
+    <orderEntry type="library" name="Maven: net.thevpc.jeep:jeep:1.2.8" level="project" />
+    <orderEntry type="module" module-name="thevpc-common-text-source" />
+    <orderEntry type="module" module-name="thevpc-common-text-source-log" />
+    <orderEntry type="module" module-name="thevpc-common-classpath" />
+    <orderEntry type="library" name="Maven: net.thevpc.jeep:jeep-swing-editorkits:1.2.8" level="project" />
     <orderEntry type="library" name="Maven: org.swinglabs:swingx:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: com.jhlabs:filters:2.0.235" level="project" />
     <orderEntry type="library" name="Maven: org.swinglabs:swing-worker:1.1" level="project" />
