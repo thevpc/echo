@@ -207,11 +207,15 @@ public class SwingApplicationUtils {
             button.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    net.thevpc.echo.api.Action a = action.action().get();
-                    if (a != null) {
-                        a.run(new DefaultActionEvent(app, appComponent, e.getSource(), e,
-                                action.value().get()
-                        ));
+                    try {
+                        net.thevpc.echo.api.Action a = action.action().get();
+                        if (a != null) {
+                            a.run(new DefaultActionEvent(app, appComponent, e.getSource(), e,
+                                    action.value().get()
+                            ));
+                        }
+                    }catch (Exception ex){
+                        action.app().errors().add(ex);
                     }
                 }
             });
@@ -335,7 +339,7 @@ public class SwingApplicationUtils {
         }
     }
 
-    public static void registerstandardButton(AbstractButton b, String id, Application app) {
+    public static void registerStandardButton(AbstractButton b, String id, Application app) {
         registerButton(b, id, "$" + id + ".icon", app);
     }
 
@@ -872,7 +876,7 @@ public class SwingApplicationUtils {
         }
 
         public <T extends AbstractButton> T registerStandardButton(T b, String actionId) {
-            SwingApplicationUtils.registerstandardButton(b, actionId, app);
+            SwingApplicationUtils.registerStandardButton(b, actionId, app);
             buttons.add(b);
             return b;
         }

@@ -17,13 +17,13 @@ public class DataPane<T> extends BorderPane {
     public static PaneLayout VERTICAL = new Vertical(1);
     public static PaneLayout HORIZONTAL = new Horizontal(1);
     public static PaneLayout TABS = new Tabs();
-    boolean withSeparator = true;
-    boolean containerAcceptsSeparator = false;
     private final WritableValue<PaneLayout> paneLayout = Props.of("paneLayout").valueOf(PaneLayout.class, VERTICAL);
     private final WritableList<T> values;
     private final DataPaneRenderer<T> renderer;
     private final List<AppComponent> renderedComponents = new ArrayList<>();
     private final WritableValue<AppContainer> container = Props.of("container").valueOf(AppContainer.class);
+    boolean withSeparator = true;
+    boolean containerAcceptsSeparator = false;
 
     public DataPane(Class componentType, DataPaneRenderer<T> renderer, Application app) {
         super(app);
@@ -47,6 +47,9 @@ public class DataPane<T> extends BorderPane {
     }
 
     public void updateContainer() {
+        //TODO FIX ME: this method should update container children as well !!!
+//        System.out.println("start updateContainer");
+//        checkInvariants();
         AppContainer container = this.container.get();
 
         PaneLayout oldLayout = container == null ? null : (PaneLayout) container.userObjects().get(PaneLayout.class.getName());
@@ -107,6 +110,8 @@ public class DataPane<T> extends BorderPane {
             }
 //            }
         }
+//        System.out.println("end updateContainer");
+//        checkInvariants();
     }
 
     private boolean isEffectiveWithSeparator() {
@@ -124,6 +129,8 @@ public class DataPane<T> extends BorderPane {
     }
 
     protected void valuesChanged(PropertyEvent event) {
+//        System.out.println("start valuesChanged "+event);
+//        checkInvariants();
         AppContainerChildren<AppComponent> containerChildren = this.container().get().children();
         switch (event.eventType()) {
             case ADD: {
@@ -151,12 +158,12 @@ public class DataPane<T> extends BorderPane {
                 int ii = indexOfElement(_index);
                 AppComponent c = containerChildren.removeAt(ii);
                 if (isEffectiveWithSeparator()) {
-                    if(_index==0){
-                        if(containerChildren.size()>0){
+                    if (_index == 0) {
+                        if (containerChildren.size() > 0) {
                             //remove separator
                             containerChildren.removeAt(0);
                         }
-                    }else {
+                    } else {
                         containerChildren.removeAt(ii - 1);
                     }
                 }
@@ -167,13 +174,41 @@ public class DataPane<T> extends BorderPane {
             case UPDATE: {
                 Integer _index = event.index();
                 int ii = indexOfElement(_index);
-                AppComponent c = containerChildren.get(ii);
-                T newValue = event.newValue();
-                c.userObjects().put(DataPane.class.getName() + ":value", newValue);
-                renderer.set(event.index(), newValue, c, this);
+                if (ii < containerChildren.size()) {
+                    AppComponent c = containerChildren.get(ii);
+                    T newValue = event.newValue();
+                    c.userObjects().put(DataPane.class.getName() + ":value", newValue);
+                    renderer.set(event.index(), newValue, c, this);
+                }
                 break;
             }
         }
+//        System.out.println("end valuesChanged "+event);
+//        checkInvariants();
+    }
+
+    private void checkInvariants() {
+        AppContainer<AppComponent> containerChildren = this.container().get();
+        int containerChildrenSize = containerChildren==null?0:containerChildren.children().size();
+        int renderedComponentsSize = renderedComponents.size();
+        int valuesSize = values.size();
+        System.out.println("checkInvariants: containerChildrenSize="+containerChildrenSize
+                +", renderedComponentsSize="+renderedComponentsSize
+                +", valuesSize="+valuesSize
+                +", withSeparator="+withSeparator
+                +", containerAcceptsSeparator="+containerAcceptsSeparator
+                +", isEffectiveWithSeparator="+isEffectiveWithSeparator()
+        );
+        if (renderedComponentsSize > 1 && isEffectiveWithSeparator()) {
+            if ((2*renderedComponentsSize -1) != containerChildrenSize) {
+                System.out.println("Why");
+            }
+        } else {
+            if (renderedComponentsSize != containerChildrenSize) {
+                System.out.println("Why");
+            }
+        }
+
     }
 
     protected AppComponent createSeparator(int index, AppComponent c) {
