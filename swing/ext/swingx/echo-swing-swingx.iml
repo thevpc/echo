@@ -23,15 +23,13 @@
     <orderEntry type="module" module-name="thevpc-common-swing" />
     <orderEntry type="module" module-name="thevpc-common-plaf" />
     <orderEntry type="library" name="Maven: com.formdev:flatlaf:1.1.2" level="project" />
-    <orderEntry type="library" name="Maven: com.kitfox.svg:svg-salamander:1.0" level="project" />
     <orderEntry type="module" module-name="shef-core" />
     <orderEntry type="library" name="Maven: net.sf.jtidy:jtidy:r938" level="project" />
     <orderEntry type="module" module-name="jeep-swing-editor" />
     <orderEntry type="module" module-name="jeep" />
-    <orderEntry type="module" module-name="thevpc-common-text-source" />
-    <orderEntry type="module" module-name="thevpc-common-text-source-log" />
     <orderEntry type="module" module-name="thevpc-common-classpath" />
     <orderEntry type="module" module-name="jeep-swing-editorkits" />
+    <orderEntry type="library" name="Maven: com.kitfox.svg:svg-salamander:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-api:5.5.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.opentest4j:opentest4j:1.2.0" level="project" />
