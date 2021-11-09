@@ -24,7 +24,7 @@ import net.thevpc.echo.swing.SwingApplicationUtils;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public abstract class SwingAppChoiceItemContext1<T> implements AppChoiceItemContext<T> {
 

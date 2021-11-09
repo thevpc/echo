@@ -13,7 +13,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class DefaultFxAppLayoutWorkspaceFactory implements AppLayoutWorkspaceFactory {
 //

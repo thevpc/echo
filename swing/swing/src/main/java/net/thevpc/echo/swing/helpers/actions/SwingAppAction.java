@@ -12,7 +12,7 @@ package net.thevpc.echo.swing.helpers.actions;
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class SwingAppAction implements Action{
 //    private Action action;

@@ -16,7 +16,7 @@ import javafx.scene.layout.BorderPane;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FxDockedPane extends BorderPane {
 

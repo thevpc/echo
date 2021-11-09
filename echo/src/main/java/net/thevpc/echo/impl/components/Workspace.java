@@ -28,7 +28,7 @@
 //import net.thevpc.echo.impl.model.ContainerModel;
 //
 ///**
-// * @author vpc
+// * @author thevpc
 // */
 //public class Workspace extends WindowContainerBase implements AppWorkspace {
 //

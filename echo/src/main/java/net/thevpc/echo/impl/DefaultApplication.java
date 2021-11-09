@@ -48,7 +48,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class DefaultApplication extends PropertyBase implements Application, ChildPropertyResolver {
 

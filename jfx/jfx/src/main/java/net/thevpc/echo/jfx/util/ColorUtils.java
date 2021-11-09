@@ -15,7 +15,7 @@ import java.util.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class ColorUtils {
 

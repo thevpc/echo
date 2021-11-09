@@ -23,7 +23,7 @@ package net.thevpc.echo;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class UncheckedException extends RuntimeException {
 

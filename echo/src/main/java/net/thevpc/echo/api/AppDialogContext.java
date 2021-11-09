@@ -25,7 +25,7 @@ import net.thevpc.echo.api.components.AppAlert;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface AppDialogContext {
 

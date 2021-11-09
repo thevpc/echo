@@ -13,7 +13,7 @@ import net.thevpc.echo.constraints.AllMargins;
 import net.thevpc.echo.constraints.AllPaddings;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class SearchDialog {
 

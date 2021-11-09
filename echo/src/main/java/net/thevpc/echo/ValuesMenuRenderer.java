@@ -7,7 +7,7 @@ package net.thevpc.echo;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface ValuesMenuRenderer<T> {
 

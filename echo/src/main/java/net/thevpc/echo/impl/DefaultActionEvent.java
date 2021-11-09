@@ -24,7 +24,7 @@ import net.thevpc.echo.api.components.AppComponent;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultActionEvent implements ActionEvent {
 

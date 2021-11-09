@@ -25,7 +25,7 @@ import net.thevpc.echo.api.AppImage;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface IconTransform {
 

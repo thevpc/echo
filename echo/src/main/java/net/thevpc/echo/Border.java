@@ -9,7 +9,7 @@ import net.thevpc.echo.api.AppBorder;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class Border implements AppBorder{
     

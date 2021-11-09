@@ -26,7 +26,7 @@ import net.thevpc.common.props.WritableBoolean;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class AppToolsConfig {
     private final WritableBoolean configurableTitle=Props.of("configurableTitle").booleanOf(true);

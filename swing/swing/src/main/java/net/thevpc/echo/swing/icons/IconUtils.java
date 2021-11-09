@@ -12,7 +12,7 @@ import javax.swing.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class IconUtils {
 

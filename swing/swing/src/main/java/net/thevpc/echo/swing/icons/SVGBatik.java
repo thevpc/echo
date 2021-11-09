@@ -23,7 +23,7 @@ package net.thevpc.echo.swing.icons;
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class SVGBatik {
 //

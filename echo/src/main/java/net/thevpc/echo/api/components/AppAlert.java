@@ -29,7 +29,7 @@ import net.thevpc.echo.api.AppAlertInputPane;
 import net.thevpc.echo.api.AppAlertResult;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public interface AppAlert extends AppControl {
 

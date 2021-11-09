@@ -16,7 +16,7 @@ import java.io.File;
 import java.net.URL;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class ImageView extends Label {
     private WritableFloat zoomFactor = Props.of("zoomFactor").floatOf(1);

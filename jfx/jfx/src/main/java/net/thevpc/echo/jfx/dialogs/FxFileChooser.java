@@ -19,7 +19,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class FxFileChooser implements AppFileChooserPeer, FxPeer {
 //

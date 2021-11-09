@@ -9,7 +9,7 @@ import net.thevpc.echo.DefaultApplicationStartupConfig;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class SwingApplicationStartupConfig extends DefaultApplicationStartupConfig {
 

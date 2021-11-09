@@ -16,7 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class SwingScrollPanePeer implements SwingPeer, AppScrollPanePeer {
 

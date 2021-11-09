@@ -23,7 +23,7 @@ import net.thevpc.echo.api.AppAlertResult;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface AppAlertPeer extends AppComponentPeer {
 

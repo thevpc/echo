@@ -17,7 +17,7 @@ import net.thevpc.echo.spi.peers.AppImagePeer;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class SwingAppImage implements AppImagePeer {
     private static Image EMPTY_IMAGE=new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB);

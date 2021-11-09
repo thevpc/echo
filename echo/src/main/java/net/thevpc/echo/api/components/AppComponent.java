@@ -36,7 +36,7 @@ import net.thevpc.echo.api.AppBorder;
 /**
  * AppComponent inherits all AppComponentModel Property implementation
  *
- * @author vpc
+ * @author thevpc
  */
 public interface AppComponent extends Property, IconSetAware {
 

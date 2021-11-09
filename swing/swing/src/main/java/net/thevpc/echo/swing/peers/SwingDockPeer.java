@@ -21,7 +21,7 @@ import net.thevpc.echo.swing.helpers.SwingHelpers;
 import javax.swing.*;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class SwingDockPeer implements SwingPeer, AppDockPeer {
 

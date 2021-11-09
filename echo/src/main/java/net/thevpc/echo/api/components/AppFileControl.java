@@ -28,7 +28,7 @@ import net.thevpc.echo.api.AppFileFilter;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface AppFileControl extends AppControl{
     WritableString currentDirectory();

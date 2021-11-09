@@ -15,7 +15,7 @@ import java.net.URL;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FxAppImage implements AppImagePeer {
 

@@ -9,7 +9,7 @@ import net.thevpc.common.i18n.Str;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultValuesMenuRenderer<T> implements ValuesMenuRenderer<T> {
 

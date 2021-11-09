@@ -13,7 +13,7 @@ import net.thevpc.echo.impl.Applications;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class EnableIfTextControl implements Consumer<AppComponent> {
     

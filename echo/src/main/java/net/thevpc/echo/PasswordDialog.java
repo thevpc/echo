@@ -18,7 +18,7 @@ import net.thevpc.echo.constraints.Grow;
 import net.thevpc.echo.constraints.ContainerGrow;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class PasswordDialog {
 

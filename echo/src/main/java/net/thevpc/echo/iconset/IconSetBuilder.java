@@ -27,7 +27,7 @@ import java.awt.Color;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface IconSetBuilder {
 

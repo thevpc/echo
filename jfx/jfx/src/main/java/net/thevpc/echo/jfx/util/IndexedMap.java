@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class IndexedMap<K, V> {
 

@@ -15,7 +15,7 @@ import net.thevpc.echo.api.ActionEvent;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class ValuesMenu<T> extends Menu {
 

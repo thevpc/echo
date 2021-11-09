@@ -28,7 +28,7 @@ import net.thevpc.echo.spi.peers.AppFileChooserPeer;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FileChooser extends FileBase implements AppFileChooser {
 

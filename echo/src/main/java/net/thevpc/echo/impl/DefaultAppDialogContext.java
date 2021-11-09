@@ -26,7 +26,7 @@ import net.thevpc.echo.api.AppDialogContext;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultAppDialogContext implements AppDialogContext {
     

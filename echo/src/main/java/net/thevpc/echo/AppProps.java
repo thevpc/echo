@@ -14,7 +14,7 @@ import net.thevpc.echo.iconset.WritableImage;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class AppProps {
 

@@ -16,7 +16,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class CustomHTMLAction extends HTMLEditorKit.HTMLTextAction {
 

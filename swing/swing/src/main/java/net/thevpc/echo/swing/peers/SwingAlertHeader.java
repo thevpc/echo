@@ -18,7 +18,7 @@ import net.thevpc.common.swing.icon.EmptyIcon;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class SwingAlertHeader extends Box {
 

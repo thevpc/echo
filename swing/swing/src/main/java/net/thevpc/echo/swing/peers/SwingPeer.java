@@ -12,7 +12,7 @@ import net.thevpc.echo.spi.peers.AppComponentPeer;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface SwingPeer extends AppComponentPeer {
 

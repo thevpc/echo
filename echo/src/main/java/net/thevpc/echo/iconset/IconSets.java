@@ -30,7 +30,7 @@ import java.io.File;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface IconSets extends WritableLiMap<String, IconSet> {
     WritableValue<IconConfig> config();

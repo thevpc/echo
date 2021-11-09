@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class WritableImage extends WritableValueImpl<AppImage> {
 

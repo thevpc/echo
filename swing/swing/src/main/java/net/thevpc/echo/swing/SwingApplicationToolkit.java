@@ -42,7 +42,7 @@ import java.util.concurrent.Callable;
 import net.thevpc.echo.swing.helpers.SwingHelpers;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class SwingApplicationToolkit extends AbstractApplicationToolkit {
 

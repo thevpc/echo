@@ -32,7 +32,7 @@ import java.awt.*;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultIconSetSupplier implements IconSetBuilder {
 

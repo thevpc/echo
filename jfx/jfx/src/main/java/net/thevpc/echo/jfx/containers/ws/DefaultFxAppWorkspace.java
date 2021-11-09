@@ -28,7 +28,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class DefaultFxAppWorkspace
 //        implements AppWorkspacePeer,FxPeer

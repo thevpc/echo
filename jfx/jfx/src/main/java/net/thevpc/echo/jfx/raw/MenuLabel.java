@@ -11,7 +11,7 @@ import javafx.scene.control.MenuItem;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class MenuLabel extends MenuButton {
 

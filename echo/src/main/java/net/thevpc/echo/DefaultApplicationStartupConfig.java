@@ -27,7 +27,7 @@ import net.thevpc.echo.api.ApplicationStartupConfig;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultApplicationStartupConfig implements ApplicationStartupConfig {
 

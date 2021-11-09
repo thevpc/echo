@@ -32,7 +32,7 @@
 //
 ///**
 // *
-// * @author vpc
+// * @author thevpc
 // */
 //public class FxAppDialogPeer extends Alert implements AppAlertPeer {
 //

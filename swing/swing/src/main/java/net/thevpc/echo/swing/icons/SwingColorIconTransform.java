@@ -18,7 +18,7 @@ import net.thevpc.echo.iconset.IconTransform;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class SwingColorIconTransform implements IconTransform {
 

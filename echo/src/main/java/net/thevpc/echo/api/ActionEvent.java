@@ -20,7 +20,7 @@ package net.thevpc.echo.api;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public interface ActionEvent extends AppEvent {
 

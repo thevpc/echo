@@ -33,7 +33,7 @@ import net.thevpc.echo.api.AppImage;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> implements IconSets {
 

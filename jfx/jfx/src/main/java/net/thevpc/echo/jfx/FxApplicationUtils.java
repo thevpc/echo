@@ -29,7 +29,7 @@ import net.thevpc.echo.Application;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FxApplicationUtils {
 

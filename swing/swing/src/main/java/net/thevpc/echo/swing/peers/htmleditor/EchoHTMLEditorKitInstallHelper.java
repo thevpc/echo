@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class EchoHTMLEditorKitInstallHelper extends MinWysiwygHTMLEditorKitInstallHelper {
 

@@ -43,7 +43,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public class FxApplicationToolkit extends AbstractApplicationToolkit {
 

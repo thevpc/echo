@@ -24,7 +24,7 @@ package net.thevpc.echo.api;
 import net.thevpc.echo.spi.peers.AppImagePeer;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public interface AppImage {
 

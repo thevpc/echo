@@ -17,7 +17,7 @@ import net.thevpc.echo.impl.util.IndexedMap;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class FxTabbedContainer extends BorderPane {
 

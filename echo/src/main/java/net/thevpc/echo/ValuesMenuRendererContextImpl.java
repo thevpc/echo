@@ -12,7 +12,7 @@ import net.thevpc.echo.constraints.Anchor;
 
 /**
  *
- * @author vpc
+ * @author thevpc
  */
 public class ValuesMenuRendererContextImpl<T> implements ValuesMenuRendererContext<T> {
     

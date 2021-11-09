@@ -34,7 +34,7 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 
 /**
- * @author vpc
+ * @author thevpc
  */
 public interface ApplicationToolkit {
 
