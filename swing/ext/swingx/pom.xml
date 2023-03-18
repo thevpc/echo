@@ -5,7 +5,7 @@
 
     <groupId>net.thevpc.echo</groupId>
     <artifactId>echo-swing-swingx</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <name>net.thevpc.echo-swing-swingx</name>
     <packaging>jar</packaging>
     <url>https://github.com/thevpc/echo</url>
@@ -116,21 +116,21 @@
                     <debug>true</debug>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>net.thevpc.maven</groupId>
-                <artifactId>writer-maven-plugin</artifactId>
-                <version>1.1.0</version>
-                <configuration>
-                    <outputFile>target/classes/META-INF/nuts/net.thevpc.nuts/nuts/nuts.properties</outputFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>write-properties</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>net.thevpc.maven</groupId>-->
+<!--                <artifactId>writer-maven-plugin</artifactId>-->
+<!--                <version>1.1.0</version>-->
+<!--                <configuration>-->
+<!--                    <outputFile>target/classes/META-INF/nuts/net.thevpc.nuts/nuts/nuts.properties</outputFile>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>write-properties</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

@@ -16,7 +16,8 @@ public class SwingUserControlPeer implements SwingPeer, AppUserControlPeer {
     @Override
     public void install(AppComponent comp) {
         this.comp=comp;
-        this.component =(Component) ((AppUserControl)comp).renderer().get();
+        Object a = ((AppUserControl) comp).renderer().get();
+        this.component =(Component) a;
     }
 
     @Override

@@ -42,7 +42,14 @@ public class SwingDockPeer implements SwingPeer, AppDockPeer {
             workspacePanel.addListener(new JDockTools.SelectionListener() {
                 @Override
                 public void onSelectionChanged(String id, JComponent component, boolean selected, JDockAnchor anchor) {
-                    SwingPeerHelper.appComponentOf(component).active().set(selected);
+                    try {
+                        AppComponent a = SwingPeerHelper.appComponentOf(component);
+                        if (a != null) {
+                            a.active().set(selected);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             });
         }
@@ -63,7 +70,7 @@ public class SwingDockPeer implements SwingPeer, AppDockPeer {
                 closable,
                 toDocAnchor(child.anchor().get())
         );
-        child.active().onChangeAndInit(() -> workspacePanel.setWindowActive(child.id(),child.active().get()));
+        child.active().onChangeAndInit(() -> workspacePanel.setWindowActive(child.id(), child.active().get()));
         child.title().onChange(v -> workspacePanel.setWindowTitle(child.id(), Applications.rawString(child.title(), child)));
         child.locale().onChange(v -> workspacePanel.setWindowTitle(child.id(), Applications.rawString(child.title(), child)));
         child.icon().onChange(v -> workspacePanel.setWindowIcon(child.id(), SwingHelpers.toAwtIcon(child.icon().get())));

@@ -16,3 +16,12 @@
 /jfx/jfx/target/
 /demos/echo-demo/target/
 /echo/target/
+/echo/echo.iml
+/.idea/
+/echo-builder.iml
+/swing/echo-swing-builder.iml
+/swing/ext/dock-mydoggy/echo-swing-mydoggy.iml
+/swing/swing/echo-swing.iml
+/demos/echo-demo/echo-demo.iml
+/echo-builder.iml
+/swing/ext/swingx/echo-swing-swingx.iml

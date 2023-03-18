@@ -106,6 +106,9 @@ public class DefaultIconsets extends WritableLiMapAdapter<String, IconSet> imple
 
     @Override
     public AppImage icon(String id, IconSetAware iconSetAware) {
+        if(iconSetAware==null){
+            return null;
+        }
         String q = iconSetAware.iconSet().get();
         if(q==null){
             q=id().get();

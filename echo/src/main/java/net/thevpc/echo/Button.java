@@ -4,6 +4,7 @@ import net.thevpc.common.i18n.Str;
 import net.thevpc.common.props.Props;
 import net.thevpc.common.props.WritableValue;
 import net.thevpc.echo.api.Action;
+import net.thevpc.echo.api.ActionWithId;
 import net.thevpc.echo.api.AppActionValue;
 import net.thevpc.echo.api.components.AppButton;
 import net.thevpc.echo.api.components.AppComponent;
@@ -26,6 +27,10 @@ public class Button extends TextBase implements AppButton {
 
     public Button(String id, Action a, Application app) {
         this(id, (Str) null, app);
+        action.set(a);
+    }
+    public Button(ActionWithId a, Application app) {
+        this(a.getId(), (Str) null, app);
         action.set(a);
     }
 

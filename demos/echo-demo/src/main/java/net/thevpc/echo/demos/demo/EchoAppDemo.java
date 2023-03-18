@@ -54,9 +54,9 @@ public class EchoAppDemo {
                             .withButtons("Please", "Never")
                             .showDialog();
                 }, app),
-                "/mainFrame/toolBar/Default/*");
+                Path.of("/mainFrame/toolBar/Default/*"));
 
-        mwt.add(createPanel(app), "/mainFrame/Example");
+        mwt.add(createPanel(app), Path.of("/mainFrame/Example"));
         mwt.add(new Button("NewFile", () -> {
         }, app), Path.of("/mainFrame/toolBar/File/*"));
         mwt.add(new Button("NewFile", () -> {

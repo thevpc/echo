@@ -11,7 +11,7 @@
     <modules>
         <module>swing</module>
         <module>ext/swingx</module>
-        <module>ext/dock-mydoggy</module>
+<!--        <module>ext/dock-mydoggy</module>-->
     </modules>
     <properties>
     </properties>
