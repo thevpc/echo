@@ -136,7 +136,7 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
         BufferedImage image = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_ARGB);
         if (color != null) {
             Graphics2D g = image.createGraphics();
-            g.setColor((Color) color.peer().toolkitColor());
+            g.setColor(SwingHelpers.toAwtColor(color));
             g.fillRect(0, 0, (int) width, (int) height);
         }
         return new SwingAppImage(image);
@@ -169,8 +169,8 @@ public class SwingApplicationToolkit extends AbstractApplicationToolkit {
 
     public IconTransform createReplaceColorTransform(AppColor from, AppColor to) {
         return new SwingColorIconTransform(
-                (Color) from.peer().toolkitColor(),
-                (Color) to.peer().toolkitColor()
+                SwingHelpers.toAwtColor(from),
+                SwingHelpers.toAwtColor(to)
                 , app);
     }
 

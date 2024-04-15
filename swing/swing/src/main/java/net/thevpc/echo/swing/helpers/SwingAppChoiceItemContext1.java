@@ -134,9 +134,7 @@ public abstract class SwingAppChoiceItemContext1<T> implements AppChoiceItemCont
 
     @Override
     public void setTextColor(AppColor color) {
-        jcomponent.setForeground(
-                color == null ? null : (Color) color.peer().toolkitColor()
-        );
+        jcomponent.setForeground(SwingHelpers.toAwtColor(color));
     }
 
     @Override
@@ -199,9 +197,7 @@ public abstract class SwingAppChoiceItemContext1<T> implements AppChoiceItemCont
 
     @Override
     public void setBackgroundColor(AppColor color) {
-        jcomponent.setForeground(
-                color == null ? null : (Color) color.peer().toolkitColor()
-        );
+        jcomponent.setForeground(SwingHelpers.toAwtColor(color));
     }
 
     @Override

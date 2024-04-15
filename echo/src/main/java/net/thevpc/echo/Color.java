@@ -2,6 +2,7 @@ package net.thevpc.echo;
 
 import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.spi.peers.AppColorPeer;
+import net.thevpc.echo.util.UserObjectsHelper;
 
 public class Color extends Paint implements AppColor {
     private AppColorPeer peer;
@@ -66,25 +67,43 @@ public class Color extends Paint implements AppColor {
             return null;
         }
         if (text.equals("<default>")) {
-            return new DefaultColor();
+            return DefaultColor.INSTANCE;
         }
         return new Color(text, app);
     }
 
     public static AppColor BLACK(Application app) {
-        return new Color(0, 0, 0, 1, app);
+        return app.userObjects().computeIfAbsent(
+                UserObjectsHelper.CONST(Color.class, "BLACK")
+                , i ->  new Color(0, 0, 0, 1, app)
+        );
     }
 
     public static AppColor WHITE(Application app) {
-        return new Color(1, 1, 1, 1, app);
+        return app.userObjects().computeIfAbsent(
+                UserObjectsHelper.CONST(Color.class, "WHITE")
+                , i -> new Color(1.0, 1.0, 1.0, 1.0, app)
+        );
     }
 
+    public static AppColor YELLOW(Application app) {
+        return app.userObjects().computeIfAbsent(
+                UserObjectsHelper.CONST(Color.class, "YELLOW")
+                , i -> new Color(255, 255, 0, app)
+        );
+    }
     public static AppColor LIGHT_GRAY(Application app) {
-        return new Color(192, 192, 192, app);
+        return app.userObjects().computeIfAbsent(
+                UserObjectsHelper.CONST(Color.class, "LIGHT_GRAY")
+                , i -> new Color(192, 192, 192, app)
+        );
     }
 
     public static AppColor DARK_GRAY(Application app) {
-        return new Color(64, 64, 64, app);
+        return app.userObjects().computeIfAbsent(
+                UserObjectsHelper.CONST(Color.class, "DARK_GRAY")
+                , i -> new Color(64, 64, 64, app)
+        );
     }
 
     private static String toHex(int value, int pad) {

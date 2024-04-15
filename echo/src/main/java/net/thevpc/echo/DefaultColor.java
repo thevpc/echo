@@ -4,6 +4,7 @@ import net.thevpc.echo.api.AppColor;
 import net.thevpc.echo.spi.peers.AppColorPeer;
 
 public class DefaultColor implements AppColor {
+    public static final AppColor INSTANCE=new DefaultColor();
     public DefaultColor() {
     }
 
