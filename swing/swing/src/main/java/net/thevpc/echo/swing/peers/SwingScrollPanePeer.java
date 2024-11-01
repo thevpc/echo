@@ -29,21 +29,21 @@ public class SwingScrollPanePeer implements SwingPeer, AppScrollPanePeer {
 
     @Override
     public void install(AppComponent comp) {
-        appComponent=(AppScrollPane) comp;
+        appComponent = (AppScrollPane) comp;
         SwingPeerHelper.installComponent(appComponent, swingComponent);
-        appComponent.children().onChange((e)->{
-            switch (e.eventType()){
-                case UPDATE:{
+        appComponent.children().onChange((e) -> {
+            switch (e.eventType()) {
+                case UPDATE: {
                     AppComponent other = e.newValue();//this.appComponent.child().get();
                     swingComponent.getViewport().setView(
-                            other==null?null: (Component) other.peer().toolkitComponent()
+                            other == null ? null : (Component) other.peer().toolkitComponent()
                     );
                     swingComponent.invalidate();
                     swingComponent.revalidate();
                     swingComponent.repaint();
                     break;
                 }
-                case REFRESH:{
+                case REFRESH: {
                     swingComponent.invalidate();
                     swingComponent.revalidate();
                     swingComponent.repaint();
@@ -57,6 +57,36 @@ public class SwingScrollPanePeer implements SwingPeer, AppScrollPanePeer {
 //                    c==null?null:((Component) c.peer().toolkitComponent())
 //            );
 //        });
+    }
+
+    public int getMaxX() {
+        return swingComponent.getHorizontalScrollBar().getMaximum();
+    }
+
+    public int getMaxY() {
+        return swingComponent.getVerticalScrollBar().getMaximum();
+    }
+
+    public void scrollTo(Float x, Float y) {
+        if (x != null) {
+            int maxX = getMaxX();
+            int xx = maxX == 0 ? 0 : (int) (x * maxX);
+            swingComponent.getHorizontalScrollBar().setValue(xx);
+        }
+        if (y != null) {
+            int maxY = getMaxY();
+            int yy = maxY == 0 ? 0 : (int) (y * maxY);
+            swingComponent.getVerticalScrollBar().setValue(yy);
+        }
+    }
+
+    public void scrollTo(Integer x, Integer y) {
+        if (x != null) {
+            swingComponent.getHorizontalScrollBar().setValue(x);
+        }
+        if (y != null) {
+            swingComponent.getVerticalScrollBar().setValue(y);
+        }
     }
 
     @Override

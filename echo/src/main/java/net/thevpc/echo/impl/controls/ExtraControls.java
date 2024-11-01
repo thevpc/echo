@@ -29,6 +29,10 @@ public class ExtraControls {
         return label;
     }
 
+    public static LabelProgressComponent createProgressLabel(Application app) {
+        return new LabelProgressComponent(timer, app);
+    }
+
     public static AppLabel createMemoryMonitorLabel(Application app) {
         //new MemoryUseIconTray(true)
         AppLabel label = new Label(app);

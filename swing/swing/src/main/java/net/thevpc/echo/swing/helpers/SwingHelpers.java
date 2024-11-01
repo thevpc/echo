@@ -101,13 +101,13 @@ public class SwingHelpers {
                 }
             });
         }
-        return (Color) color.peer().toolkitColor();
+        return toAwtColor(color);
     }
-    public static Font toAwtFont(AppFont color, JComponent c,NamedFunction<JComponent,Font> def) {
-        if(color==null){
+    public static Font toAwtFont(AppFont font, JComponent c,NamedFunction<JComponent,Font> def) {
+        if(font==null){
             return null;
         }
-        if(color.toString().equals("<default>")){
+        if(font.toString().equals("<default>")){
             String pn = UIPlafManager.getCurrentManager().getCurrent().getName();
             String cn = c.getClass().getName();
             String fn = def.name();
@@ -121,15 +121,15 @@ public class SwingHelpers {
                 }
             });
         }
-        return (Font) color.peer().toolkitFont();
+        return toAwtFont(font);
     }
 
     public static Color toAwtColor(AppColor color) {
         return color == null ? null : (Color) color.peer().toolkitColor();
     }
 
-    public static Font toAwtFont(AppFont color) {
-        return color == null ? null : (Font) color.peer().toolkitFont();
+    public static Font toAwtFont(AppFont font) {
+        return font == null ? null : (Font) font.peer().toolkitFont();
     }
 
 

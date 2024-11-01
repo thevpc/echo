@@ -27,6 +27,7 @@ import net.thevpc.common.i18n.WritableStr;
 import net.thevpc.common.msg.StringMessage;
 import net.thevpc.common.props.*;
 import net.thevpc.common.props.impl.PropertyBase;
+import net.thevpc.common.props.impl.WritableMapImpl;
 import net.thevpc.echo.*;
 import net.thevpc.echo.api.*;
 import net.thevpc.echo.api.components.AppComponent;
@@ -38,10 +39,7 @@ import net.thevpc.echo.iconset.NoIconSet;
 import net.thevpc.echo.impl.components.ContainerBase;
 import net.thevpc.echo.spi.peers.AppComponentPeer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
@@ -78,6 +76,7 @@ public class DefaultApplication extends PropertyBase implements Application, Chi
     private List<Semaphore> waitings = new ArrayList<>();
     private ApplicationToolkit toolkit;
     private PrinterService printerService;
+    private WritableMap<String,Object> userProps=Props.of("userProps").mapOf(String.class, Object.class);
 
     public DefaultApplication() {
         this(null);
@@ -242,6 +241,10 @@ public class DefaultApplication extends PropertyBase implements Application, Chi
         );
         fonts().clear();
         fonts().setAll(toolkit().availablefonts());
+    }
+
+    public WritableMap<String,Object> userProps() {
+        return userProps;
     }
 
     @Override

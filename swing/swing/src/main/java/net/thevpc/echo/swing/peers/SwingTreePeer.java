@@ -270,6 +270,16 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
             reset();
             super.setUI(ui);
         }
+
+        @Override
+        public void setForeground(Color fg) {
+            super.setForeground(fg);
+        }
+
+        @Override
+        public void setTextNonSelectionColor(Color newColor) {
+            super.setTextNonSelectionColor(newColor);
+        }
     }
 
     private static class MyAppChoiceItemContext<T> implements AppTreeItemContext<T> {
@@ -352,9 +362,7 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
         @Override
         public void setTextColor(AppColor color) {
-            myDefaultTreeCellRenderer.setForeground(
-                    color == null ? null : (Color) color.peer().toolkitColor()
-            );
+            myDefaultTreeCellRenderer.setForeground(SwingHelpers.toAwtColor(color));
         }
 
         @Override
@@ -428,12 +436,10 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
         @Override
         public void setBackgroundColor(AppColor c) {
-            if (c == null) {
-                c = net.thevpc.echo.Color.WHITE(getApplication());
-            }
-            myDefaultTreeCellRenderer.setBackground(
-                    c == null ? null : (Color) c.peer().toolkitColor()
-            );
+//            if (c == null) {
+//                c = net.thevpc.echo.Color.WHITE(getApplication());
+//            }
+            myDefaultTreeCellRenderer.setBackground(SwingHelpers.toAwtColor(c));
         }
 
         @Override
@@ -448,41 +454,41 @@ public class SwingTreePeer implements SwingPeer, AppTreePeer {
 
         @Override
         public void setBackgroundNonSelectionColor(AppColor c) {
-            if (c == null) {
-                c = net.thevpc.echo.Color.BLACK(getApplication());
-            }
+//            if (c == null) {
+//                c = net.thevpc.echo.Color.BLACK(getApplication());
+//            }
             myDefaultTreeCellRenderer.setBackgroundNonSelectionColor(
-                    c == null ? null : new Color(c.rgba())
+                    SwingHelpers.toAwtColor(c)
             );
         }
 
         @Override
         public void setBackgroundSelectionColor(AppColor c) {
-            if (c == null) {
-                c = net.thevpc.echo.Color.WHITE(getApplication());
-            }
+//            if (c == null) {
+//                c = net.thevpc.echo.Color.WHITE(getApplication());
+//            }
             myDefaultTreeCellRenderer.setBackgroundSelectionColor(
-                    c == null ? null : new Color(c.rgba())
+                    SwingHelpers.toAwtColor(c)
             );
         }
 
         @Override
         public void setTextNonSelectionColor(AppColor c) {
-            if (c == null) {
-                c = net.thevpc.echo.Color.BLACK(getApplication());
-            }
+//            if (c == null) {
+//                c = net.thevpc.echo.Color.BLACK(getApplication());
+//            }
             myDefaultTreeCellRenderer.setTextNonSelectionColor(
-                    c == null ? null : new Color(c.rgba())
+                    SwingHelpers.toAwtColor(c)
             );
         }
 
         @Override
         public void setTextSelectionColor(AppColor c) {
-            if (c == null) {
-                c = net.thevpc.echo.Color.BLACK(getApplication());
-            }
+//            if (c == null) {
+//                c = net.thevpc.echo.Color.BLACK(getApplication());
+//            }
             myDefaultTreeCellRenderer.setTextSelectionColor(
-                    c == null ? null : new Color(c.rgba())
+                    SwingHelpers.toAwtColor(c)
             );
         }
     }

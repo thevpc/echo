@@ -498,7 +498,7 @@ public class SwingApplicationUtils {
             Boolean bold,
             Boolean underline,
             Boolean strike) {
-        Font f = initialFont == null ? null : (Font) initialFont.peer().toolkitFont();
+        Font f = SwingHelpers.toAwtFont(initialFont);
         setComponentFont(component, f, italic, bold, underline, strike);
     }
 
