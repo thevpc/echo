@@ -8,12 +8,15 @@
     <name>net.thevpc.echo</name>
     <version>1.1.1</version>
     <packaging>pom</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
     <modules>
         <module>swing</module>
 <!--        <module>jfx</module>-->
         <module>demos/echo-demo</module>
         <module>echo</module>
     </modules>
-    <properties>
-    </properties>
 </project>
