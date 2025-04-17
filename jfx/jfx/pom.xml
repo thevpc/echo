@@ -1,6 +1,4 @@
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.thevpc.echo</groupId>
@@ -59,11 +57,7 @@
         <!-- ##############################
                 PRIVATE COMPILE DEPENDENCIES 
         ############################## -->
-        <dependency>
-            <groupId>net.thevpc.echo</groupId>
-            <artifactId>echo</artifactId>
-            <version>1.1.1</version>
-        </dependency>
+        <dependency><groupId>net.thevpc.echo</groupId><artifactId>echo</artifactId><version>1.1.1</version></dependency>
 
         <!-- ##############################
                 THIRD PARTY COMPILE DEPENDENCIES 
@@ -78,40 +72,18 @@
             <artifactId>DockFX</artifactId>
             <version>0.4b</version>
         </dependency>-->
-        <dependency>
-            <groupId>org.jfxtras</groupId>
-            <artifactId>jfxtras-window</artifactId>
-            <!--<version>15-r2</version>-->
-            <version>8.0-r6</version>
-        </dependency>
+        <dependency><groupId>org.jfxtras</groupId><artifactId>jfxtras-window</artifactId><!--<version>15-r2</version>--><version>8.0-r6</version></dependency>
 
 
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-swing</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.kitfox.svg</groupId>
-            <artifactId>svg-salamander</artifactId>
-            <version>1.0</version>
-        </dependency>
+        <dependency><groupId>org.openjfx</groupId><artifactId>javafx-controls</artifactId><version>${javafx.version}</version></dependency>
+        <dependency><groupId>org.openjfx</groupId><artifactId>javafx-swing</artifactId><version>${javafx.version}</version></dependency>
+        <dependency><groupId>com.kitfox.svg</groupId><artifactId>svg-salamander</artifactId><version>1.0</version></dependency>
       
       
         <!-- ##############################
                 TEST DEPENDENCIES
         ############################## -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>5.5.0</version>
-            <scope>test</scope>
-        </dependency>
+        <dependency><groupId>org.junit.jupiter</groupId><artifactId>junit-jupiter-api</artifactId><version>5.5.0</version><scope>test</scope></dependency>
     </dependencies>
 
     <distributionManagement>
